@@ -1,0 +1,19 @@
+{
+  "name": "autobenta-ph",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["backend", "frontend"],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm --workspace=backend run dev",
+    "dev:frontend": "npm --workspace=frontend run dev",
+    "build": "npm --workspace=frontend run build",
+    "start": "npm --workspace=backend run start",
+    "seed": "npm --workspace=backend run seed",
+    "migrate": "npm --workspace=backend run migrate",
+    "test": "npm --workspace=backend run test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

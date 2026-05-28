@@ -1,0 +1,578 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  buyer
+  seller
+  dealer
+  inspector
+  admin
+}
+
+enum ListingStatus {
+  draft
+  pending
+  active
+  sold
+  archived
+  rejected
+  flagged
+}
+
+enum InquiryStatus {
+  new
+  contacted
+  viewing_scheduled
+  financing
+  closed_won
+  closed_lost
+}
+
+enum InspectionStatus {
+  requested
+  scheduled
+  in_progress
+  completed
+  cancelled
+}
+
+enum InspectionResult {
+  pass
+  warning
+  fail
+}
+
+enum FinancingStatus {
+  requested
+  prequalified
+  docs_needed
+  approved
+  rejected
+}
+
+enum FuelType {
+  gasoline
+  diesel
+  hybrid
+  electric
+  lpg
+}
+
+enum Transmission {
+  automatic
+  manual
+  cvt
+}
+
+enum SellerType {
+  private
+  dealer
+  repossessed
+}
+
+enum ConditionGrade {
+  excellent
+  good
+  fair
+  poor
+}
+
+enum ModerationAction {
+  approve
+  reject
+  flag
+  request_info
+  escalate
+  suspend_seller
+  restore
+}
+
+enum FraudFlagSeverity {
+  low
+  medium
+  high
+  critical
+}
+
+enum DealerActivityType {
+  lead_created
+  lead_updated
+  note_added
+  reminder_set
+  listing_created
+  listing_sold
+  inquiry_received
+  financing_requested
+}
+
+// ─── Core Models ──────────────────────────────────────────────────────────────
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  name          String
+  phone         String?
+  role          Role     @default(buyer)
+  isVerified    Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  isSuspended   Boolean  @default(false)
+  suspendReason String?
+  avatarUrl     String?
+  lastLoginAt   DateTime?
+  loginCount    Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  dealer              Dealer?
+  listings            VehicleListing[]
+  favorites           Favorite[]
+  inquiriesSent       Inquiry[]         @relation("BuyerInquiries")
+  inspectionRequests  InspectionRequest[]
+  financingRequests   FinancingRequest[]
+  auditLogs           AuditLog[]
+  sellerRiskProfile   SellerRiskProfile?
+  recentlyViewed      RecentlyViewed[]
+  savedSearches       SavedSearch[]
+
+  @@map("users")
+}
+
+model Dealer {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName  String
+  description   String?
+  address       String
+  city          String
+  logoUrl       String?
+  website       String?
+  licenseNumber String?
+  isVerified    Boolean  @default(false)
+  avgResponseHours Float?
+  totalLeads    Int      @default(0)
+  totalWon      Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  listings   VehicleListing[]
+  leads      Lead[]
+  activities DealerActivity[]
+  reminders  DealerReminder[]
+
+  @@map("dealers")
+}
+
+model VehicleListing {
+  id             String         @id @default(uuid())
+  sellerId       String
+  seller         User           @relation(fields: [sellerId], references: [id])
+  dealerId       String?
+  dealer         Dealer?        @relation(fields: [dealerId], references: [id])
+  sellerType     SellerType     @default(private)
+  status         ListingStatus  @default(draft)
+
+  make           String
+  model          String
+  year           Int
+  variant        String?
+  plateEnding    String?
+  mileage        Int
+  price          Decimal        @db.Decimal(12, 2)
+  negotiable     Boolean        @default(true)
+
+  fuelType       FuelType       @default(gasoline)
+  transmission   Transmission   @default(automatic)
+  color          String?
+  bodyType       String?
+
+  location       String
+  city           String
+  region         String
+
+  condition      ConditionGrade @default(good)
+  description    String?
+
+  hasOrCr        Boolean        @default(true)
+  orCrNotes      String?
+  ownerCount     Int            @default(1)
+  serviceHistory Boolean        @default(false)
+  serviceNotes   String?
+  hasAccident    Boolean        @default(false)
+  accidentNotes  String?
+  hasFlood       Boolean        @default(false)
+  floodNotes     String?
+
+  viewCount      Int            @default(0)
+  inquiryCount   Int            @default(0)
+  favoriteCount  Int            @default(0)
+  isSponsored    Boolean        @default(false)
+  featuredUntil  DateTime?
+
+  // Phase 2: AI vision draft metadata
+  aiDraftData    Json?
+  searchVector   String?        // denormalized search text
+
+  fraudFlags     Json?
+  fraudScore     Int?           @default(0)
+  moderationNote String?
+  aiAnalysisId   String?
+
+  listedAt       DateTime?      // when first activated
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  soldAt         DateTime?
+
+  photos              VehiclePhoto[]
+  favorites           Favorite[]
+  inquiries           Inquiry[]
+  inspectionRequests  InspectionRequest[]
+  financingRequests   FinancingRequest[]
+  aiAnalyses          AIAnalysis[]
+  leads               Lead[]
+  fraudFlagRecords    FraudFlag[]
+  moderationActions   ListingModerationAction[]
+  recentlyViewed      RecentlyViewed[]
+
+  @@index([status])
+  @@index([make, model])
+  @@index([city])
+  @@index([price])
+  @@index([year])
+  @@index([mileage])
+  @@index([createdAt])
+  @@index([sellerId])
+  @@index([dealerId])
+  @@index([fraudScore])
+  @@map("vehicle_listings")
+}
+
+model VehiclePhoto {
+  id         String   @id @default(uuid())
+  listingId  String
+  listing    VehicleListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  url        String
+  storageKey String?          // R2/S3 object key for deletion
+  provider   String  @default("local")
+  isPrimary  Boolean @default(false)
+  caption    String?
+  sortOrder  Int     @default(0)
+  width      Int?
+  height     Int?
+  sizeBytes  Int?
+  createdAt  DateTime @default(now())
+
+  @@map("vehicle_photos")
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listingId String
+  listing   VehicleListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, listingId])
+  @@map("favorites")
+}
+
+model Inquiry {
+  id          String        @id @default(uuid())
+  buyerId     String
+  buyer       User          @relation("BuyerInquiries", fields: [buyerId], references: [id])
+  listingId   String
+  listing     VehicleListing @relation(fields: [listingId], references: [id])
+  message     String
+  contactPhone String?
+  status      InquiryStatus @default(new)
+  isRead      Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  lead Lead?
+
+  @@map("inquiries")
+}
+
+model Lead {
+  id         String        @id @default(uuid())
+  dealerId   String
+  dealer     Dealer        @relation(fields: [dealerId], references: [id])
+  inquiryId  String?       @unique
+  inquiry    Inquiry?      @relation(fields: [inquiryId], references: [id])
+  listingId  String
+  listing    VehicleListing @relation(fields: [listingId], references: [id])
+  buyerName  String
+  buyerEmail String?
+  buyerPhone String?
+  status     InquiryStatus @default(new)
+  notes      String?
+  source     String?       @default("inquiry") // inquiry, direct, referral, walk-in
+  lostReason String?
+  closedAt   DateTime?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  activities DealerActivity[]
+
+  @@index([dealerId, status])
+  @@map("leads")
+}
+
+model InspectionRequest {
+  id          String           @id @default(uuid())
+  buyerId     String
+  buyer       User             @relation(fields: [buyerId], references: [id])
+  listingId   String
+  listing     VehicleListing   @relation(fields: [listingId], references: [id])
+  status      InspectionStatus @default(requested)
+  preferredDate DateTime?
+  address     String?
+  notes       String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  report InspectionReport?
+
+  @@map("inspection_requests")
+}
+
+model InspectionReport {
+  id          String           @id @default(uuid())
+  requestId   String           @unique
+  request     InspectionRequest @relation(fields: [requestId], references: [id])
+  inspectorId String?
+  overallScore Int
+  result      InspectionResult
+
+  exterior      Json
+  interior      Json
+  engine        Json
+  transmission  Json
+  suspension    Json
+  tires         Json
+  electrical    Json
+  floodSigns    Json
+  accidentSigns Json
+  testDriveNotes String?
+
+  photos      Json?
+  isPublic    Boolean  @default(true)
+  inspectedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@map("inspection_reports")
+}
+
+model FinancingRequest {
+  id             String          @id @default(uuid())
+  buyerId        String
+  buyer          User            @relation(fields: [buyerId], references: [id])
+  listingId      String
+  listing        VehicleListing  @relation(fields: [listingId], references: [id])
+  status         FinancingStatus @default(requested)
+  vehiclePrice   Decimal         @db.Decimal(12, 2)
+  downPayment    Decimal         @db.Decimal(12, 2)
+  loanAmount     Decimal         @db.Decimal(12, 2)
+  termMonths     Int
+  monthlyPayment Decimal?        @db.Decimal(12, 2)
+  incomeRange    String
+  employmentType String?
+  adminNotes     String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@map("financing_requests")
+}
+
+model AIAnalysis {
+  id               String   @id @default(uuid())
+  listingId        String
+  listing          VehicleListing @relation(fields: [listingId], references: [id])
+  estimatedPrice   Decimal? @db.Decimal(12, 2)
+  priceLow         Decimal? @db.Decimal(12, 2)
+  priceHigh        Decimal? @db.Decimal(12, 2)
+  listingScore     Int?
+  fraudScore       Int?
+  fraudFlags       Json?
+  qualityFlags     Json?
+  buyerChecklist   Json?
+  negotiationTips  Json?
+  summary          String?
+  model            String   @default("mock")
+  createdAt        DateTime @default(now())
+
+  @@map("ai_analyses")
+}
+
+// ─── Phase 2: Fraud & Moderation ─────────────────────────────────────────────
+
+model FraudFlag {
+  id          String            @id @default(uuid())
+  listingId   String
+  listing     VehicleListing    @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  flagType    String            // price_too_low, duplicate_listing, suspicious_seller, etc.
+  severity    FraudFlagSeverity @default(medium)
+  title       String
+  description String
+  metadata    Json?
+  isResolved  Boolean           @default(false)
+  resolvedBy  String?
+  resolvedAt  DateTime?
+  resolveNote String?
+  autoDetected Boolean          @default(true)
+  createdAt   DateTime          @default(now())
+
+  @@index([listingId])
+  @@index([flagType])
+  @@index([severity])
+  @@index([isResolved])
+  @@map("fraud_flags")
+}
+
+model SellerRiskProfile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  riskScore        Int      @default(0)       // 0–100
+  riskLevel        String   @default("low")   // low, medium, high, critical
+  flags            Json?
+  totalListings    Int      @default(0)
+  flaggedListings  Int      @default(0)
+  rapidListings    Boolean  @default(false)   // >5 listings in 24h
+  duplicateHistory Boolean  @default(false)
+  suspiciousEdits  Int      @default(0)
+  lastCalculated   DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("seller_risk_profiles")
+}
+
+model ListingModerationAction {
+  id          String           @id @default(uuid())
+  listingId   String
+  listing     VehicleListing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  adminId     String
+  action      ModerationAction
+  reason      String?
+  details     Json?
+  previousStatus String?
+  newStatus      String?
+  createdAt   DateTime         @default(now())
+
+  @@index([listingId])
+  @@index([adminId])
+  @@index([action])
+  @@map("listing_moderation_actions")
+}
+
+// ─── Phase 2: Discovery ───────────────────────────────────────────────────────
+
+model SavedSearch {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  filters    Json
+  alertOn    Boolean  @default(false)
+  lastRun    DateTime?
+  resultCount Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+  @@map("saved_searches")
+}
+
+model RecentlyViewed {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listingId String
+  listing   VehicleListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  viewedAt  DateTime @default(now())
+
+  @@unique([userId, listingId])
+  @@index([userId])
+  @@map("recently_viewed")
+}
+
+// ─── Phase 2: Dealer Operations ───────────────────────────────────────────────
+
+model DealerActivity {
+  id          String             @id @default(uuid())
+  dealerId    String
+  dealer      Dealer             @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  leadId      String?
+  lead        Lead?              @relation(fields: [leadId], references: [id])
+  actorId     String?
+  type        DealerActivityType
+  description String
+  metadata    Json?
+  createdAt   DateTime           @default(now())
+
+  @@index([dealerId])
+  @@index([leadId])
+  @@map("dealer_activities")
+}
+
+model DealerReminder {
+  id          String   @id @default(uuid())
+  dealerId    String
+  dealer      Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  leadId      String?
+  title       String
+  dueAt       DateTime
+  isDone      Boolean  @default(false)
+  doneAt      DateTime?
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@index([dealerId, isDone])
+  @@index([dueAt])
+  @@map("dealer_reminders")
+}
+
+// ─── Phase 2: Audit Infrastructure ───────────────────────────────────────────
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  action      String
+  entityType  String
+  entityId    String?
+  details     Json?
+  ipAddress   String?
+  userAgent   String?
+  requestId   String?
+  prevHash    String?  // chain link
+  hash        String?  // SHA-256 of this record
+  createdAt   DateTime @default(now())
+
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model AuditHashAnchor {
+  id        String   @id @default(uuid())
+  sequence  Int      @unique
+  hash      String
+  logId     String?
+  createdAt DateTime @default(now())
+
+  @@map("audit_hash_anchors")
+}

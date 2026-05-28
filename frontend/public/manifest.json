@@ -1,0 +1,40 @@
+{
+  "name": "AutoBenta PH",
+  "short_name": "AutoBenta",
+  "description": "Philippines Used Car Marketplace",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "auto"],
+  "lang": "en-PH",
+  "shortcuts": [
+    {
+      "name": "Browse Cars",
+      "short_name": "Browse",
+      "url": "/cars",
+      "description": "Search and browse car listings"
+    },
+    {
+      "name": "Sell My Car",
+      "short_name": "Sell",
+      "url": "/sell",
+      "description": "Create a new listing"
+    }
+  ]
+}
