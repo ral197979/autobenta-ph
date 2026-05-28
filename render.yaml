@@ -12,7 +12,7 @@ services:
     runtime: node
     plan: starter
     buildCommand: >-
-      npm install &&
+      npm install --include=dev &&
       npm --workspace=frontend run build &&
       mkdir -p backend/public && cp -r frontend/dist/. backend/public &&
       cd backend && npx prisma generate
