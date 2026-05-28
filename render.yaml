@@ -16,7 +16,7 @@ services:
       npm --workspace=frontend run build &&
       mkdir -p backend/public && cp -r frontend/dist/. backend/public &&
       cd backend && npx prisma generate
-    startCommand: cd backend && npx prisma migrate deploy && node prisma/seed.js && node src/server.js
+    startCommand: cd backend && npx prisma migrate deploy && node src/server.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
