@@ -1,4 +1,4 @@
-import { ShieldCheck, BadgeCheck, Sparkles } from 'lucide-react';
+import { ShieldCheck, BadgeCheck, Sparkles, MapPin, Gauge, Zap, CreditCard } from 'lucide-react';
 import SearchPanel from './SearchPanel';
 
 export default function HomeHero() {
@@ -47,18 +47,12 @@ export default function HomeHero() {
           </dl>
         </div>
 
-        {/* Right: car showcase */}
+        {/* Right: featured car listing card */}
         <div className="relative hidden lg:col-span-5 lg:block">
-          <div className="relative mx-auto aspect-[5/4] w-full max-w-lg">
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-deepblue/40 via-electric/20 to-transparent blur-2xl" />
-            <img
-              src="https://placehold.co/1000x800/0B1220/FACC15?text=AutoBentaPH"
-              alt="Featured car"
-              className="relative h-full w-full rounded-3xl border border-white/10 object-cover shadow-2xl"
-            />
+          <div className="relative mx-auto w-full max-w-lg overflow-hidden">
 
-            {/* Floating badges */}
-            <div className="absolute -left-6 top-6 flex items-center gap-2 rounded-xl border border-white/10 bg-white/95 px-3 py-2 text-ink shadow-xl">
+            {/* Floating badge — top-left */}
+            <div className="absolute -left-4 top-4 z-20 flex items-center gap-2 rounded-xl border border-white/10 bg-white/95 px-3 py-2 text-ink shadow-xl">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
                 <ShieldCheck className="h-4 w-4" />
               </div>
@@ -68,7 +62,88 @@ export default function HomeHero() {
               </div>
             </div>
 
-            <div className="absolute -right-4 bottom-8 flex items-center gap-2 rounded-xl border border-white/10 bg-white/95 px-3 py-2 text-ink shadow-xl">
+            {/* Card */}
+            <div className="rounded-2xl border border-cardborder bg-white shadow-2xl overflow-hidden">
+
+              {/* Image area */}
+              <div className="relative h-52">
+                <img
+                  src="https://placehold.co/800x500/1e3a5f/e2e8f0?text=2021+Toyota+Fortuner"
+                  alt="2021 Toyota Fortuner"
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      'https://placehold.co/800x500/0B1220/FACC15?text=Featured+Vehicle';
+                  }}
+                />
+                {/* Dark gradient overlay at bottom of image */}
+                <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/60 to-transparent" />
+              </div>
+
+              {/* Card body */}
+              <div className="p-5">
+
+                {/* Title + price */}
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h3 className="text-base font-bold text-ink leading-snug">
+                      2021 Toyota Fortuner
+                    </h3>
+                    <p className="text-xs text-slatetext mt-0.5">2.4 V Diesel 4x2 AT</p>
+                  </div>
+                  <p className="text-lg font-bold text-ink whitespace-nowrap">&#x20B1;1,780,000</p>
+                </div>
+
+                {/* Meta row */}
+                <div className="mt-3 flex items-center gap-4 text-xs text-slatetext">
+                  <span className="flex items-center gap-1">
+                    <MapPin className="h-3.5 w-3.5 shrink-0" />
+                    Makati City
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Gauge className="h-3.5 w-3.5 shrink-0" />
+                    35,000 km
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Zap className="h-3.5 w-3.5 shrink-0" />
+                    Automatic
+                  </span>
+                  <span>Diesel</span>
+                </div>
+
+                {/* Badge pills */}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700 border border-emerald-200">
+                    <ShieldCheck className="h-3 w-3 shrink-0" />
+                    Verified
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-deepblue border border-blue-200">
+                    <BadgeCheck className="h-3 w-3 shrink-0" />
+                    Inspection-ready
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 border border-amber-200">
+                    <CreditCard className="h-3 w-3 shrink-0" />
+                    Financing
+                  </span>
+                </div>
+
+                {/* Monthly estimate */}
+                <p className="mt-3 text-xs text-slatetext">
+                  ~&#x20B1;29,700/mo &middot; 60 months
+                </p>
+
+                {/* CTA */}
+                <a
+                  href="#"
+                  className="mt-4 flex w-full items-center justify-center rounded-xl bg-electric px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-deepblue transition-colors"
+                >
+                  View listing &rarr;
+                </a>
+              </div>
+            </div>
+
+            {/* Floating badge — bottom-right */}
+            <div className="absolute -right-4 bottom-4 z-20 flex items-center gap-2 rounded-xl border border-white/10 bg-white/95 px-3 py-2 text-ink shadow-xl">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-deepblue">
                 <BadgeCheck className="h-4 w-4" />
               </div>
@@ -78,10 +153,6 @@ export default function HomeHero() {
               </div>
             </div>
 
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 rounded-xl border border-white/10 bg-ink/90 px-4 py-2 text-white shadow-xl backdrop-blur">
-              <p className="text-[11px] text-white/60">Fair price estimate</p>
-              <p className="text-sm font-bold text-accent">₱748,000 · Great deal</p>
-            </div>
           </div>
         </div>
       </div>

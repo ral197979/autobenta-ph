@@ -56,6 +56,31 @@ The homepage of AutoBentaPH has been redesigned from a generic gradient/centered
 - `npm --workspace=frontend run lint` → **cannot run** — `eslint` binary is not installed in the frontend workspace (pre-existing condition, unrelated to this redesign). Confirmed via `sh: eslint: command not found`. Recommend `npm i -D eslint` in `frontend/` to restore lint capability.
 - `cd backend && npm test -- --forceExit` → **11 suites, 107 tests pass**.
 
+---
+
+## Addendum — Hero right-panel replacement (2026-05-29)
+
+### What was wrong
+The hero's right column displayed a plain dark placeholder image (`placehold.co` with the text "AutoBentaPH") wrapped in an `aspect-[5/4]` container. It conveyed no actual product value — no car details, no price, no trust signals beyond the floating badge overlays.
+
+### What was changed
+**`frontend/src/components/home/HomeHero.jsx`** — right column (`lg:col-span-5`) rewritten:
+
+- The raw `<img>` + blurred-gradient background was replaced with a white `rounded-2xl shadow-2xl border-cardborder` card mimicking a real listing.
+- Card image slot (`h-52`, `object-cover`) uses `https://placehold.co/800x500/1e3a5f/e2e8f0?text=2021+Toyota+Fortuner`; `onError` falls back to a gold-on-navy placeholder.
+- A dark gradient overlay (`bg-gradient-to-t from-black/60`) sits at the bottom of the image area.
+- Card body shows: car title + variant, peso price (₱1,780,000), location / mileage / transmission / fuel meta row, three badge pills (Verified · Inspection-ready · Financing) using `ShieldCheck`, `BadgeCheck`, `CreditCard` from lucide-react, monthly estimate (~₱29,700/mo · 60 months), and a full-width "View listing →" electric-blue CTA button.
+- Floating trust badges kept to exactly two: top-left `Inspection-ready · 120-point check` (green ShieldCheck) and bottom-right `Verified seller · DTI registered` (blue BadgeCheck). The old `₱748,000 · Great deal` bottom-center badge was removed.
+- New lucide-react imports added: `MapPin`, `Gauge`, `Zap`, `CreditCard`.
+- Left column (`lg:col-span-7`) is untouched.
+
+### Build result
+`npm --workspace=frontend run build` → **passes** (1622 modules, 428 kB JS / 41 kB CSS).
+
+`npm --workspace=frontend run lint` → **cannot run** — `eslint` binary still not installed (pre-existing condition).
+
+---
+
 ## Known follow-ups
 
 - **Real car photography.** All visuals currently use `placehold.co` placeholders. Swapping in licensed PH market photos will be the biggest visual upgrade.
