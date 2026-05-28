@@ -12,9 +12,10 @@ services:
     runtime: node
     plan: starter
     buildCommand: >-
-      cd frontend && npm install && npm run build &&
-      mkdir -p ../backend/public && cp -r dist/. ../backend/public &&
-      cd ../backend && npm install && npx prisma generate
+      npm install &&
+      npm --workspace=frontend run build &&
+      mkdir -p backend/public && cp -r frontend/dist/. backend/public &&
+      cd backend && npx prisma generate
     startCommand: cd backend && npx prisma migrate deploy && node src/server.js
     healthCheckPath: /api/health
     envVars:
