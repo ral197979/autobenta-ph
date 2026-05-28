@@ -126,6 +126,15 @@ app.use('/api/dealer/analytics', dealerAnalyticsRoutes);
 app.use('/api/saved-searches', savedSearchRoutes);
 app.use('/api/ai-vision', aiVisionRoutes);
 
+// ─── Frontend (production only) ───────────────────────────────────────────────
+if (process.env.NODE_ENV === 'production') {
+  const frontendDist = path.join(__dirname, '../../public');
+  app.use(express.static(frontendDist));
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
+
 // ─── Error handler ────────────────────────────────────────────────────────────
 app.use((err, req, res, _next) => {
   const status = err.status || err.statusCode || 500;
