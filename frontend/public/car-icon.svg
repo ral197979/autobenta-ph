@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="14" fill="#0B1220"/>
+  <rect width="64" height="64" rx="14" fill="url(#grad)"/>
+  <!-- Car body -->
+  <path d="M14 38h36v5a2 2 0 01-2 2H16a2 2 0 01-2-2v-5z" fill="#2563EB"/>
+  <path d="M13 38l4-10c.8-2 2.7-3.3 4.8-3.3h20.4c2.1 0 4 1.3 4.8 3.3l4 10H13z" fill="#2563EB"/>
+  <!-- Windshield -->
+  <path d="M22 28l-2.5 7h25l-2.5-7H22z" fill="#93C5FD" opacity="0.5"/>
+  <!-- Wheels -->
+  <circle cx="22" cy="43" r="5" fill="#0B1220"/>
+  <circle cx="22" cy="43" r="2.5" fill="#60A5FA"/>
+  <circle cx="42" cy="43" r="5" fill="#0B1220"/>
+  <circle cx="42" cy="43" r="2.5" fill="#60A5FA"/>
+  <!-- Accent stripe -->
+  <rect x="14" y="37" width="36" height="2" fill="#FACC15" rx="1"/>
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1D4ED8" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0B1220" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>
