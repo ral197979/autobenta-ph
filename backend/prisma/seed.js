@@ -16,6 +16,9 @@ const PH_CITIES = [
   { city: 'San Pedro', region: 'Region IV-A' },
 ];
 
+// Real Unsplash car photos — reliable CDN, no external service dependency
+const U = (id) => `https://images.unsplash.com/photo-${id}?w=800&h=600&fit=crop&q=80`;
+
 const PH_CAR_LISTINGS = [
   {
     make: 'Toyota', model: 'Vios', year: 2020, variant: '1.3 XLE CVT',
@@ -26,9 +29,8 @@ const PH_CAR_LISTINGS = [
     sellerType: 'private',
     city: 'Pasig', region: 'NCR', location: 'Pasig City',
     photos: [
-      { url: 'https://placehold.co/800x600/e2e8f0/334155?text=Toyota+Vios+Front', isPrimary: true },
-      { url: 'https://placehold.co/800x600/e2e8f0/334155?text=Toyota+Vios+Interior', isPrimary: false },
-      { url: 'https://placehold.co/800x600/e2e8f0/334155?text=Toyota+Vios+Engine', isPrimary: false },
+      { url: U('1503376780353-7e6692767b70'), isPrimary: true },
+      { url: U('1494976388531-d1058494cdd8'), isPrimary: false },
     ],
   },
   {
@@ -40,8 +42,8 @@ const PH_CAR_LISTINGS = [
     sellerType: 'private',
     city: 'Quezon City', region: 'NCR', location: 'Quezon City',
     photos: [
-      { url: 'https://placehold.co/800x600/dbeafe/1e3a8a?text=Montero+Sport+Front', isPrimary: true },
-      { url: 'https://placehold.co/800x600/dbeafe/1e3a8a?text=Montero+Sport+Side', isPrimary: false },
+      { url: U('1519641471654-76ce0107ad1b'), isPrimary: true },
+      { url: U('1549317661-bd32c8ce0db2'), isPrimary: false },
     ],
   },
   {
@@ -53,10 +55,8 @@ const PH_CAR_LISTINGS = [
     sellerType: 'dealer',
     city: 'Makati', region: 'NCR', location: 'Makati City',
     photos: [
-      { url: 'https://placehold.co/800x600/dcfce7/14532d?text=Fortuner+Front', isPrimary: true },
-      { url: 'https://placehold.co/800x600/dcfce7/14532d?text=Fortuner+Interior', isPrimary: false },
-      { url: 'https://placehold.co/800x600/dcfce7/14532d?text=Fortuner+Engine', isPrimary: false },
-      { url: 'https://placehold.co/800x600/dcfce7/14532d?text=Fortuner+Odometer', isPrimary: false },
+      { url: U('1549317661-bd32c8ce0db2'), isPrimary: true },
+      { url: U('1519641471654-76ce0107ad1b'), isPrimary: false },
     ],
   },
   {
@@ -68,8 +68,8 @@ const PH_CAR_LISTINGS = [
     sellerType: 'private',
     city: 'Mandaluyong', region: 'NCR', location: 'Mandaluyong City',
     photos: [
-      { url: 'https://placehold.co/800x600/fef9c3/713f12?text=Honda+City+Front', isPrimary: true },
-      { url: 'https://placehold.co/800x600/fef9c3/713f12?text=Honda+City+Side', isPrimary: false },
+      { url: U('1568605117036-5fe5e7bab0b7'), isPrimary: true },
+      { url: U('1503376780353-7e6692767b70'), isPrimary: false },
     ],
   },
   {
@@ -82,8 +82,8 @@ const PH_CAR_LISTINGS = [
     sellerType: 'private',
     city: 'Angeles City', region: 'Region III', location: 'Angeles City, Pampanga',
     photos: [
-      { url: 'https://placehold.co/800x600/fee2e2/7f1d1d?text=Ford+Ranger+Front', isPrimary: true },
-      { url: 'https://placehold.co/800x600/fee2e2/7f1d1d?text=Ford+Ranger+Bed', isPrimary: false },
+      { url: U('1558618666-fcd25c85cd64'), isPrimary: true },
+      { url: U('1612544448445-b8232cff3b6c'), isPrimary: false },
     ],
   },
   {
@@ -95,8 +95,8 @@ const PH_CAR_LISTINGS = [
     sellerType: 'dealer',
     city: 'Cebu City', region: 'Region VII', location: 'Cebu City',
     photos: [
-      { url: 'https://placehold.co/800x600/f3e8ff/4c1d95?text=Nissan+Navara+Front', isPrimary: true },
-      { url: 'https://placehold.co/800x600/f3e8ff/4c1d95?text=Nissan+Navara+Side', isPrimary: false },
+      { url: U('1612544448445-b8232cff3b6c'), isPrimary: true },
+      { url: U('1558618666-fcd25c85cd64'), isPrimary: false },
     ],
   },
   {
@@ -108,9 +108,8 @@ const PH_CAR_LISTINGS = [
     sellerType: 'private',
     city: 'Bacoor', region: 'Region IV-A', location: 'Bacoor, Cavite',
     photos: [
-      { url: 'https://placehold.co/800x600/e0f2fe/0c4a6e?text=Suzuki+Ertiga+Front', isPrimary: true },
-      { url: 'https://placehold.co/800x600/e0f2fe/0c4a6e?text=Suzuki+Ertiga+Interior', isPrimary: false },
-      { url: 'https://placehold.co/800x600/e0f2fe/0c4a6e?text=Suzuki+Ertiga+3rd+Row', isPrimary: false },
+      { url: U('1494976388531-d1058494cdd8'), isPrimary: true },
+      { url: U('1503376780353-7e6692767b70'), isPrimary: false },
     ],
   },
   {
@@ -122,7 +121,7 @@ const PH_CAR_LISTINGS = [
     sellerType: 'repossessed',
     city: 'Davao City', region: 'Region XI', location: 'Davao City',
     photos: [
-      { url: 'https://placehold.co/800x600/fdf4ff/4a044e?text=Hyundai+Starex+Front', isPrimary: true },
+      { url: U('1609521263047-f8f205293f24'), isPrimary: true },
     ],
   },
 ];
@@ -298,16 +297,18 @@ async function main() {
           inquiryCount: Math.floor(Math.random() * 15),
         },
       });
-
-      if (photos?.length) {
-        await prisma.vehiclePhoto.createMany({
-          data: photos.map((p, idx) => ({ ...p, listingId: listing.id, sortOrder: idx })),
-        });
-      }
       console.log(`Created listing: ${listing.year} ${listing.make} ${listing.model}`);
     } else {
       listing = existingListing;
-      console.log(`Skipped existing: ${listingData.year} ${listingData.make} ${listingData.model}`);
+      // Replace photos so URL changes in seed data are picked up on re-seed
+      await prisma.vehiclePhoto.deleteMany({ where: { listingId: listing.id } });
+      console.log(`Updated photos for: ${listingData.year} ${listingData.make} ${listingData.model}`);
+    }
+
+    if (photos?.length) {
+      await prisma.vehiclePhoto.createMany({
+        data: photos.map((p, idx) => ({ ...p, listingId: listing.id, sortOrder: idx })),
+      });
     }
 
     // Add a sample inquiry for buyer
