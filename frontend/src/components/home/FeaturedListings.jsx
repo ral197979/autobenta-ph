@@ -12,7 +12,15 @@ export default function FeaturedListings() {
   });
 
   const apiListings = data?.listings || [];
-  const listings = apiListings.length >= 4 ? apiListings.slice(0, 8) : MOCK_LISTINGS;
+  // Deduplicate by id, then by make+model+year to catch DB seed duplicates
+  const seen = new Set();
+  const deduped = apiListings.filter((l) => {
+    const key = `${l.make}-${l.model}-${l.year}-${l.variant}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  const listings = deduped.length >= 4 ? deduped.slice(0, 8) : MOCK_LISTINGS;
 
   return (
     <section className="bg-white">
