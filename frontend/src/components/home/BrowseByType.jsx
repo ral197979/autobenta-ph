@@ -1,53 +1,73 @@
 import { Link } from 'react-router-dom';
 
-// Clean inline SVG silhouettes — no emoji, single accent color.
+// Distinct side-profile silhouettes per body type.
+// viewBox="0 0 80 44" gives a natural car-width canvas.
+
+/** Sedan — classic 3-box: long hood, raised cabin, short trunk */
 const SedanIcon = (props) => (
-  <svg viewBox="0 0 64 32" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}>
-    <path d="M4 22h56l-4-6-10-2-6-6H22l-6 6-10 2-2 6z" />
-    <circle cx="18" cy="24" r="4" />
-    <circle cx="46" cy="24" r="4" />
+  <svg viewBox="0 0 80 44" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" {...props}>
+    <path d="M6 30 L6 24 L14 24 L22 14 L54 14 L62 24 L74 24 L74 30 Z" />
+    <path d="M24 24 L28 16 L50 16 L56 24 Z" />
+    <circle cx="20" cy="30" r="5" />
+    <circle cx="60" cy="30" r="5" />
   </svg>
 );
 
+/** SUV — tall boxy cabin, high ride height, large wheels */
 const SuvIcon = (props) => (
-  <svg viewBox="0 0 64 32" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}>
-    <path d="M4 22h56v-6l-8-2-4-8H16l-4 8-8 2v6z" />
-    <circle cx="18" cy="24" r="4" />
-    <circle cx="46" cy="24" r="4" />
+  <svg viewBox="0 0 80 44" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" {...props}>
+    <path d="M4 30 L4 16 L14 16 L20 8 L62 8 L68 16 L76 16 L76 30 Z" />
+    <path d="M22 16 L25 10 L60 10 L64 16 Z" />
+    <circle cx="20" cy="31" r="6" />
+    <circle cx="60" cy="31" r="6" />
   </svg>
 );
 
+/** Pickup — short cab left, open flat bed right — unmistakable */
 const PickupIcon = (props) => (
-  <svg viewBox="0 0 64 32" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}>
-    <path d="M4 22h56v-6l-8-2-4-8H26v16M26 14H6l-2 8" />
-    <circle cx="18" cy="24" r="4" />
-    <circle cx="46" cy="24" r="4" />
+  <svg viewBox="0 0 80 44" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" {...props}>
+    {/* Cab */}
+    <path d="M4 30 L4 20 L12 20 L20 10 L46 10 L46 30 Z" />
+    {/* Bed walls */}
+    <path d="M46 20 L74 20 L74 30 L46 30" />
+    {/* Tailgate tick */}
+    <line x1="72" y1="20" x2="72" y2="30" />
+    <circle cx="18" cy="31" r="5.5" />
+    <circle cx="60" cy="31" r="5.5" />
   </svg>
 );
 
+/** Van / MPV — cab-forward flat face, tall box, two side windows */
 const VanIcon = (props) => (
-  <svg viewBox="0 0 64 32" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}>
-    <path d="M4 22h56V8H12L4 16v6z" />
-    <path d="M12 8v8h22V8M34 8v8h18" />
-    <circle cx="18" cy="24" r="4" />
-    <circle cx="46" cy="24" r="4" />
+  <svg viewBox="0 0 80 44" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" {...props}>
+    <path d="M6 30 L6 8 L68 8 L74 18 L74 30 Z" />
+    <rect x="10" y="13" width="18" height="11" rx="1.5" />
+    <rect x="32" y="13" width="20" height="11" rx="1.5" />
+    <circle cx="20" cy="31" r="5.5" />
+    <circle cx="60" cy="31" r="5.5" />
   </svg>
 );
 
+/** Hatchback — compact, very steep rear hatch angle */
 const HatchIcon = (props) => (
-  <svg viewBox="0 0 64 32" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}>
-    <path d="M4 22h56l-6-6-6-8H20l-12 12-4 2z" />
-    <circle cx="18" cy="24" r="4" />
-    <circle cx="46" cy="24" r="4" />
+  <svg viewBox="0 0 80 44" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" {...props}>
+    <path d="M8 30 L8 24 L18 24 L28 12 L56 12 L64 22 L64 24 L72 24 L72 30 Z" />
+    <path d="M30 24 L36 14 L54 14 L62 24 Z" />
+    <circle cx="22" cy="30" r="5" />
+    <circle cx="58" cy="30" r="5" />
   </svg>
 );
 
+/** Luxury — very long, very low, elongated hood, fastback slope */
 const LuxIcon = (props) => (
-  <svg viewBox="0 0 64 32" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}>
-    <path d="M2 22h60l-6-6-12-2-4-6H22l-4 6-12 2-2 6z" />
-    <circle cx="18" cy="24" r="4" />
-    <circle cx="46" cy="24" r="4" />
-    <path d="M28 8l4-3 4 3" />
+  <svg viewBox="0 0 80 44" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round" {...props}>
+    <path d="M2 30 L2 25 L10 25 L16 18 L54 18 L62 22 L78 22 L78 30 Z" />
+    {/* Long hood */}
+    <line x1="10" y1="25" x2="18" y2="20" />
+    {/* Sloped fastback rear */}
+    <path d="M26 25 L30 19 L52 19 L60 25 Z" />
+    <circle cx="18" cy="30" r="4.5" />
+    <circle cx="62" cy="30" r="4.5" />
   </svg>
 );
 
