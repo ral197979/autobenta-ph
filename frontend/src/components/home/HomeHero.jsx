@@ -49,21 +49,9 @@ export default function HomeHero() {
 
         {/* Right: featured car listing card */}
         <div className="relative hidden lg:col-span-5 lg:block">
-          {/* Outer wrapper — NO overflow-hidden so floating badges aren't clipped */}
-          <div className="relative mx-auto w-full max-w-lg px-6 py-6">
+          <div className="relative mx-auto w-full max-w-lg">
 
-            {/* Floating badge — top-left, outside card */}
-            <div className="absolute left-0 top-2 z-20 flex items-center gap-2 rounded-xl border border-white/10 bg-white/95 px-3 py-2 text-ink shadow-xl">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
-                <ShieldCheck className="h-4 w-4" />
-              </div>
-              <div className="leading-tight">
-                <p className="text-xs font-semibold">Inspection-ready</p>
-                <p className="text-[11px] text-slatetext">120-point check</p>
-              </div>
-            </div>
-
-            {/* Card — overflow-hidden only here for border-radius clipping */}
+            {/* Card */}
             <div className="overflow-hidden rounded-2xl border border-cardborder bg-white shadow-2xl">
 
               {/* Image area — CSS gradient, never blank */}
@@ -141,17 +129,6 @@ export default function HomeHero() {
                 >
                   View listing &rarr;
                 </a>
-              </div>
-            </div>
-
-            {/* Floating badge — bottom-right */}
-            <div className="absolute -right-4 bottom-4 z-20 flex items-center gap-2 rounded-xl border border-white/10 bg-white/95 px-3 py-2 text-ink shadow-xl">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-deepblue">
-                <BadgeCheck className="h-4 w-4" />
-              </div>
-              <div className="leading-tight">
-                <p className="text-xs font-semibold">Verified seller</p>
-                <p className="text-[11px] text-slatetext">DTI registered</p>
               </div>
             </div>
 
