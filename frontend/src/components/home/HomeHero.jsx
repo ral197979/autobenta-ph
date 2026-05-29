@@ -49,10 +49,11 @@ export default function HomeHero() {
 
         {/* Right: featured car listing card */}
         <div className="relative hidden lg:col-span-5 lg:block">
-          <div className="relative mx-auto w-full max-w-lg overflow-hidden">
+          {/* Outer wrapper — NO overflow-hidden so floating badges aren't clipped */}
+          <div className="relative mx-auto w-full max-w-lg px-6 py-6">
 
-            {/* Floating badge — top-left */}
-            <div className="absolute -left-4 top-4 z-20 flex items-center gap-2 rounded-xl border border-white/10 bg-white/95 px-3 py-2 text-ink shadow-xl">
+            {/* Floating badge — top-left, outside card */}
+            <div className="absolute left-0 top-2 z-20 flex items-center gap-2 rounded-xl border border-white/10 bg-white/95 px-3 py-2 text-ink shadow-xl">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
                 <ShieldCheck className="h-4 w-4" />
               </div>
@@ -62,22 +63,23 @@ export default function HomeHero() {
               </div>
             </div>
 
-            {/* Card */}
-            <div className="rounded-2xl border border-cardborder bg-white shadow-2xl overflow-hidden">
+            {/* Card — overflow-hidden only here for border-radius clipping */}
+            <div className="overflow-hidden rounded-2xl border border-cardborder bg-white shadow-2xl">
 
-              {/* Image area */}
-              <div className="relative h-52">
-                <img
-                  src="https://placehold.co/800x500/1e3a5f/e2e8f0?text=2021+Toyota+Fortuner"
-                  alt="2021 Toyota Fortuner"
-                  className="h-full w-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src =
-                      'https://placehold.co/800x500/0B1220/FACC15?text=Featured+Vehicle';
-                  }}
-                />
-                {/* Dark gradient overlay at bottom of image */}
-                <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/60 to-transparent" />
+              {/* Image area — CSS gradient, never blank */}
+              <div className="relative h-52 bg-gradient-to-br from-[#0f2744] via-[#1a3a6b] to-[#0B1220]">
+                {/* Car silhouette SVG */}
+                <svg viewBox="0 0 200 80" className="absolute inset-0 m-auto h-32 w-auto opacity-20" fill="currentColor" aria-hidden="true">
+                  <path d="M170 48H30l5-18c2-7 8-12 15-14l30-6c4-1 8 0 11 3l14 10h20l18-6c5-2 10 0 13 4l9 12c3 2 5 5 5 9v6zm-140 0v8h12v-8zm108 0v8h12v-8z" className="text-white/40" />
+                </svg>
+                {/* Vehicle label */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <p className="text-[11px] font-medium uppercase tracking-widest text-white/40">Featured listing</p>
+                  <p className="mt-1 text-xl font-bold text-white/90">Toyota Fortuner</p>
+                  <p className="text-xs text-accent font-semibold">2021 · Top of the line</p>
+                </div>
+                {/* Dark gradient overlay at bottom */}
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent" />
               </div>
 
               {/* Card body */}
