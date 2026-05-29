@@ -1,4 +1,4 @@
-import { ShieldCheck, BadgeCheck, Sparkles, MapPin, Gauge, Zap, CreditCard } from 'lucide-react';
+import { ShieldCheck, Sparkles, MapPin, Gauge } from 'lucide-react';
 import SearchPanel from './SearchPanel';
 
 export default function HomeHero() {
@@ -16,17 +16,17 @@ export default function HomeHero() {
         <div className="lg:col-span-7">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur">
             <Sparkles className="h-3.5 w-3.5 text-accent" />
-            Verified listings · Real PH inspections · Fair price AI
+            Verified listings · Brand new &amp; used · Fair price AI
           </div>
           <h1 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-            The smarter way to buy
+            The smarter way to buy a
             <br />
-            a <span className="text-accent">used car</span> in the Philippines.
+            <span className="text-accent">brand new or used car</span> in the Philippines.
           </h1>
           <p className="mt-4 max-w-xl text-base text-white/70 sm:text-lg">
-            Browse thousands of inspection-ready cars from verified sellers across Metro
-            Manila, Cebu, Davao and beyond. Compare, book an inspection, and close with
-            confidence.
+            Browse brand new dealer units and inspection-ready used cars from verified
+            sellers across Metro Manila, Cebu, Davao and beyond. Compare, inspect, and
+            drive home with confidence.
           </p>
 
           <div className="mt-8">
@@ -47,92 +47,82 @@ export default function HomeHero() {
           </dl>
         </div>
 
-        {/* Right: featured car listing card */}
-        <div className="relative hidden lg:col-span-5 lg:block">
-          <div className="relative mx-auto w-full max-w-lg">
+        {/* Right: listing cards */}
+        <div className="hidden lg:col-span-5 lg:flex lg:flex-col lg:justify-center lg:gap-3">
 
-            {/* Card */}
-            <div className="overflow-hidden rounded-2xl border border-cardborder bg-white shadow-2xl">
+          {[
+            {
+              year: 2021, make: 'Toyota', model: 'Fortuner',
+              variant: '2.4 V Diesel 4x2 AT',
+              price: '1,780,000', mo: '29,700',
+              city: 'Makati City', km: '35,000',
+              from: '#0f2744', via: '#1a3a6b', to: '#0B1220',
+              badges: ['Verified', 'Financing'],
+            },
+            {
+              year: 2020, make: 'Honda', model: 'CR-V',
+              variant: '1.6 S Diesel CVT',
+              price: '1,250,000', mo: '20,800',
+              city: 'Quezon City', km: '42,000',
+              from: '#1a0a2e', via: '#3b1f6b', to: '#0B1220',
+              badges: ['Verified', 'Inspection-ready'],
+            },
+            {
+              year: 2022, make: 'Mitsubishi', model: 'Montero Sport',
+              variant: 'GLS Premium 4x2 AT',
+              price: '1,950,000', mo: '32,500',
+              city: 'BGC, Taguig', km: '18,000',
+              from: '#0a1f2e', via: '#0f4a6b', to: '#0B1220',
+              badges: ['Verified', 'Financing'],
+            },
+          ].map((car) => (
+            <a
+              key={car.model}
+              href="#"
+              className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur transition hover:bg-white/10"
+            >
+              {/* Gradient thumbnail */}
+              <div
+                className="h-16 w-24 shrink-0 rounded-xl"
+                style={{ background: `linear-gradient(135deg, ${car.from}, ${car.via}, ${car.to})` }}
+              />
 
-              {/* Image area — CSS gradient, never blank */}
-              <div className="relative h-52 bg-gradient-to-br from-[#0f2744] via-[#1a3a6b] to-[#0B1220]">
-                {/* Car silhouette SVG */}
-                <svg viewBox="0 0 200 80" className="absolute inset-0 m-auto h-32 w-auto opacity-20" fill="currentColor" aria-hidden="true">
-                  <path d="M170 48H30l5-18c2-7 8-12 15-14l30-6c4-1 8 0 11 3l14 10h20l18-6c5-2 10 0 13 4l9 12c3 2 5 5 5 9v6zm-140 0v8h12v-8zm108 0v8h12v-8z" className="text-white/40" />
-                </svg>
-                {/* Vehicle label */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <p className="text-[11px] font-medium uppercase tracking-widest text-white/40">Featured listing</p>
-                  <p className="mt-1 text-xl font-bold text-white/90">Toyota Fortuner</p>
-                  <p className="text-xs text-accent font-semibold">2021 · Top of the line</p>
-                </div>
-                {/* Dark gradient overlay at bottom */}
-                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/50 to-transparent" />
-              </div>
-
-              {/* Card body */}
-              <div className="p-5">
-
-                {/* Title + price */}
+              {/* Details */}
+              <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <h3 className="text-base font-bold text-ink leading-snug">
-                      2021 Toyota Fortuner
-                    </h3>
-                    <p className="text-xs text-slatetext mt-0.5">2.4 V Diesel 4x2 AT</p>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-white">
+                      {car.year} {car.make} {car.model}
+                    </p>
+                    <p className="truncate text-[11px] text-white/50">{car.variant}</p>
                   </div>
-                  <p className="text-lg font-bold text-ink whitespace-nowrap">&#x20B1;1,780,000</p>
+                  <p className="shrink-0 text-sm font-bold text-accent">&#x20B1;{car.price}</p>
                 </div>
 
-                {/* Meta row */}
-                <div className="mt-3 flex items-center gap-4 text-xs text-slatetext">
+                <div className="mt-1.5 flex items-center gap-3 text-[11px] text-white/50">
                   <span className="flex items-center gap-1">
-                    <MapPin className="h-3.5 w-3.5 shrink-0" />
-                    Makati City
+                    <MapPin className="h-3 w-3 shrink-0" />{car.city}
                   </span>
                   <span className="flex items-center gap-1">
-                    <Gauge className="h-3.5 w-3.5 shrink-0" />
-                    35,000 km
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Zap className="h-3.5 w-3.5 shrink-0" />
-                    Automatic
-                  </span>
-                  <span>Diesel</span>
-                </div>
-
-                {/* Badge pills */}
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700 border border-emerald-200">
-                    <ShieldCheck className="h-3 w-3 shrink-0" />
-                    Verified
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-deepblue border border-blue-200">
-                    <BadgeCheck className="h-3 w-3 shrink-0" />
-                    Inspection-ready
-                  </span>
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700 border border-amber-200">
-                    <CreditCard className="h-3 w-3 shrink-0" />
-                    Financing
+                    <Gauge className="h-3 w-3 shrink-0" />{car.km} km
                   </span>
                 </div>
 
-                {/* Monthly estimate */}
-                <p className="mt-3 text-xs text-slatetext">
-                  ~&#x20B1;29,700/mo &middot; 60 months
-                </p>
-
-                {/* CTA */}
-                <a
-                  href="#"
-                  className="mt-4 flex w-full items-center justify-center rounded-xl bg-electric px-4 py-2.5 text-sm font-semibold text-white shadow hover:bg-deepblue transition-colors"
-                >
-                  View listing &rarr;
-                </a>
+                <div className="mt-2 flex gap-1.5">
+                  {car.badges.map((b) => (
+                    <span key={b} className="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white/70">
+                      <ShieldCheck className="h-2.5 w-2.5 shrink-0" />{b}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
+            </a>
+          ))}
 
-          </div>
+          <a href="#" className="mt-1 text-center text-xs font-medium text-white/40 hover:text-white/70 transition-colors">
+            View all 12,000+ listings &rarr;
+          </a>
+
         </div>
       </div>
     </section>
