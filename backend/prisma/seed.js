@@ -16,8 +16,8 @@ const PH_CITIES = [
   { city: 'San Pedro', region: 'Region IV-A' },
 ];
 
-// Real Unsplash car photos — reliable CDN, no external service dependency
-const U = (id) => `https://images.unsplash.com/photo-${id}?w=800&h=600&fit=crop&q=80`;
+// Wikimedia Commons — free, model-specific car photos
+const W = (path) => `https://upload.wikimedia.org/wikipedia/commons/${path}`;
 
 const PH_CAR_LISTINGS = [
   {
@@ -29,8 +29,7 @@ const PH_CAR_LISTINGS = [
     sellerType: 'private',
     city: 'Pasig', region: 'NCR', location: 'Pasig City',
     photos: [
-      { url: U('1503376780353-7e6692767b70'), isPrimary: true },
-      { url: U('1494976388531-d1058494cdd8'), isPrimary: false },
+      { url: W('0/07/2020_Toyota_Vios_1.3_J_in_Alumina_Jade_Metallic%2C_front_left%2C_08-11-2024.jpg'), isPrimary: true },
     ],
   },
   {
@@ -42,8 +41,7 @@ const PH_CAR_LISTINGS = [
     sellerType: 'private',
     city: 'Quezon City', region: 'NCR', location: 'Quezon City',
     photos: [
-      { url: U('1519641471654-76ce0107ad1b'), isPrimary: true },
-      { url: U('1549317661-bd32c8ce0db2'), isPrimary: false },
+      { url: W('7/7b/2021_Mitsubishi_Montero_Sport_Limited_%28cropped%29.jpg'), isPrimary: true },
     ],
   },
   {
@@ -55,8 +53,7 @@ const PH_CAR_LISTINGS = [
     sellerType: 'dealer',
     city: 'Makati', region: 'NCR', location: 'Makati City',
     photos: [
-      { url: U('1549317661-bd32c8ce0db2'), isPrimary: true },
-      { url: U('1519641471654-76ce0107ad1b'), isPrimary: false },
+      { url: W('d/d5/2022_Toyota_Fortuner_2.8_VRZ_GR_Sport_4x2_GUN166R_%2820220428%29.jpg'), isPrimary: true },
     ],
   },
   {
@@ -68,8 +65,7 @@ const PH_CAR_LISTINGS = [
     sellerType: 'private',
     city: 'Mandaluyong', region: 'NCR', location: 'Mandaluyong City',
     photos: [
-      { url: U('1568605117036-5fe5e7bab0b7'), isPrimary: true },
-      { url: U('1503376780353-7e6692767b70'), isPrimary: false },
+      { url: W('c/c6/2019_Honda_City_RS.jpg'), isPrimary: true },
     ],
   },
   {
@@ -82,8 +78,7 @@ const PH_CAR_LISTINGS = [
     sellerType: 'private',
     city: 'Angeles City', region: 'Region III', location: 'Angeles City, Pampanga',
     photos: [
-      { url: U('1558618666-fcd25c85cd64'), isPrimary: true },
-      { url: U('1612544448445-b8232cff3b6c'), isPrimary: false },
+      { url: W('5/58/Ford_Ranger_Wildtrak_%28T6%2C_P375%29_1X7A6170.jpg'), isPrimary: true },
     ],
   },
   {
@@ -95,8 +90,7 @@ const PH_CAR_LISTINGS = [
     sellerType: 'dealer',
     city: 'Cebu City', region: 'Region VII', location: 'Cebu City',
     photos: [
-      { url: U('1612544448445-b8232cff3b6c'), isPrimary: true },
-      { url: U('1558618666-fcd25c85cd64'), isPrimary: false },
+      { url: W('a/a7/2017_Nissan_Navara_Tekna_DCi_2.3_Front.jpg'), isPrimary: true },
     ],
   },
   {
@@ -108,8 +102,7 @@ const PH_CAR_LISTINGS = [
     sellerType: 'private',
     city: 'Bacoor', region: 'Region IV-A', location: 'Bacoor, Cavite',
     photos: [
-      { url: U('1494976388531-d1058494cdd8'), isPrimary: true },
-      { url: U('1503376780353-7e6692767b70'), isPrimary: false },
+      { url: W('e/e7/2018_Suzuki_Ertiga_GL%2C_Royal_Plaza%2C_South_Surabaya.jpg'), isPrimary: true },
     ],
   },
   {
@@ -121,7 +114,7 @@ const PH_CAR_LISTINGS = [
     sellerType: 'repossessed',
     city: 'Davao City', region: 'Region XI', location: 'Davao City',
     photos: [
-      { url: U('1609521263047-f8f205293f24'), isPrimary: true },
+      { url: W('0/09/00_hyundai_starex_van_1_%28cropped%29.jpg'), isPrimary: true },
     ],
   },
 ];
