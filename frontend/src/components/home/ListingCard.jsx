@@ -8,6 +8,7 @@ import {
   FUEL_LABELS,
 } from '../../utils/format';
 import { estimateMonthly } from '../../data/mockListings';
+import TrustBadges from '../TrustBadges';
 
 // Deterministic gradient per make so each brand has a consistent colour swatch
 const MAKE_GRADIENT = {
@@ -121,7 +122,10 @@ export default function ListingCard({ listing }) {
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between border-t border-cardborder pt-3">
+        {/* Trust badges — max 3, compact */}
+        <TrustBadges listing={listing} size="xs" maxCount={3} />
+
+        <div className="mt-3 flex items-center justify-between border-t border-cardborder pt-3">
           <div className="flex items-center gap-1 text-xs text-slatetext">
             <MapPin className="h-3.5 w-3.5" />
             <span className="truncate">{listing.city}</span>

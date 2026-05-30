@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Heart, MapPin, Gauge, Fuel, Settings, CheckCircle } from 'lucide-react';
 import { formatPrice, formatMileage, TRANSMISSION_LABELS, FUEL_LABELS, CONDITION_COLORS, CONDITION_LABELS, SELLER_TYPE_LABELS } from '../utils/format';
+import TrustBadges from './TrustBadges';
 import api from '../api/client';
 import { useState } from 'react';
 
@@ -69,16 +70,14 @@ export default function CarCard({ listing, onFavoriteToggle }) {
           <div className="flex items-center gap-1"><Settings className="w-3 h-3 shrink-0" /><span>{TRANSMISSION_LABELS[listing.transmission]}</span></div>
         </div>
 
-        <div className="mt-auto flex items-center justify-between text-xs text-gray-400">
-          <div className="flex items-center gap-1">
-            <MapPin className="w-3 h-3" />
-            <span className="truncate">{listing.city}</span>
-          </div>
-          {listing.dealer?.isVerified && (
-            <div className="flex items-center gap-1 text-blue-600">
-              <CheckCircle className="w-3 h-3" /> Verified Dealer
+        <div className="mt-auto space-y-2">
+          <TrustBadges listing={listing} size="xs" maxCount={3} />
+          <div className="flex items-center justify-between text-xs text-gray-400">
+            <div className="flex items-center gap-1">
+              <MapPin className="w-3 h-3" />
+              <span className="truncate">{listing.city}</span>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </Link>

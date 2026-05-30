@@ -10,6 +10,10 @@ export const MOCK_LISTINGS = [
     bodyType: 'Sedan', condition: 'excellent', city: 'Quezon City', sellerType: 'dealer',
     photos: [{ url: W('0/07/2020_Toyota_Vios_1.3_J_in_Alumina_Jade_Metallic%2C_front_left%2C_08-11-2024.jpg') }],
     inspectionRequests: [{ status: 'completed' }], dealer: { isVerified: true },
+    // Fully trusted — all signals present
+    ownershipVerified: true, transferReady: true, vehicleHistoryAvailable: true,
+    sellerVerified: true, priceScore: 88, financingEligible: true,
+    hasOrCr: true, ownerCount: 1, serviceHistory: true, hasAccident: false, hasFlood: false,
   },
   {
     id: 'mock-2',
@@ -18,6 +22,10 @@ export const MOCK_LISTINGS = [
     bodyType: 'SUV', condition: 'excellent', city: 'Makati', sellerType: 'dealer',
     photos: [{ url: W('7/7b/2021_Mitsubishi_Montero_Sport_Limited_%28cropped%29.jpg') }],
     inspectionRequests: [{ status: 'completed' }], dealer: { isVerified: true },
+    // Fully trusted
+    ownershipVerified: true, transferReady: true, vehicleHistoryAvailable: true,
+    sellerVerified: true, priceScore: 91, financingEligible: true,
+    hasOrCr: true, ownerCount: 1, serviceHistory: true, hasAccident: false, hasFlood: false,
   },
   {
     id: 'mock-3',
@@ -26,6 +34,10 @@ export const MOCK_LISTINGS = [
     bodyType: 'SUV', condition: 'excellent', city: 'Pasig', sellerType: 'dealer',
     photos: [{ url: W('d/d5/2022_Toyota_Fortuner_2.8_VRZ_GR_Sport_4x2_GUN166R_%2820220428%29.jpg') }],
     inspectionRequests: [{ status: 'completed' }], dealer: { isVerified: true },
+    // Fully trusted, high price score
+    ownershipVerified: true, transferReady: true, vehicleHistoryAvailable: true,
+    sellerVerified: true, priceScore: 94, financingEligible: true,
+    hasOrCr: true, ownerCount: 1, serviceHistory: true, hasAccident: false, hasFlood: false,
   },
   {
     id: 'mock-4',
@@ -34,6 +46,10 @@ export const MOCK_LISTINGS = [
     bodyType: 'Sedan', condition: 'good', city: 'Cebu City', sellerType: 'private',
     photos: [{ url: W('c/c6/2019_Honda_City_RS.jpg') }],
     inspectionRequests: [], dealer: null,
+    // Partial — private seller, no ownership verification, no financing
+    ownershipVerified: false, transferReady: false, vehicleHistoryAvailable: false,
+    sellerVerified: false, priceScore: 72, financingEligible: false,
+    hasOrCr: true, ownerCount: 2, serviceHistory: false, hasAccident: false, hasFlood: false,
   },
   {
     id: 'mock-5',
@@ -42,6 +58,10 @@ export const MOCK_LISTINGS = [
     bodyType: 'Pickup', condition: 'excellent', city: 'Davao City', sellerType: 'dealer',
     photos: [{ url: W('5/58/Ford_Ranger_Wildtrak_%28T6%2C_P375%29_1X7A6170.jpg') }],
     inspectionRequests: [{ status: 'completed' }], dealer: { isVerified: true },
+    // Mostly trusted — no vehicle history report yet
+    ownershipVerified: true, transferReady: true, vehicleHistoryAvailable: false,
+    sellerVerified: true, priceScore: 85, financingEligible: true,
+    hasOrCr: true, ownerCount: 1, serviceHistory: true, hasAccident: false, hasFlood: false,
   },
   {
     id: 'mock-6',
@@ -50,6 +70,10 @@ export const MOCK_LISTINGS = [
     bodyType: 'Pickup', condition: 'good', city: 'Cagayan de Oro', sellerType: 'private',
     photos: [{ url: W('a/a7/2017_Nissan_Navara_Tekna_DCi_2.3_Front.jpg') }],
     inspectionRequests: [], dealer: null,
+    // Minimal trust signals — private, no verification
+    ownershipVerified: false, transferReady: false, vehicleHistoryAvailable: false,
+    sellerVerified: false, priceScore: 65, financingEligible: false,
+    hasOrCr: true, ownerCount: 2, serviceHistory: false, hasAccident: false, hasFlood: false,
   },
   {
     id: 'mock-7',
@@ -58,6 +82,10 @@ export const MOCK_LISTINGS = [
     bodyType: 'MPV', condition: 'excellent', city: 'Manila', sellerType: 'dealer',
     photos: [{ url: W('e/e7/2018_Suzuki_Ertiga_GL%2C_Royal_Plaza%2C_South_Surabaya.jpg') }],
     inspectionRequests: [{ status: 'completed' }], dealer: { isVerified: true },
+    // Mostly trusted — financing eligible, no history report
+    ownershipVerified: true, transferReady: false, vehicleHistoryAvailable: false,
+    sellerVerified: true, priceScore: 80, financingEligible: true,
+    hasOrCr: true, ownerCount: 1, serviceHistory: false, hasAccident: false, hasFlood: false,
   },
   {
     id: 'mock-8',
@@ -66,6 +94,10 @@ export const MOCK_LISTINGS = [
     bodyType: 'Van', condition: 'good', city: 'Taguig', sellerType: 'private',
     photos: [{ url: W('0/09/00_hyundai_starex_van_1_%28cropped%29.jpg') }],
     inspectionRequests: [], dealer: null,
+    // Basic — private seller, OR/CR only
+    ownershipVerified: false, transferReady: false, vehicleHistoryAvailable: false,
+    sellerVerified: false, priceScore: 58, financingEligible: false,
+    hasOrCr: true, ownerCount: 3, serviceHistory: false, hasAccident: false, hasFlood: false,
   },
   // Brand new units
   {
@@ -75,6 +107,9 @@ export const MOCK_LISTINGS = [
     bodyType: 'SUV', condition: 'brand_new', city: 'Makati', sellerType: 'dealer',
     photos: [{ url: W('d/d5/2022_Toyota_Fortuner_2.8_VRZ_GR_Sport_4x2_GUN166R_%2820220428%29.jpg') }],
     inspectionRequests: [], dealer: { isVerified: true },
+    ownershipVerified: true, transferReady: false, vehicleHistoryAvailable: false,
+    sellerVerified: true, priceScore: 95, financingEligible: true,
+    hasOrCr: false, ownerCount: 0, serviceHistory: false, hasAccident: false, hasFlood: false,
   },
   {
     id: 'mock-new-2',
@@ -83,6 +118,9 @@ export const MOCK_LISTINGS = [
     bodyType: 'SUV', condition: 'brand_new', city: 'Quezon City', sellerType: 'dealer',
     photos: [{ url: W('7/7b/2021_Mitsubishi_Montero_Sport_Limited_%28cropped%29.jpg') }],
     inspectionRequests: [], dealer: { isVerified: true },
+    ownershipVerified: true, transferReady: false, vehicleHistoryAvailable: false,
+    sellerVerified: true, priceScore: 97, financingEligible: true,
+    hasOrCr: false, ownerCount: 0, serviceHistory: false, hasAccident: false, hasFlood: false,
   },
   {
     id: 'mock-new-3',
@@ -91,6 +129,9 @@ export const MOCK_LISTINGS = [
     bodyType: 'Sedan', condition: 'brand_new', city: 'Pasig', sellerType: 'dealer',
     photos: [{ url: W('c/c6/2019_Honda_City_RS.jpg') }],
     inspectionRequests: [], dealer: { isVerified: true },
+    ownershipVerified: true, transferReady: false, vehicleHistoryAvailable: false,
+    sellerVerified: true, priceScore: 93, financingEligible: true,
+    hasOrCr: false, ownerCount: 0, serviceHistory: false, hasAccident: false, hasFlood: false,
   },
   {
     id: 'mock-new-4',
@@ -99,6 +140,9 @@ export const MOCK_LISTINGS = [
     bodyType: 'Pickup', condition: 'brand_new', city: 'Cebu City', sellerType: 'dealer',
     photos: [{ url: W('5/58/Ford_Ranger_Wildtrak_%28T6%2C_P375%29_1X7A6170.jpg') }],
     inspectionRequests: [], dealer: { isVerified: true },
+    ownershipVerified: true, transferReady: false, vehicleHistoryAvailable: false,
+    sellerVerified: true, priceScore: 90, financingEligible: true,
+    hasOrCr: false, ownerCount: 0, serviceHistory: false, hasAccident: false, hasFlood: false,
   },
 ];
 

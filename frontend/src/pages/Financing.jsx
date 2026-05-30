@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
-import { CreditCard, Calculator, CheckCircle } from 'lucide-react';
+import { CreditCard, Calculator, CheckCircle, FileCheck } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/client';
 import { formatPrice } from '../utils/format';
@@ -87,10 +87,19 @@ export default function Financing() {
       <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
       <h1 className="text-2xl font-bold mb-2">Financing Request Submitted!</h1>
       <p className="text-gray-500 mb-6">Our financing team will review your application and contact you within 24 hours.</p>
-      <div className="flex gap-3 justify-center">
+      <div className="flex gap-3 justify-center flex-wrap mb-6">
         <Link to="/dashboard" className="btn-primary">View My Requests</Link>
         <Link to="/cars" className="btn-secondary">Browse More Cars</Link>
       </div>
+      {form.listingId && (
+        <Link
+          to={`/ownership-transfer?listingId=${form.listingId}`}
+          className="inline-flex items-center gap-2 rounded-xl border border-deepblue/30 bg-blue-50 px-5 py-3 text-sm font-semibold text-deepblue transition-colors hover:bg-blue-100"
+        >
+          <FileCheck className="w-4 h-4" />
+          Review LTO transfer steps for this vehicle
+        </Link>
+      )}
     </div>
   );
 

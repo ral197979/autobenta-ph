@@ -1,19 +1,24 @@
-import { BadgeCheck, FileCheck, ShieldCheck, CreditCard, TrendingUp, BookOpen } from 'lucide-react';
+import { BadgeCheck, FileCheck, ShieldCheck, CreditCard, TrendingUp, BookOpen, UserCheck } from 'lucide-react';
 
 const BADGE_CONFIG = {
-  ownership_verified: {
-    icon: BadgeCheck,
-    label: 'Verified Ownership',
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-  },
   transfer_ready: {
     icon: FileCheck,
-    label: 'Ready For Transfer',
+    label: 'Transfer Ready',
     color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  },
+  seller_verified: {
+    icon: UserCheck,
+    label: 'Verified Seller',
+    color: 'bg-deepblue/5 text-deepblue border-deepblue/20',
+  },
+  ownership_verified: {
+    icon: BadgeCheck,
+    label: 'Ownership Verified',
+    color: 'bg-blue-50 text-blue-700 border-blue-200',
   },
   inspection_ready: {
     icon: ShieldCheck,
-    label: 'Inspection Ready',
+    label: 'Inspected',
     color: 'bg-purple-50 text-purple-700 border-purple-200',
   },
   financing_eligible: {
@@ -21,29 +26,47 @@ const BADGE_CONFIG = {
     label: 'Financing Eligible',
     color: 'bg-orange-50 text-orange-700 border-orange-200',
   },
-  price_verified: {
-    icon: TrendingUp,
-    label: 'Price Verified',
-    color: 'bg-teal-50 text-teal-700 border-teal-200',
-  },
   history_available: {
     icon: BookOpen,
     label: 'History Available',
     color: 'bg-indigo-50 text-indigo-700 border-indigo-200',
   },
+  price_verified: {
+    icon: TrendingUp,
+    label: 'Price Verified',
+    color: 'bg-teal-50 text-teal-700 border-teal-200',
+  },
 };
 
-export default function TrustBadges({ listing, size = 'sm' }) {
-  const activeBadges = [];
+// Priority order — highest trust signal first
+const PRIORITY = [
+  'transfer_ready',
+  'seller_verified',
+  'ownership_verified',
+  'inspection_ready',
+  'financing_eligible',
+  'history_available',
+  'price_verified',
+];
 
-  if (listing?.ownershipVerified) activeBadges.push('ownership_verified');
-  if (listing?.transferReady) activeBadges.push('transfer_ready');
-  if (listing?.inspectionRequests?.some((r) => r.status === 'completed')) activeBadges.push('inspection_ready');
-  if (listing?.financingEligible) activeBadges.push('financing_eligible');
-  if (listing?.priceScore >= 70) activeBadges.push('price_verified');
-  if (listing?.vehicleHistoryAvailable) activeBadges.push('history_available');
+export default function TrustBadges({ listing, size = 'sm', maxCount }) {
+  const all = [];
+
+  if (listing?.transferReady) all.push('transfer_ready');
+  if (listing?.sellerVerified || listing?.dealer?.isVerified) all.push('seller_verified');
+  if (listing?.ownershipVerified) all.push('ownership_verified');
+  if (listing?.inspectionRequests?.some((r) => r.status === 'completed')) all.push('inspection_ready');
+  if (listing?.financingEligible) all.push('financing_eligible');
+  if (listing?.vehicleHistoryAvailable) all.push('history_available');
+  if (listing?.priceScore >= 70) all.push('price_verified');
+
+  // Sort by priority
+  const activeBadges = all.sort((a, b) => PRIORITY.indexOf(a) - PRIORITY.indexOf(b));
 
   if (activeBadges.length === 0) return null;
+
+  const visible = maxCount ? activeBadges.slice(0, maxCount) : activeBadges;
+  const overflow = maxCount ? activeBadges.length - maxCount : 0;
 
   const iconSize = size === 'xs' ? 'h-3 w-3' : 'h-3.5 w-3.5';
   const textSize = size === 'xs' ? 'text-[10px]' : 'text-[11px]';
@@ -51,7 +74,7 @@ export default function TrustBadges({ listing, size = 'sm' }) {
 
   return (
     <div className="flex flex-wrap gap-1.5">
-      {activeBadges.map((key) => {
+      {visible.map((key) => {
         const { icon: Icon, label, color } = BADGE_CONFIG[key];
         return (
           <span
@@ -63,6 +86,11 @@ export default function TrustBadges({ listing, size = 'sm' }) {
           </span>
         );
       })}
+      {overflow > 0 && (
+        <span className={`inline-flex items-center rounded-full border border-cardborder bg-softbg font-semibold text-slatetext ${padding} ${textSize}`}>
+          +{overflow} more
+        </span>
+      )}
     </div>
   );
 }

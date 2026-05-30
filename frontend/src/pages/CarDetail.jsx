@@ -5,6 +5,9 @@ import { MapPin, Gauge, Fuel, Settings, Calendar, Users, Heart, Share2, AlertTri
 import api from '../api/client';
 import { formatPrice, formatMileage, formatRelativeTime, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_COLORS, CONDITION_LABELS } from '../utils/format';
 import { useAuth } from '../context/AuthContext';
+import ReadinessScore from '../components/ReadinessScore';
+import VehicleHistoryCard from '../components/VehicleHistoryCard';
+import TrustBadges from '../components/TrustBadges';
 
 export default function CarDetail() {
   const { id } = useParams();
@@ -17,6 +20,7 @@ export default function CarDetail() {
   const [aiAnswer, setAiAnswer] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [tab, setTab] = useState('details');
+  const [inspectionRequested, setInspectionRequested] = useState(false);
 
   const { data: listing, isLoading } = useQuery({
     queryKey: ['listing', id],
@@ -44,7 +48,7 @@ export default function CarDetail() {
     if (!user) return navigate('/login');
     try {
       await api.post('/inspections/request', { listingId: id, notes: 'Pre-purchase inspection requested via listing page.' });
-      alert('Inspection request submitted! Our team will contact you soon.');
+      setInspectionRequested(true);
     } catch (e) {
       alert(e.response?.data?.error || 'Failed to request inspection');
     }
@@ -233,13 +237,14 @@ export default function CarDetail() {
             {listing.variant && <p className="text-sm text-gray-500 mb-3">{listing.variant}</p>}
             <p className="text-3xl font-bold text-primary-700 mb-1">{formatPrice(listing.price)}</p>
             {listing.negotiable && <p className="text-xs text-green-600 mb-3">Price negotiable</p>}
-            <div className="flex flex-wrap gap-2 text-xs text-gray-500">
+            <div className="flex flex-wrap gap-2 text-xs text-gray-500 mb-3">
               <span className="flex items-center gap-1"><Gauge className="w-3 h-3" />{formatMileage(listing.mileage)}</span>
               <span className="flex items-center gap-1"><Fuel className="w-3 h-3" />{FUEL_LABELS[listing.fuelType]}</span>
               <span className="flex items-center gap-1"><Settings className="w-3 h-3" />{TRANSMISSION_LABELS[listing.transmission]}</span>
               <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{listing.city}</span>
               <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{formatRelativeTime(listing.createdAt)}</span>
             </div>
+            <TrustBadges listing={listing} size="xs" maxCount={3} />
           </div>
 
           {/* Inquiry */}
@@ -277,11 +282,32 @@ export default function CarDetail() {
             )}
           </div>
 
+          {/* Transfer Readiness Score */}
+          <ReadinessScore listing={listing} />
+
+          {/* Vehicle History */}
+          <VehicleHistoryCard listing={listing} />
+
           {/* Actions */}
           <div className="card p-4 space-y-2">
-            <button onClick={requestInspection} className="w-full btn-secondary flex items-center justify-center gap-2 text-sm">
-              <Wrench className="w-4 h-4" /> Request Inspection
-            </button>
+            {inspectionRequested ? (
+              <div className="rounded-lg bg-green-50 border border-green-200 p-3 text-sm text-green-800">
+                <div className="flex items-center gap-2 font-semibold mb-1.5">
+                  <CheckCircle className="w-4 h-4 shrink-0" /> Inspection requested!
+                </div>
+                <p className="text-xs text-green-700 mb-2">Our team will contact you within 24 hours to schedule.</p>
+                <Link
+                  to={`/ownership-transfer?listingId=${id}`}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-deepblue hover:underline"
+                >
+                  <FileCheck className="w-3.5 h-3.5" /> Review transfer checklist →
+                </Link>
+              </div>
+            ) : (
+              <button onClick={requestInspection} className="w-full btn-secondary flex items-center justify-center gap-2 text-sm">
+                <Wrench className="w-4 h-4" /> Request Inspection
+              </button>
+            )}
             <Link to={`/financing?listingId=${id}&price=${listing.price}`} className="w-full btn-secondary flex items-center justify-center gap-2 text-sm">
               <CreditCard className="w-4 h-4" /> Get Financing Quote
             </Link>
@@ -292,15 +318,15 @@ export default function CarDetail() {
 
           {/* Transfer CTA */}
           <Link
-            to="/ownership-transfer"
+            to={`/ownership-transfer?listingId=${id}`}
             className="card p-4 flex items-start gap-3 hover:border-deepblue/30 transition-colors group"
           >
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-deepblue/10">
               <FileCheck className="w-5 h-5 text-deepblue" />
             </div>
             <div>
-              <p className="font-semibold text-ink text-sm group-hover:text-deepblue transition-colors">Ready to complete the transfer?</p>
-              <p className="text-xs text-gray-500 mt-0.5">Step-by-step LTO ownership transfer guide →</p>
+              <p className="font-semibold text-ink text-sm group-hover:text-deepblue transition-colors">Start ownership transfer checklist</p>
+              <p className="text-xs text-gray-500 mt-0.5">Check LTO requirements, fees, and documents →</p>
             </div>
           </Link>
 

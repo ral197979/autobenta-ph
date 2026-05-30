@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { FileCheck, ArrowRight, ClipboardList, BookOpen, Calculator, Clock, HelpCircle, ShieldCheck } from 'lucide-react';
 import TransferChecklist from '../components/transfer/TransferChecklist';
 import TransferDocuments from '../components/transfer/TransferDocuments';
@@ -29,6 +29,9 @@ function Section({ id, icon: Icon, label, children }) {
 }
 
 export default function OwnershipTransfer() {
+  const [searchParams] = useSearchParams();
+  const listingId = searchParams.get('listingId') || undefined;
+
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -92,7 +95,7 @@ export default function OwnershipTransfer() {
             Track each step of your transfer. Progress is saved in your browser so you can pick up where you left off.
           </p>
           <div className="max-w-2xl">
-            <TransferChecklist />
+            <TransferChecklist listingId={listingId} />
           </div>
         </Section>
 
