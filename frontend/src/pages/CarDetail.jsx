@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { MapPin, Gauge, Fuel, Settings, Calendar, Users, Heart, Share2, AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, MessageCircle, Wrench, CreditCard, Bot, Shield } from 'lucide-react';
+import { MapPin, Gauge, Fuel, Settings, Calendar, Users, Heart, Share2, AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, MessageCircle, Wrench, CreditCard, Bot, Shield, FileCheck } from 'lucide-react';
 import api from '../api/client';
 import { formatPrice, formatMileage, formatRelativeTime, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_COLORS, CONDITION_LABELS } from '../utils/format';
 import { useAuth } from '../context/AuthContext';
@@ -289,6 +289,20 @@ export default function CarDetail() {
               Compare This Car
             </Link>
           </div>
+
+          {/* Transfer CTA */}
+          <Link
+            to="/ownership-transfer"
+            className="card p-4 flex items-start gap-3 hover:border-deepblue/30 transition-colors group"
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-deepblue/10">
+              <FileCheck className="w-5 h-5 text-deepblue" />
+            </div>
+            <div>
+              <p className="font-semibold text-ink text-sm group-hover:text-deepblue transition-colors">Ready to complete the transfer?</p>
+              <p className="text-xs text-gray-500 mt-0.5">Step-by-step LTO ownership transfer guide →</p>
+            </div>
+          </Link>
 
           {/* Views */}
           <div className="card p-4 text-center text-xs text-gray-400">

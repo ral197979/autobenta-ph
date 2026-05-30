@@ -3,6 +3,7 @@ import FeaturedListings from '../components/home/FeaturedListings';
 import BrowseByType from '../components/home/BrowseByType';
 import HowItWorks from '../components/home/HowItWorks';
 import TrustSection from '../components/home/TrustSection';
+import TrustPlatformSection from '../components/home/TrustPlatformSection';
 import SellerCTA from '../components/home/SellerCTA';
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
       <section id="how-it-works">
         <HowItWorks />
       </section>
+      <TrustPlatformSection />
       <TrustSection />
       <SellerCTA />
     </div>

@@ -27,9 +27,9 @@ function Logo() {
 
 const NAV_LINKS = [
   { to: '/cars', label: 'Browse cars' },
-  { to: '/financing', label: 'Car value' },
+  { to: '/ownership-transfer', label: 'Transfer guide' },
+  { to: '/financing', label: 'Financing' },
   { to: '/inspections', label: 'Inspections' },
-  { to: '/#how-it-works', label: 'How it works' },
 ];
 
 export default function Navbar() {

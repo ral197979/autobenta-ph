@@ -220,7 +220,15 @@ model VehicleListing {
   isSponsored    Boolean        @default(false)
   featuredUntil  DateTime?
 
-  // Phase 2: AI vision draft metadata
+  // Trust & transfer readiness fields (Phase 2)
+  ownershipVerified      Boolean  @default(false)
+  transferReady          Boolean  @default(false)
+  vehicleHistoryAvailable Boolean @default(false)
+  sellerVerified         Boolean  @default(false)
+  priceScore             Int?     // 0–100 AI price score
+  financingEligible      Boolean  @default(false)
+
+  // AI vision draft metadata
   aiDraftData    Json?
   searchVector   String?        // denormalized search text
 
