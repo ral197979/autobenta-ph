@@ -1,15 +1,17 @@
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, X, Navigation } from 'lucide-react';
 
 const MAKES = ['Toyota', 'Honda', 'Mitsubishi', 'Ford', 'Nissan', 'Suzuki', 'Hyundai', 'Isuzu', 'Mazda', 'Kia'];
 const FUEL_TYPES = [['gasoline', 'Gasoline'], ['diesel', 'Diesel'], ['hybrid', 'Hybrid'], ['electric', 'Electric'], ['lpg', 'LPG']];
 const TRANSMISSIONS = [['automatic', 'Automatic'], ['manual', 'Manual'], ['cvt', 'CVT']];
 const SELLER_TYPES = [['private', 'Private Seller'], ['dealer', 'Dealer'], ['repossessed', 'Repossessed']];
-const CONDITIONS = [['excellent', 'Excellent'], ['good', 'Good'], ['fair', 'Fair'], ['poor', 'Poor']];
+const CONDITIONS = [['brand_new', 'Brand New'], ['excellent', 'Excellent'], ['good', 'Good'], ['fair', 'Fair'], ['poor', 'Poor']];
 const CITIES = ['Metro Manila', 'Cebu City', 'Davao City', 'Angeles City', 'Bacoor', 'San Pedro', 'Laguna', 'Pampanga'];
 const YEARS = Array.from({ length: 15 }, (_, i) => new Date().getFullYear() - i);
 
-export default function FilterPanel({ filters, onChange, onReset }) {
+const RADIUS_OPTIONS = [10, 25, 50, 100, 200];
+
+export default function FilterPanel({ filters, onChange, onReset, geo }) {
   const [expanded, setExpanded] = useState({ price: true, vehicle: true, specs: false, location: false });
 
   const toggle = (section) => setExpanded(p => ({ ...p, [section]: !p[section] }));
@@ -109,10 +111,53 @@ export default function FilterPanel({ filters, onChange, onReset }) {
 
       <Section id="location" label="Location & Seller">
         <div className="space-y-2">
-          <select value={filters.location || ''} onChange={e => set('location', e.target.value)} className="input text-sm">
-            <option value="">All Locations</option>
-            {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+          {/* Near me toggle */}
+          {geo && (
+            <div className="space-y-2">
+              {!geo.active ? (
+                <button
+                  onClick={geo.request}
+                  disabled={geo.loading || geo.error === 'denied'}
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-primary-400 py-2 text-xs font-semibold text-primary-600 transition-colors hover:bg-primary-50 disabled:opacity-50"
+                >
+                  <Navigation className="h-3.5 w-3.5" />
+                  {geo.loading ? 'Locating…' : geo.error === 'denied' ? 'Location denied' : 'Use my location'}
+                </button>
+              ) : (
+                <div className="rounded-lg bg-primary-50 p-2">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-1 text-xs font-semibold text-primary-700">
+                      <Navigation className="h-3.5 w-3.5" /> Location active
+                    </span>
+                    <button onClick={geo.clear} className="text-xs text-gray-400 hover:text-gray-600">Clear</button>
+                  </div>
+                  <label className="mt-2 block text-xs text-gray-500">Radius</label>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {RADIUS_OPTIONS.map((r) => (
+                      <button
+                        key={r}
+                        onClick={() => set('radius', filters.radius === String(r) ? '' : String(r))}
+                        className={`rounded-full px-2 py-0.5 text-xs font-medium transition-colors ${
+                          (filters.radius ? filters.radius === String(r) : r === 50)
+                            ? 'bg-primary-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {r} km
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          {/* City text filter (hidden when near-me is active) */}
+          {(!geo || !geo.active) && (
+            <select value={filters.location || ''} onChange={e => set('location', e.target.value)} className="input text-sm">
+              <option value="">All Locations</option>
+              {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          )}
           <div>
             <label className="text-xs text-gray-500 mb-1 block">Seller Type</label>
             <div className="flex flex-wrap gap-1.5">

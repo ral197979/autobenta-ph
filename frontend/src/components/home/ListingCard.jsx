@@ -25,6 +25,11 @@ const gradientFor = (make) =>
 
 const isPlaceholder = (url) => !url || url.includes('placehold.co');
 
+function formatDistance(km) {
+  if (km == null) return null;
+  return km < 1 ? '< 1 km' : `${Math.round(km)} km`;
+}
+
 export default function ListingCard({ listing }) {
   const rawPhoto = listing.photos?.[0]?.url;
   const [imgError, setImgError] = useState(false);
@@ -120,6 +125,11 @@ export default function ListingCard({ listing }) {
           <div className="flex items-center gap-1 text-xs text-slatetext">
             <MapPin className="h-3.5 w-3.5" />
             <span className="truncate">{listing.city}</span>
+            {listing.distanceKm != null && (
+              <span className="ml-1 rounded-full bg-electric/10 px-1.5 py-0.5 text-[10px] font-semibold text-electric">
+                {formatDistance(listing.distanceKm)}
+              </span>
+            )}
           </div>
           <span className="text-xs font-semibold text-electric group-hover:underline">
             View details

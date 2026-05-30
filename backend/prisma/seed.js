@@ -19,6 +19,21 @@ const PH_CITIES = [
 // Wikimedia Commons — free, model-specific car photos
 const W = (path) => `https://upload.wikimedia.org/wikipedia/commons/${path}`;
 
+// Approximate city centre coordinates (WGS-84)
+const CITY_COORDS = {
+  'Pasig':          { lat: 14.5764, lng: 121.0851 },
+  'Quezon City':    { lat: 14.6760, lng: 121.0437 },
+  'Makati':         { lat: 14.5547, lng: 121.0244 },
+  'Mandaluyong':    { lat: 14.5794, lng: 121.0359 },
+  'Manila':         { lat: 14.5995, lng: 120.9842 },
+  'Taguig':         { lat: 14.5243, lng: 121.0792 },
+  'Angeles City':   { lat: 15.1450, lng: 120.5887 },
+  'Cebu City':      { lat: 10.3157, lng: 123.8854 },
+  'Davao City':     { lat:  7.1907, lng: 125.4553 },
+  'Bacoor':         { lat: 14.4586, lng: 120.9337 },
+  'Cagayan de Oro': { lat:  8.4542, lng: 124.6319 },
+};
+
 const PH_CAR_LISTINGS = [
   {
     make: 'Toyota', model: 'Vios', year: 2020, variant: '1.3 XLE CVT',
@@ -278,6 +293,8 @@ async function main() {
       where: { make: listingData.make, model: listingData.model, year: listingData.year, sellerId },
     });
 
+    const coords = CITY_COORDS[listingData.city] || null;
+
     let listing;
     if (!existingListing) {
       listing = await prisma.vehicleListing.create({
@@ -288,13 +305,20 @@ async function main() {
           status: 'active',
           viewCount: Math.floor(Math.random() * 200) + 10,
           inquiryCount: Math.floor(Math.random() * 15),
+          ...(coords && { lat: coords.lat, lng: coords.lng }),
         },
       });
       console.log(`Created listing: ${listing.year} ${listing.make} ${listing.model}`);
     } else {
       listing = existingListing;
-      // Replace photos so URL changes in seed data are picked up on re-seed
+      // Replace photos and refresh coords on every re-seed
       await prisma.vehiclePhoto.deleteMany({ where: { listingId: listing.id } });
+      if (coords) {
+        await prisma.vehicleListing.update({
+          where: { id: listing.id },
+          data: { lat: coords.lat, lng: coords.lng },
+        });
+      }
       console.log(`Updated photos for: ${listingData.year} ${listingData.make} ${listingData.model}`);
     }
 

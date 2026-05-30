@@ -198,6 +198,8 @@ model VehicleListing {
   location       String
   city           String
   region         String
+  lat            Float?
+  lng            Float?
 
   condition      ConditionGrade @default(good)
   description    String?

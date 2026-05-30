@@ -12,13 +12,30 @@ const prisma = new PrismaClient();
 
 const LISTINGS_PER_PAGE = 20;
 
+// Haversine distance in km between two lat/lng points
+function haversineKm(lat1, lng1, lat2, lng2) {
+  if (lat2 == null || lng2 == null) return null;
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 router.get('/', optionalAuth, async (req, res, next) => {
   try {
     const {
       page = 1, make, model, yearMin, yearMax, priceMin, priceMax,
       mileageMax, fuelType, transmission, location, sellerType,
       condition, sortBy = 'createdAt', sortOrder = 'desc', search,
+      lat, lng, radius,
     } = req.query;
+
+    const nearbyMode = lat && lng;
+    const userLat = nearbyMode ? parseFloat(lat) : null;
+    const userLng = nearbyMode ? parseFloat(lng) : null;
+    const radiusKm = radius ? parseFloat(radius) : 100;
 
     const where = { status: 'active' };
     if (make) where.make = { contains: make, mode: 'insensitive' };
@@ -28,7 +45,8 @@ router.get('/', optionalAuth, async (req, res, next) => {
     if (mileageMax) where.mileage = { lte: parseInt(mileageMax) };
     if (fuelType) where.fuelType = fuelType;
     if (transmission) where.transmission = transmission;
-    if (location) where.city = { contains: location, mode: 'insensitive' };
+    // In nearby mode, skip city text filter — distance radius takes over
+    if (location && !nearbyMode) where.city = { contains: location, mode: 'insensitive' };
     if (sellerType) where.sellerType = sellerType;
     if (condition) where.condition = condition;
     if (search) {
@@ -37,6 +55,36 @@ router.get('/', optionalAuth, async (req, res, next) => {
         { model: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
       ];
+    }
+
+    if (nearbyMode) {
+      // Fetch all matching listings (no pagination yet — filter by distance in JS)
+      const all = await prisma.vehicleListing.findMany({
+        where,
+        include: {
+          photos: { where: { isPrimary: true }, take: 1 },
+          seller: { select: { id: true, name: true, role: true } },
+          dealer: { select: { id: true, businessName: true, isVerified: true } },
+        },
+        orderBy: [{ isSponsored: 'desc' }],
+        take: 500,
+      });
+
+      // Annotate with distance and filter by radius
+      const withDist = all
+        .map((l) => ({ ...l, distanceKm: haversineKm(userLat, userLng, l.lat, l.lng) }))
+        .filter((l) => l.distanceKm != null && l.distanceKm <= radiusKm)
+        .sort((a, b) => a.distanceKm - b.distanceKm);
+
+      const pageNum = parseInt(page);
+      const skip = (pageNum - 1) * LISTINGS_PER_PAGE;
+      const paginated = withDist.slice(skip, skip + LISTINGS_PER_PAGE);
+
+      return res.json({
+        listings: paginated,
+        pagination: { page: pageNum, total: withDist.length, pages: Math.ceil(withDist.length / LISTINGS_PER_PAGE), perPage: LISTINGS_PER_PAGE },
+        nearbyMode: true,
+      });
     }
 
     const skip = (parseInt(page) - 1) * LISTINGS_PER_PAGE;

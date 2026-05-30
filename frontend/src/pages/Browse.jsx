@@ -5,8 +5,9 @@ import { SlidersHorizontal, X, ArrowUpDown } from 'lucide-react';
 import api from '../api/client';
 import CarCard from '../components/CarCard';
 import FilterPanel from '../components/FilterPanel';
+import useGeolocation from '../hooks/useGeolocation';
 
-const SORT_OPTIONS = [
+const BASE_SORT_OPTIONS = [
   { value: 'createdAt_desc', label: 'Newest First' },
   { value: 'price_asc', label: 'Price: Low to High' },
   { value: 'price_desc', label: 'Price: High to Low' },
@@ -20,6 +21,19 @@ export default function Browse() {
   const [showFilters, setShowFilters] = useState(false);
   const [sort, setSort] = useState('createdAt_desc');
   const [page, setPage] = useState(1);
+  const geo = useGeolocation();
+
+  // Auto-activate geo if coming from a "near me" link
+  useEffect(() => {
+    const lat = searchParams.get('lat');
+    const lng = searchParams.get('lng');
+    if (lat && lng && !geo.active) geo.request();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const SORT_OPTIONS = [
+    ...(geo.active ? [{ value: 'nearby_asc', label: 'Nearest First' }] : []),
+    ...BASE_SORT_OPTIONS,
+  ];
 
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
@@ -27,17 +41,28 @@ export default function Browse() {
     model: searchParams.get('model') || '',
     yearMin: '', yearMax: '', priceMin: '', priceMax: '',
     mileageMax: '', fuelType: '', transmission: '', location: '',
-    sellerType: '', condition: '',
+    sellerType: '', condition: '', radius: '50',
   });
 
   useEffect(() => {
     setPage(1);
   }, [filters, sort]);
 
+  // When geo activates, auto-switch sort to nearest first
+  useEffect(() => {
+    if (geo.active) setSort('nearby_asc');
+  }, [geo.active]);
+
   const buildQuery = () => {
-    const [sortBy, sortOrder] = sort.split('_');
+    const isNearby = sort === 'nearby_asc' && geo.active;
+    const [sortBy, sortOrder] = isNearby ? ['createdAt', 'desc'] : sort.split('_');
     const params = new URLSearchParams({ page, sortBy, sortOrder });
-    Object.entries(filters).forEach(([k, v]) => { if (v) params.set(k, v); });
+    Object.entries(filters).forEach(([k, v]) => { if (v && k !== 'radius') params.set(k, v); });
+    if (isNearby) {
+      params.set('lat', geo.lat);
+      params.set('lng', geo.lng);
+      params.set('radius', filters.radius || '50');
+    }
     return params.toString();
   };
 
@@ -48,7 +73,7 @@ export default function Browse() {
   });
 
   const resetFilters = () => {
-    setFilters({ search: '', make: '', model: '', yearMin: '', yearMax: '', priceMin: '', priceMax: '', mileageMax: '', fuelType: '', transmission: '', location: '', sellerType: '', condition: '' });
+    setFilters({ search: '', make: '', model: '', yearMin: '', yearMax: '', priceMin: '', priceMax: '', mileageMax: '', fuelType: '', transmission: '', location: '', sellerType: '', condition: '', radius: '50' });
     setSearchParams({});
   };
 
@@ -59,7 +84,7 @@ export default function Browse() {
       {/* Header */}
       <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Browse Used Cars</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Browse Cars</h1>
           <p className="text-sm text-gray-500">
             {isLoading ? 'Loading...' : `${data?.pagination?.total?.toLocaleString() || 0} cars found`}
           </p>
@@ -95,7 +120,7 @@ export default function Browse() {
       <div className="flex gap-6">
         {/* Sidebar filters (desktop) */}
         <div className="hidden lg:block w-64 shrink-0">
-          <FilterPanel filters={filters} onChange={setFilters} onReset={resetFilters} />
+          <FilterPanel filters={filters} onChange={setFilters} onReset={resetFilters} geo={geo} />
         </div>
 
         {/* Mobile filter drawer */}
@@ -107,7 +132,7 @@ export default function Browse() {
                 <h2 className="font-bold">Filters</h2>
                 <button onClick={() => setShowFilters(false)}><X className="w-5 h-5" /></button>
               </div>
-              <FilterPanel filters={filters} onChange={setFilters} onReset={resetFilters} />
+              <FilterPanel filters={filters} onChange={setFilters} onReset={resetFilters} geo={geo} />
               <button onClick={() => setShowFilters(false)} className="mt-4 w-full btn-primary">
                 Show {data?.pagination?.total || 0} Results
               </button>
