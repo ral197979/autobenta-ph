@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BadgeCheck, FileCheck, ShieldCheck, CreditCard, TrendingUp, BookOpen, UserCheck } from 'lucide-react';
 
 const BADGE_CONFIG = {
@@ -49,9 +50,10 @@ const PRIORITY = [
   'price_verified',
 ];
 
-export default function TrustBadges({ listing, size = 'sm', maxCount }) {
-  const all = [];
+export default function TrustBadges({ listing, size = 'sm', maxCount, expandable = false }) {
+  const [expanded, setExpanded] = useState(false);
 
+  const all = [];
   if (listing?.transferReady) all.push('transfer_ready');
   if (listing?.sellerVerified || listing?.dealer?.isVerified) all.push('seller_verified');
   if (listing?.ownershipVerified) all.push('ownership_verified');
@@ -60,13 +62,12 @@ export default function TrustBadges({ listing, size = 'sm', maxCount }) {
   if (listing?.vehicleHistoryAvailable) all.push('history_available');
   if (listing?.priceScore >= 70) all.push('price_verified');
 
-  // Sort by priority
   const activeBadges = all.sort((a, b) => PRIORITY.indexOf(a) - PRIORITY.indexOf(b));
-
   if (activeBadges.length === 0) return null;
 
-  const visible = maxCount ? activeBadges.slice(0, maxCount) : activeBadges;
-  const overflow = maxCount ? activeBadges.length - maxCount : 0;
+  const showAll = !maxCount || expanded;
+  const visible = showAll ? activeBadges : activeBadges.slice(0, maxCount);
+  const overflow = (!showAll && maxCount) ? activeBadges.length - maxCount : 0;
 
   const iconSize = size === 'xs' ? 'h-3 w-3' : 'h-3.5 w-3.5';
   const textSize = size === 'xs' ? 'text-[10px]' : 'text-[11px]';
@@ -87,9 +88,19 @@ export default function TrustBadges({ listing, size = 'sm', maxCount }) {
         );
       })}
       {overflow > 0 && (
-        <span className={`inline-flex items-center rounded-full border border-cardborder bg-softbg font-semibold text-slatetext ${padding} ${textSize}`}>
-          +{overflow} more
-        </span>
+        expandable ? (
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setExpanded(true); }}
+            className={`inline-flex items-center rounded-full border border-deepblue/20 bg-deepblue/5 font-semibold text-deepblue hover:bg-deepblue/10 transition-colors ${padding} ${textSize}`}
+          >
+            +{overflow} more
+          </button>
+        ) : (
+          <span className={`inline-flex items-center rounded-full border border-cardborder bg-softbg font-semibold text-slatetext ${padding} ${textSize}`}>
+            +{overflow} more
+          </span>
+        )
       )}
     </div>
   );

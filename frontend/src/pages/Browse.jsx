@@ -42,6 +42,7 @@ export default function Browse() {
     yearMin: '', yearMax: '', priceMin: '', priceMax: '',
     mileageMax: '', fuelType: '', transmission: '', location: '',
     sellerType: '', condition: '', radius: '50',
+    verified: searchParams.get('verified') || '',
   });
 
   useEffect(() => {
@@ -73,7 +74,7 @@ export default function Browse() {
   });
 
   const resetFilters = () => {
-    setFilters({ search: '', make: '', model: '', yearMin: '', yearMax: '', priceMin: '', priceMax: '', mileageMax: '', fuelType: '', transmission: '', location: '', sellerType: '', condition: '', radius: '50' });
+    setFilters({ search: '', make: '', model: '', yearMin: '', yearMax: '', priceMin: '', priceMax: '', mileageMax: '', fuelType: '', transmission: '', location: '', sellerType: '', condition: '', radius: '50', verified: '' });
     setSearchParams({});
   };
 
@@ -105,6 +106,23 @@ export default function Browse() {
           </div>
         </div>
       </div>
+
+      {/* Active filter chips */}
+      {filters.verified === 'true' && (
+        <div className="flex items-center gap-2 mb-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-deepblue/20 bg-deepblue/5 px-3 py-1 text-xs font-semibold text-deepblue">
+            Verified sellers only
+            <button
+              type="button"
+              onClick={() => setFilters(p => ({ ...p, verified: '' }))}
+              className="ml-0.5 hover:text-ink transition-colors"
+              aria-label="Remove filter"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </span>
+        </div>
+      )}
 
       {/* Search bar */}
       <div className="mb-5">

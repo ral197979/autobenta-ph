@@ -29,7 +29,7 @@ router.get('/', optionalAuth, async (req, res, next) => {
       page = 1, make, model, yearMin, yearMax, priceMin, priceMax,
       mileageMax, fuelType, transmission, location, sellerType,
       condition, sortBy = 'createdAt', sortOrder = 'desc', search,
-      lat, lng, radius,
+      lat, lng, radius, verified,
     } = req.query;
 
     const nearbyMode = lat && lng;
@@ -49,6 +49,10 @@ router.get('/', optionalAuth, async (req, res, next) => {
     if (location && !nearbyMode) where.city = { contains: location, mode: 'insensitive' };
     if (sellerType) where.sellerType = sellerType;
     if (condition) where.condition = condition;
+    if (verified === 'true') {
+      if (!where.AND) where.AND = [];
+      where.AND.push({ OR: [{ sellerVerified: true }, { dealer: { isVerified: true } }] });
+    }
     if (search) {
       where.OR = [
         { make: { contains: search, mode: 'insensitive' } },

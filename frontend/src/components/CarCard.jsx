@@ -71,7 +71,7 @@ export default function CarCard({ listing, onFavoriteToggle }) {
         </div>
 
         <div className="mt-auto space-y-2">
-          <TrustBadges listing={listing} size="xs" maxCount={3} />
+          <TrustBadges listing={listing} size="xs" maxCount={3} expandable />
           <div className="flex items-center justify-between text-xs text-gray-400">
             <div className="flex items-center gap-1">
               <MapPin className="w-3 h-3" />
