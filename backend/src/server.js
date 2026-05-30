@@ -32,6 +32,7 @@ const fraudRoutes = require('./routes/fraud');
 const dealerAnalyticsRoutes = require('./routes/dealerAnalytics');
 const savedSearchRoutes = require('./routes/savedSearches');
 const aiVisionRoutes = require('./routes/aiVision');
+const verificationRoutes = require('./routes/verifications');
 
 const { apiLimiter, authLimiter } = require('./middleware/rateLimiters');
 
@@ -73,6 +74,7 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
+app.use('/uploads/documents', express.static(path.join(__dirname, '../../uploads/documents')));
 
 // ─── Swagger ──────────────────────────────────────────────────────────────────
 const swaggerSpec = swaggerJsdoc({
@@ -125,6 +127,7 @@ app.use('/api/admin/fraud', fraudRoutes);
 app.use('/api/dealer/analytics', dealerAnalyticsRoutes);
 app.use('/api/saved-searches', savedSearchRoutes);
 app.use('/api/ai-vision', aiVisionRoutes);
+app.use('/api/verifications', verificationRoutes);
 
 // ─── Frontend (production only) ───────────────────────────────────────────────
 if (process.env.NODE_ENV === 'production') {

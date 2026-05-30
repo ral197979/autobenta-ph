@@ -113,6 +113,36 @@ enum DealerActivityType {
   financing_requested
 }
 
+enum VerificationType {
+  seller_identity
+  dealer_business
+  ownership
+  vehicle
+  transfer_readiness
+}
+
+enum VerificationStatus {
+  pending
+  under_review
+  approved
+  rejected
+  expired
+  suspended
+}
+
+enum DocumentType {
+  government_id
+  selfie
+  or_cr
+  deed_of_sale
+  business_registration
+  dealer_permit
+  proof_of_address
+  insurance_policy
+  inspection_report
+  other
+}
+
 // ─── Core Models ──────────────────────────────────────────────────────────────
 
 model User {
@@ -132,6 +162,10 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  // Verification
+  verificationScore   Int?
+  verificationExpiry  DateTime?
+
   dealer              Dealer?
   listings            VehicleListing[]
   favorites           Favorite[]
@@ -142,6 +176,8 @@ model User {
   sellerRiskProfile   SellerRiskProfile?
   recentlyViewed      RecentlyViewed[]
   savedSearches       SavedSearch[]
+  verificationRequests VerificationRequest[]
+  verificationReviews  VerificationReview[]
 
   @@map("users")
 }
@@ -220,13 +256,18 @@ model VehicleListing {
   isSponsored    Boolean        @default(false)
   featuredUntil  DateTime?
 
-  // Trust & transfer readiness fields (Phase 2)
+  // Trust & transfer readiness fields
   ownershipVerified      Boolean  @default(false)
   transferReady          Boolean  @default(false)
   vehicleHistoryAvailable Boolean @default(false)
   sellerVerified         Boolean  @default(false)
   priceScore             Int?     // 0–100 AI price score
   financingEligible      Boolean  @default(false)
+
+  // Readiness Score V2 — backend-calculated
+  readinessScore         Int?     // 0–100, computed by backend
+  readinessReason        Json?    // breakdown of criteria
+  readinessEvaluatedAt   DateTime?
 
   // AI vision draft metadata
   aiDraftData    Json?
@@ -252,6 +293,7 @@ model VehicleListing {
   fraudFlagRecords    FraudFlag[]
   moderationActions   ListingModerationAction[]
   recentlyViewed      RecentlyViewed[]
+  verificationRequests VerificationRequest[]
 
   @@index([status])
   @@index([make, model])
@@ -585,4 +627,81 @@ model AuditHashAnchor {
   createdAt DateTime @default(now())
 
   @@map("audit_hash_anchors")
+}
+
+// ─── Phase 3: Verification Engine ─────────────────────────────────────────────
+
+model VerificationRequest {
+  id               String             @id @default(uuid())
+  userId           String
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listingId        String?
+  listing          VehicleListing?    @relation(fields: [listingId], references: [id], onDelete: SetNull)
+  verificationType VerificationType
+  status           VerificationStatus @default(pending)
+  submittedAt      DateTime           @default(now())
+  expiresAt        DateTime?
+  rejectionReason  String?
+  adminNotes       String?
+  verificationScore Int?              // 0–100 computed on approval
+  metadata         Json?              // extra context per type
+
+  documents   VerificationDocument[]
+  reviews     VerificationReview[]
+  statusHistory VerificationStatusHistory[]
+
+  @@index([userId])
+  @@index([listingId])
+  @@index([verificationType])
+  @@index([status])
+  @@index([submittedAt])
+  @@map("verification_requests")
+}
+
+model VerificationDocument {
+  id            String              @id @default(uuid())
+  requestId     String
+  request       VerificationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  documentType  DocumentType
+  url           String
+  storageKey    String?
+  provider      String              @default("local")
+  fileName      String?
+  sizeBytes     Int?
+  mimeType      String?
+  isConfidential Boolean            @default(true)
+  uploadedAt    DateTime            @default(now())
+
+  @@index([requestId])
+  @@index([documentType])
+  @@map("verification_documents")
+}
+
+model VerificationReview {
+  id          String              @id @default(uuid())
+  requestId   String
+  request     VerificationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  reviewerId  String
+  reviewer    User                @relation(fields: [reviewerId], references: [id])
+  action      VerificationStatus
+  notes       String?
+  reviewedAt  DateTime            @default(now())
+
+  @@index([requestId])
+  @@index([reviewerId])
+  @@map("verification_reviews")
+}
+
+model VerificationStatusHistory {
+  id          String              @id @default(uuid())
+  requestId   String
+  request     VerificationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  fromStatus  VerificationStatus?
+  toStatus    VerificationStatus
+  changedBy   String?
+  reason      String?
+  changedAt   DateTime            @default(now())
+
+  @@index([requestId])
+  @@map("verification_status_history")
 }

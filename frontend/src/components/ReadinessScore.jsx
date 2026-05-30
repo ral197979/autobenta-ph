@@ -1,68 +1,48 @@
+import { useQuery } from '@tanstack/react-query';
 import { ShieldCheck } from 'lucide-react';
+import api from '../api/client';
 
-function computeScore(listing) {
-  if (!listing) return { score: 0, items: [] };
+// Client-side fallback used when API isn't available (e.g. mock listings)
+function computeScoreFallback(listing) {
+  if (!listing) return { total: 0, criteria: [], band: 'Fair', color: 'amber' };
 
-  const items = [];
-  let score = 0;
+  const criteria = [
+    { key: 'seller_verified', label: 'Seller identity verified', points: 20, passed: !!(listing.sellerVerified || listing.seller?.isVerified || listing.dealer?.isVerified) },
+    { key: 'ownership_verified', label: 'Ownership verified', points: 25, passed: !!listing.ownershipVerified },
+    { key: 'history_available', label: 'Vehicle history available', points: 15, passed: !!listing.vehicleHistoryAvailable },
+    { key: 'transfer_docs', label: 'Transfer documents complete', points: 20, passed: !!(listing.hasOrCr && listing.ownershipVerified) },
+    { key: 'inspection_completed', label: 'Inspection completed', points: 10, passed: !!(listing.inspectionRequests?.some(r => r.status === 'completed')) },
+    { key: 'financing_eligible', label: 'Financing eligible', points: 10, passed: !!listing.financingEligible },
+  ];
 
-  if (listing.ownershipVerified) {
-    items.push({ label: 'Ownership verified', points: 20, met: true });
-    score += 20;
-  } else {
-    items.push({ label: 'Ownership verified', points: 20, met: false });
-  }
+  const total = criteria.reduce((sum, c) => sum + (c.passed ? c.points : 0), 0);
+  let band, color;
+  if (total >= 70) { band = 'Excellent'; color = 'green'; }
+  else if (total >= 40) { band = 'Good'; color = 'blue'; }
+  else { band = 'Fair'; color = 'amber'; }
 
-  if (listing.hasOrCr) {
-    items.push({ label: 'OR/CR available', points: 20, met: true });
-    score += 20;
-  } else {
-    items.push({ label: 'OR/CR available', points: 20, met: false });
-  }
-
-  if (listing.sellerVerified || listing.dealer?.isVerified) {
-    items.push({ label: 'Seller identity verified', points: 15, met: true });
-    score += 15;
-  } else {
-    items.push({ label: 'Seller identity verified', points: 15, met: false });
-  }
-
-  if (listing.financingEligible) {
-    items.push({ label: 'Insurance / financing eligible', points: 15, met: true });
-    score += 15;
-  } else {
-    items.push({ label: 'Insurance / financing eligible', points: 15, met: false });
-  }
-
-  const hasCompletedInspection = listing.inspectionRequests?.some((r) => r.status === 'completed');
-  if (hasCompletedInspection) {
-    items.push({ label: 'Inspection completed', points: 15, met: true });
-    score += 15;
-  } else {
-    items.push({ label: 'Inspection completed', points: 15, met: false });
-  }
-
-  const noFlags = !listing.hasAccident && !listing.hasFlood && listing.fraudScore < 30;
-  if (noFlags) {
-    items.push({ label: 'No ownership discrepancies', points: 15, met: true });
-    score += 15;
-  } else {
-    items.push({ label: 'No ownership discrepancies', points: 15, met: false });
-  }
-
-  return { score, items };
+  return { total, criteria, band, color };
 }
 
-function scoreColor(score) {
-  if (score >= 80) return { bar: 'bg-emerald-500', text: 'text-emerald-600', label: 'Excellent' };
-  if (score >= 55) return { bar: 'bg-deepblue', text: 'text-deepblue', label: 'Good' };
-  if (score >= 30) return { bar: 'bg-accent', text: 'text-amber-600', label: 'Fair' };
-  return { bar: 'bg-red-400', text: 'text-red-600', label: 'Needs attention' };
+function scoreStyle(color) {
+  if (color === 'green') return { bar: 'bg-emerald-500', text: 'text-emerald-600', pill: 'bg-emerald-100 text-emerald-700' };
+  if (color === 'blue') return { bar: 'bg-deepblue', text: 'text-deepblue', pill: 'bg-blue-100 text-blue-700' };
+  return { bar: 'bg-amber-400', text: 'text-amber-600', pill: 'bg-amber-100 text-amber-700' };
 }
 
 export default function ReadinessScore({ listing, compact = false }) {
-  const { score, items } = computeScore(listing);
-  const { bar, text, label } = scoreColor(score);
+  const listingId = listing?.id;
+
+  const { data: apiScore } = useQuery({
+    queryKey: ['readiness-score', listingId],
+    queryFn: () => api.get(`/verifications/listing/${listingId}/readiness-score`).then(r => r.data),
+    enabled: !!listingId && !listingId?.startsWith('mock'),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const score = apiScore || computeScoreFallback(listing);
+  const { total, criteria, band, color } = score;
+  const { bar, text, pill } = scoreStyle(color);
 
   if (compact) {
     return (
@@ -74,18 +54,18 @@ export default function ReadinessScore({ listing, compact = false }) {
               cx="16" cy="16" r="12"
               fill="none"
               strokeWidth="3"
-              strokeDasharray={`${(score / 100) * 75.4} 75.4`}
+              strokeDasharray={`${(total / 100) * 75.4} 75.4`}
               className={bar.replace('bg-', 'stroke-')}
               strokeLinecap="round"
             />
           </svg>
           <span className={`absolute inset-0 flex items-center justify-center text-[10px] font-bold ${text}`}>
-            {score}
+            {total}
           </span>
         </div>
         <div>
           <p className="text-xs font-bold text-ink">Transfer Readiness</p>
-          <p className={`text-[11px] font-semibold ${text}`}>{label}</p>
+          <p className={`text-[11px] font-semibold ${text}`}>{band}</p>
         </div>
       </div>
     );
@@ -96,38 +76,29 @@ export default function ReadinessScore({ listing, compact = false }) {
       <div className="flex items-center gap-3 mb-4">
         <ShieldCheck className="h-5 w-5 text-deepblue" />
         <h3 className="font-bold text-ink">Transfer Readiness Score</h3>
+        {apiScore && <span className="ml-auto text-[10px] text-slatetext/50">Verified by platform</span>}
       </div>
 
       <div className="flex items-end gap-4 mb-4">
         <div>
-          <span className={`text-4xl font-bold ${text}`}>{score}</span>
+          <span className={`text-4xl font-bold ${text}`}>{total}</span>
           <span className="text-xl text-slatetext">/100</span>
         </div>
-        <span className={`mb-1 rounded-full px-2.5 py-0.5 text-xs font-bold ${
-          score >= 80 ? 'bg-emerald-100 text-emerald-700' :
-          score >= 55 ? 'bg-blue-100 text-blue-700' :
-          score >= 30 ? 'bg-amber-100 text-amber-700' :
-          'bg-red-100 text-red-700'
-        }`}>
-          {label}
-        </span>
+        <span className={`mb-1 rounded-full px-2.5 py-0.5 text-xs font-bold ${pill}`}>{band}</span>
       </div>
 
       <div className="mb-5 h-2 w-full rounded-full bg-softbg overflow-hidden">
-        <div
-          className={`h-2 rounded-full transition-all duration-700 ${bar}`}
-          style={{ width: `${score}%` }}
-        />
+        <div className={`h-2 rounded-full transition-all duration-700 ${bar}`} style={{ width: `${total}%` }} />
       </div>
 
       <div className="space-y-2">
-        {items.map((item) => (
-          <div key={item.label} className="flex items-center justify-between text-sm">
+        {criteria.map((item) => (
+          <div key={item.key} className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-2">
-              <span className={`h-2 w-2 rounded-full ${item.met ? 'bg-emerald-400' : 'bg-cardborder'}`} />
-              <span className={item.met ? 'text-ink' : 'text-slatetext/60'}>{item.label}</span>
+              <span className={`h-2 w-2 rounded-full ${item.passed ? 'bg-emerald-400' : 'bg-cardborder'}`} />
+              <span className={item.passed ? 'text-ink' : 'text-slatetext/60'}>{item.label}</span>
             </div>
-            <span className={`text-xs font-bold ${item.met ? 'text-emerald-600' : 'text-slatetext/40'}`}>
+            <span className={`text-xs font-bold ${item.passed ? 'text-emerald-600' : 'text-slatetext/40'}`}>
               +{item.points}
             </span>
           </div>

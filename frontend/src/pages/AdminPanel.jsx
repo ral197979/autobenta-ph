@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Shield, Users, Car, BarChart3, FileCheck, CreditCard, CheckCircle, XCircle, AlertTriangle, Building2, AlertOctagon, UserX } from 'lucide-react';
+import { Shield, Users, Car, BarChart3, FileCheck, CreditCard, CheckCircle, XCircle, AlertTriangle, Building2, AlertOctagon, UserX, BadgeCheck } from 'lucide-react';
 import api from '../api/client';
 import { formatPrice, formatRelativeTime, STATUS_COLORS } from '../utils/format';
 import ModerationQueue from './admin/ModerationQueue';
 import FraudReview from './admin/FraudReview';
 import SellerRiskDashboard from './admin/SellerRiskDashboard';
+import VerificationQueue from './admin/VerificationQueue';
 
-const TABS = ['overview', 'moderation', 'fraud', 'seller-risk', 'listings', 'users', 'dealers', 'financing', 'logs'];
+const TABS = ['overview', 'verifications', 'moderation', 'fraud', 'seller-risk', 'listings', 'users', 'dealers', 'financing', 'logs'];
 
 export default function AdminPanel() {
   const [tab, setTab] = useState('overview');
@@ -78,6 +79,7 @@ export default function AdminPanel() {
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
         <TabBtn id="overview" icon={BarChart3} label="Overview" />
+        <TabBtn id="verifications" icon={BadgeCheck} label="Verifications" />
         <TabBtn id="moderation" icon={AlertTriangle} label="Moderation" />
         <TabBtn id="fraud" icon={AlertOctagon} label="Fraud" />
         <TabBtn id="seller-risk" icon={UserX} label="Seller Risk" />
@@ -122,6 +124,16 @@ export default function AdminPanel() {
               <p className="text-xs text-gray-500">Avg. Listing Price</p>
             </div>
           </div>
+        </div>
+      )}
+
+      {tab === 'verifications' && (
+        <div>
+          <div className="flex items-center gap-2 mb-6">
+            <BadgeCheck className="w-5 h-5 text-deepblue" />
+            <h2 className="text-lg font-bold text-ink">Verification Queue</h2>
+          </div>
+          <VerificationQueue />
         </div>
       )}
 

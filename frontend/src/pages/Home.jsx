@@ -4,6 +4,7 @@ import BrowseByType from '../components/home/BrowseByType';
 import HowItWorks from '../components/home/HowItWorks';
 import TrustSection from '../components/home/TrustSection';
 import TrustPlatformSection from '../components/home/TrustPlatformSection';
+import HowVerificationWorks from '../components/home/HowVerificationWorks';
 import SellerCTA from '../components/home/SellerCTA';
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
         <HowItWorks />
       </section>
       <TrustPlatformSection />
+      <HowVerificationWorks />
       <TrustSection />
       <SellerCTA />
     </div>

@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Car, Heart, MessageCircle, Wrench, CreditCard, Plus } from 'lucide-react';
+import { Car, Heart, MessageCircle, Wrench, CreditCard, Plus, BadgeCheck } from 'lucide-react';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice, formatRelativeTime, STATUS_COLORS } from '../utils/format';
+import SellerVerification from '../components/seller/SellerVerification';
 
-const TABS = ['my-listings', 'favorites', 'inquiries', 'inspections', 'financing'];
+const TABS = ['my-listings', 'favorites', 'inquiries', 'inspections', 'financing', 'verification'];
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -62,6 +63,7 @@ export default function Dashboard() {
         <TabBtn id="inquiries" icon={MessageCircle} label="Inquiries" />
         <TabBtn id="inspections" icon={Wrench} label="Inspections" />
         <TabBtn id="financing" icon={CreditCard} label="Financing" />
+        {['seller', 'dealer', 'admin'].includes(user?.role) && <TabBtn id="verification" icon={BadgeCheck} label="Verification" />}
       </div>
 
       {/* My Listings */}
@@ -165,6 +167,18 @@ export default function Dashboard() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {tab === 'verification' && (
+        <div className="max-w-2xl">
+          <div className="mb-6">
+            <h2 className="text-lg font-bold text-ink">Identity & Business Verification</h2>
+            <p className="text-sm text-slatetext mt-1">
+              Verified sellers earn trust badges that appear on your listings — increasing buyer confidence and inquiry rates.
+            </p>
+          </div>
+          <SellerVerification user={user} />
         </div>
       )}
     </div>
