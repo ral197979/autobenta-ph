@@ -2,6 +2,12 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Search, MapPin, Wallet } from 'lucide-react';
 
+const CONDITION_TABS = [
+  { label: 'All Cars', value: '' },
+  { label: 'Brand New', value: 'brand_new' },
+  { label: 'Used', value: 'used' },
+];
+
 const QUICK_FILTERS = [
   { label: 'Toyota', query: 'make=Toyota' },
   { label: 'Honda', query: 'make=Honda' },
@@ -22,6 +28,7 @@ const BUDGETS = [
 
 export default function SearchPanel() {
   const navigate = useNavigate();
+  const [condition, setCondition] = useState('');
   const [keyword, setKeyword] = useState('');
   const [city, setCity] = useState('');
   const [budget, setBudget] = useState('');
@@ -29,6 +36,7 @@ export default function SearchPanel() {
   const handleSubmit = (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
+    if (condition) params.set('condition', condition);
     if (keyword) params.set('search', keyword);
     if (city) params.set('city', city);
     if (budget) {
@@ -41,6 +49,23 @@ export default function SearchPanel() {
 
   return (
     <div className="rounded-2xl border border-cardborder bg-white p-5 shadow-xl shadow-ink/5 md:p-6">
+      {/* Condition tabs */}
+      <div className="mb-4 flex rounded-xl bg-softbg p-1 gap-1">
+        {CONDITION_TABS.map((tab) => (
+          <button
+            key={tab.value}
+            type="button"
+            onClick={() => setCondition(tab.value)}
+            className={`flex-1 rounded-lg py-2 text-xs font-semibold transition-colors ${
+              condition === tab.value
+                ? 'bg-white text-deepblue shadow-sm'
+                : 'text-slatetext hover:text-ink'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
           <label className="relative block">

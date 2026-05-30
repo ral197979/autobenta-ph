@@ -48,7 +48,7 @@ function AppRoutes() {
       <footer className="bg-gray-900 text-gray-400 py-8 mt-auto">
         <div className="max-w-7xl mx-auto px-4 text-center text-sm">
           <p className="font-semibold text-white mb-1">AutoBenta PH</p>
-          <p>The Philippines' trusted used car marketplace. © {new Date().getFullYear()}</p>
+          <p>The Philippines' trusted new &amp; used car marketplace. © {new Date().getFullYear()}</p>
         </div>
       </footer>
     </div>

@@ -19,8 +19,8 @@ export const formatRelativeTime = (date) => {
 
 export const TRANSMISSION_LABELS = { automatic: 'AT', manual: 'MT', cvt: 'CVT' };
 export const FUEL_LABELS = { gasoline: 'Gas', diesel: 'Diesel', hybrid: 'Hybrid', electric: 'EV', lpg: 'LPG' };
-export const CONDITION_LABELS = { excellent: 'Excellent', good: 'Good', fair: 'Fair', poor: 'Poor' };
-export const CONDITION_COLORS = { excellent: 'text-green-700 bg-green-100', good: 'text-blue-700 bg-blue-100', fair: 'text-yellow-700 bg-yellow-100', poor: 'text-red-700 bg-red-100' };
+export const CONDITION_LABELS = { brand_new: 'Brand New', excellent: 'Excellent', good: 'Good', fair: 'Fair', poor: 'Poor' };
+export const CONDITION_COLORS = { brand_new: 'text-amber-700 bg-amber-100', excellent: 'text-green-700 bg-green-100', good: 'text-blue-700 bg-blue-100', fair: 'text-yellow-700 bg-yellow-100', poor: 'text-red-700 bg-red-100' };
 export const STATUS_COLORS = {
   active: 'text-green-700 bg-green-100', pending: 'text-yellow-700 bg-yellow-100',
   draft: 'text-gray-700 bg-gray-100', sold: 'text-blue-700 bg-blue-100',
