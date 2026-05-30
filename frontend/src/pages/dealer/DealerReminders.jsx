@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../api/client';
 
-export default function DealerReminders() {
+export default function DealerReminders({ compact = false }) {
   const [showDone, setShowDone] = useState(false);
   const [form, setForm] = useState({ title: '', dueAt: '', notes: '' });
   const [showForm, setShowForm] = useState(false);
@@ -28,6 +28,23 @@ export default function DealerReminders() {
   });
 
   const overdue = (dueAt) => new Date(dueAt) < new Date();
+
+  if (compact) {
+    const upcoming = reminders.filter(r => !r.isDone).slice(0, 3);
+    if (!upcoming.length) return <p className="text-xs text-slatetext">No upcoming reminders.</p>;
+    return (
+      <div className="space-y-2">
+        {upcoming.map(r => (
+          <div key={r.id} className={`flex items-center justify-between rounded-lg border p-2.5 ${overdue(r.dueAt) ? 'border-red-200 bg-red-50' : 'border-cardborder bg-white'}`}>
+            <p className="text-xs font-medium text-ink truncate">{r.title}</p>
+            <p className={`text-[10px] shrink-0 ml-2 ${overdue(r.dueAt) ? 'text-red-600 font-medium' : 'text-slatetext'}`}>
+              {new Date(r.dueAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })}
+            </p>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl">

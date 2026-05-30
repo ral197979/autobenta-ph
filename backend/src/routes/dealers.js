@@ -116,11 +116,100 @@ router.patch('/me/leads/:leadId', authenticate, requireRole('dealer', 'admin'), 
     if (!lead) return res.status(404).json({ error: 'Lead not found' });
 
     const { status, notes } = req.body;
+
+    // Track first sale lifecycle
+    if (status === 'closed_won' && dealer && !dealer.firstSaleAt) {
+      await prisma.dealer.update({ where: { id: dealer.id }, data: { firstSaleAt: new Date() } });
+    }
+
     const updated = await prisma.lead.update({
       where: { id: req.params.leadId },
       data: { ...(status && { status }), ...(notes !== undefined && { notes }) },
     });
     res.json(updated);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ─── GET /me/profile ──────────────────────────────────────────────────────────
+
+router.get('/me/profile', authenticate, requireRole('dealer', 'admin'), async (req, res, next) => {
+  try {
+    const dealer = await prisma.dealer.findFirst({
+      where: { userId: req.user.id },
+      include: {
+        subscription: true,
+        branches: { where: { isActive: true }, orderBy: { isMain: 'desc' } },
+        members: { where: { isActive: true }, include: { user: { select: { id: true, name: true, email: true, avatarUrl: true } } } },
+        _count: { select: { listings: true, leads: true } },
+      },
+    });
+    if (!dealer) return res.status(404).json({ error: 'Dealer profile not found' });
+    res.json(dealer);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ─── GET /me/subscription ─────────────────────────────────────────────────────
+
+router.get('/me/subscription', authenticate, requireRole('dealer', 'admin'), async (req, res, next) => {
+  try {
+    const dealer = await prisma.dealer.findFirst({ where: { userId: req.user.id } });
+    if (!dealer) return res.status(404).json({ error: 'Dealer not found' });
+
+    const sub = await prisma.dealerSubscription.findUnique({ where: { dealerId: dealer.id } });
+    const { PLAN_FEATURES } = require('../services/dealerNetwork/subscriptionEntitlements');
+    const plan = sub?.plan || 'free';
+
+    res.json({
+      plan,
+      status: sub?.status || 'active',
+      features: PLAN_FEATURES[plan],
+      startedAt: sub?.startedAt,
+      expiresAt: sub?.expiresAt,
+      trialEndsAt: sub?.trialEndsAt,
+      allPlans: Object.entries(PLAN_FEATURES).map(([p, f]) => ({ plan: p, features: f })),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ─── POST /me/branches ────────────────────────────────────────────────────────
+
+router.post('/me/branches', authenticate, requireRole('dealer', 'admin'), async (req, res, next) => {
+  try {
+    const dealer = await prisma.dealer.findFirst({
+      where: { userId: req.user.id },
+      include: { subscription: true },
+    });
+    if (!dealer) return res.status(404).json({ error: 'Dealer not found' });
+
+    const { hasFeature } = require('../services/dealerNetwork/subscriptionEntitlements');
+    if (!hasFeature(dealer.subscription?.plan || 'free', 'multiBranch')) {
+      return res.status(403).json({ error: 'Multi-branch requires Enterprise plan', upgradeUrl: '/dealer/subscription' });
+    }
+
+    const { name, address, city, region, phone, isMain } = req.body;
+    const branch = await prisma.dealerBranch.create({
+      data: { dealerId: dealer.id, name, address, city, region: region || 'NCR', phone, isMain: !!isMain },
+    });
+    res.status(201).json(branch);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ─── GET /me/branches ─────────────────────────────────────────────────────────
+
+router.get('/me/branches', authenticate, requireRole('dealer', 'admin'), async (req, res, next) => {
+  try {
+    const dealer = await prisma.dealer.findFirst({ where: { userId: req.user.id } });
+    if (!dealer) return res.status(404).json({ error: 'Dealer not found' });
+    const branches = await prisma.dealerBranch.findMany({ where: { dealerId: dealer.id }, orderBy: { isMain: 'desc' } });
+    res.json(branches);
   } catch (err) {
     next(err);
   }

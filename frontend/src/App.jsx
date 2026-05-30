@@ -17,6 +17,13 @@ import AIListingWizard from './pages/AIListingWizard';
 import OwnershipTransfer from './pages/OwnershipTransfer';
 import Insurance from './pages/Insurance';
 import SafeBuying from './pages/SafeBuying';
+import DealerLayout from './pages/dealer/DealerLayout';
+import DealerDashboard from './pages/dealer/DealerDashboard';
+import DealerLeads from './pages/dealer/DealerLeads';
+import DealerListings from './pages/dealer/DealerListings';
+import DealerAnalytics from './pages/dealer/DealerAnalytics';
+import DealerSettings from './pages/dealer/DealerSettings';
+import DealerSubscription from './pages/dealer/DealerSubscription';
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth();
@@ -41,7 +48,15 @@ function AppRoutes() {
           <Route path="/sell" element={<ProtectedRoute roles={['seller', 'dealer', 'admin']}><Sell /></ProtectedRoute>} />
           <Route path="/ai-wizard" element={<ProtectedRoute roles={['seller', 'dealer', 'admin']}><AIListingWizard /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/dealer" element={<ProtectedRoute roles={['dealer', 'admin']}><DealerPanel /></ProtectedRoute>} />
+          <Route path="/dealer-panel" element={<ProtectedRoute roles={['dealer', 'admin']}><DealerPanel /></ProtectedRoute>} />
+          <Route path="/dealer" element={<ProtectedRoute roles={['dealer', 'admin']}><DealerLayout /></ProtectedRoute>}>
+            <Route index element={<DealerDashboard />} />
+            <Route path="leads" element={<DealerLeads />} />
+            <Route path="listings" element={<DealerListings />} />
+            <Route path="analytics" element={<DealerAnalytics />} />
+            <Route path="settings" element={<DealerSettings />} />
+            <Route path="subscription" element={<DealerSubscription />} />
+          </Route>
           <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminPanel /></ProtectedRoute>} />
           <Route path="/inspections" element={<ProtectedRoute><Inspections /></ProtectedRoute>} />
           <Route path="/financing" element={<Financing />} />

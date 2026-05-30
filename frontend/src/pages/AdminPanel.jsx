@@ -56,6 +56,10 @@ export default function AdminPanel() {
     mutationFn: ({ id, isVerified }) => api.patch(`/admin/dealers/${id}/verify`, { isVerified }),
     onSuccess: () => qc.invalidateQueries(['admin-dealers']),
   });
+  const updateDealerTier = useMutation({
+    mutationFn: ({ id, tier }) => api.patch(`/admin/dealers/${id}`, { tier }),
+    onSuccess: () => qc.invalidateQueries(['admin-dealers']),
+  });
   const updateFinancing = useMutation({
     mutationFn: ({ id, status }) => api.patch(`/financing/${id}`, { status }),
     onSuccess: () => qc.invalidateQueries(['admin-financing']),
@@ -206,15 +210,26 @@ export default function AdminPanel() {
         <div className="card overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-500 text-xs">
-              <tr>{['Business', 'Owner', 'City', 'License', 'Status', 'Actions'].map(h => <th key={h} className="px-4 py-3 text-left font-semibold">{h}</th>)}</tr>
+              <tr>{['Business', 'Owner', 'City', 'Tier', 'Plan', 'Status', 'Actions'].map(h => <th key={h} className="px-4 py-3 text-left font-semibold">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y">
               {dealers?.map(d => (
                 <tr key={d.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3 font-medium">{d.businessName}</td>
                   <td className="px-4 py-3 text-gray-500">{d.user?.name}</td>
-                  <td className="px-4 py-3">{d.city}</td>
-                  <td className="px-4 py-3 text-xs text-gray-400">{d.licenseNumber || '—'}</td>
+                  <td className="px-4 py-3">{d.city || '—'}</td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={d.tier || 'basic'}
+                      onChange={e => updateDealerTier.mutate({ id: d.id, tier: e.target.value })}
+                      className="text-xs border border-gray-200 rounded px-1.5 py-1 bg-white"
+                    >
+                      {['basic', 'verified', 'verified_pro', 'enterprise'].map(t => (
+                        <option key={t} value={t}>{t.replace('_', ' ')}</option>
+                      ))}
+                    </select>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-gray-500 capitalize">{d.subscription?.plan || 'free'}</td>
                   <td className="px-4 py-3"><span className={`badge ${d.isVerified ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{d.isVerified ? 'Verified' : 'Pending'}</span></td>
                   <td className="px-4 py-3">
                     <button onClick={() => verifyDealer.mutate({ id: d.id, isVerified: !d.isVerified })}

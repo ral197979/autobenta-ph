@@ -33,6 +33,11 @@ const dealerAnalyticsRoutes = require('./routes/dealerAnalytics');
 const savedSearchRoutes = require('./routes/savedSearches');
 const aiVisionRoutes = require('./routes/aiVision');
 const verificationRoutes = require('./routes/verifications');
+const dealerNetworkRoutes = require('./routes/dealerNetwork');
+const v8atlasWebhookRoutes = require('./routes/v8atlasWebhooks');
+
+// Register V8Atlas providers if enabled
+require('./services/v8atlas/V8AtlasAdapter').registerV8AtlasProviders();
 
 const { apiLimiter, authLimiter } = require('./middleware/rateLimiters');
 
@@ -128,6 +133,8 @@ app.use('/api/dealer/analytics', dealerAnalyticsRoutes);
 app.use('/api/saved-searches', savedSearchRoutes);
 app.use('/api/ai-vision', aiVisionRoutes);
 app.use('/api/verifications', verificationRoutes);
+app.use('/api/dealer-network/v1', dealerNetworkRoutes);
+app.use('/api/webhooks/v8atlas', v8atlasWebhookRoutes);
 
 // ─── Frontend (production only) ───────────────────────────────────────────────
 if (process.env.NODE_ENV === 'production') {

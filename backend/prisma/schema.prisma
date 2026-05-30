@@ -113,6 +113,20 @@ enum DealerActivityType {
   financing_requested
 }
 
+enum SubscriptionPlan {
+  free
+  verified
+  pro
+  enterprise
+}
+
+enum DealerTier {
+  basic
+  verified
+  verified_pro
+  enterprise
+}
+
 enum VerificationType {
   seller_identity
   dealer_business
@@ -178,6 +192,7 @@ model User {
   savedSearches       SavedSearch[]
   verificationRequests VerificationRequest[]
   verificationReviews  VerificationReview[]
+  dealerMemberships    DealerMember[]
 
   @@map("users")
 }
@@ -193,17 +208,28 @@ model Dealer {
   logoUrl       String?
   website       String?
   licenseNumber String?
-  isVerified    Boolean  @default(false)
+  isVerified    Boolean        @default(false)
+  tier          DealerTier     @default(basic)
   avgResponseHours Float?
-  totalLeads    Int      @default(0)
-  totalWon      Int      @default(0)
+  totalLeads    Int            @default(0)
+  totalWon      Int            @default(0)
+
+  // Lifecycle tracking
+  firstListingAt  DateTime?
+  firstLeadAt     DateTime?
+  firstSaleAt     DateTime?
+  onboardingStep  Int          @default(0)   // 0-5 steps completed
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  listings   VehicleListing[]
-  leads      Lead[]
-  activities DealerActivity[]
-  reminders  DealerReminder[]
+  listings      VehicleListing[]
+  leads         Lead[]
+  activities    DealerActivity[]
+  reminders     DealerReminder[]
+  branches      DealerBranch[]
+  members       DealerMember[]
+  subscription  DealerSubscription?
 
   @@map("dealers")
 }
@@ -627,6 +653,61 @@ model AuditHashAnchor {
   createdAt DateTime @default(now())
 
   @@map("audit_hash_anchors")
+}
+
+// ─── Phase 4: Dealer Network ──────────────────────────────────────────────────
+
+model DealerBranch {
+  id        String   @id @default(uuid())
+  dealerId  String
+  dealer    Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  name      String
+  address   String
+  city      String
+  region    String
+  phone     String?
+  isMain    Boolean  @default(false)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dealerId])
+  @@map("dealer_branches")
+}
+
+model DealerSubscription {
+  id           String           @id @default(uuid())
+  dealerId     String           @unique
+  dealer       Dealer           @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  plan         SubscriptionPlan @default(free)
+  status       String           @default("active")  // active | cancelled | expired | trial
+  startedAt    DateTime         @default(now())
+  expiresAt    DateTime?
+  billingCycle String?          // monthly | annual
+  features     Json?            // entitlement flags: { maxListings, analytics, crm, priorityPlacement, v8atlasSync, multiBranch }
+  trialEndsAt  DateTime?
+  cancelledAt  DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@map("dealer_subscriptions")
+}
+
+model DealerMember {
+  id        String   @id @default(uuid())
+  dealerId  String
+  dealer    Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String   @default("agent")  // owner | manager | agent
+  isActive  Boolean  @default(true)
+  invitedAt DateTime @default(now())
+  joinedAt  DateTime?
+
+  @@unique([dealerId, userId])
+  @@index([dealerId])
+  @@index([userId])
+  @@map("dealer_members")
 }
 
 // ─── Phase 3: Verification Engine ─────────────────────────────────────────────
