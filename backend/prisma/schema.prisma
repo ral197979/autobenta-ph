@@ -1246,6 +1246,17 @@ model DealerProspect {
   status           String         @default("active")
   expectedMrr      Int?
   closeProbability Int            @default(10)
+  // Qualification scoring fields
+  monthlyVehiclesSold  Int?
+  salesTeamSize        Int?
+  currentDms           String?   // 'none','cdk','reynolds','dealersocket','excel','custom','unknown'
+  currentLeadProcess   String?   // 'none','excel','facebook_manual','crm','other'
+  painLevel            Int?      // 1-5 (1=mild, 5=critical)
+  buyingTimeline       String?   // 'immediate','1_month','3_months','6_months','unknown'
+  decisionMakerAccess  Boolean   @default(false)
+  budgetRange          String?   // 'confirmed','likely','unknown','constrained'
+  qualificationScore   Int?      // auto-calculated 0-100
+  qualificationTier    String?   // 'hot','warm','cold','unqualified'
   notes            String?
   lostReason       String?
   wonAt            DateTime?

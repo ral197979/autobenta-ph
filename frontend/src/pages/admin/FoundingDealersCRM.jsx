@@ -22,6 +22,13 @@ const ACTIVITY_COLORS = {
   demo_scheduled: 'bg-purple-100 text-purple-700',
 };
 
+const TIER_CONFIG = {
+  hot:         { label: '🔥 Hot',        bg: 'bg-red-100',    text: 'text-red-700',    border: 'border-red-200' },
+  warm:        { label: '☀️ Warm',       bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-200' },
+  cold:        { label: '❄️ Cold',       bg: 'bg-blue-100',   text: 'text-blue-700',   border: 'border-blue-200' },
+  unqualified: { label: '○ Unqualified', bg: 'bg-gray-100',   text: 'text-gray-500',   border: 'border-gray-200' },
+};
+
 const INVENTORY_OPTIONS = ['<10', '10-25', '25-50', '50+'];
 const CURRENT_SYSTEM_OPTIONS = ['None / Manual', 'Facebook Marketplace', 'Philkotse / OLX', 'Excel / Spreadsheet', 'CDK / Reynolds / DMS', 'Other'];
 const SOURCE_OPTIONS = ['Referral', 'Cold Outreach', 'Facebook Ad', 'Organic Search', 'Event', 'Other'];
@@ -52,6 +59,15 @@ function ProspectCard({ prospect, onClick }) {
       className="bg-white rounded-xl border border-cardborder p-3 cursor-pointer hover:shadow-md hover:border-deepblue/30 transition-all"
       onClick={() => onClick(prospect)}
     >
+      {prospect.qualificationTier && (() => {
+        const t = TIER_CONFIG[prospect.qualificationTier] || TIER_CONFIG.unqualified;
+        return (
+          <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border ${t.bg} ${t.text} ${t.border} mb-1`}>
+            {t.label}
+            {prospect.qualificationScore != null && <span className="opacity-70">· {prospect.qualificationScore}</span>}
+          </span>
+        );
+      })()}
       <p className="font-semibold text-ink text-sm leading-tight">{prospect.dealerName}</p>
       {prospect.contactName && (
         <p className="text-xs text-slatetext mt-0.5">{prospect.contactName}{prospect.phone && ` · ${prospect.phone}`}</p>
@@ -311,6 +327,76 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
             <div>
               <label className="block text-xs font-semibold text-slatetext mb-1">Next Follow-Up</label>
               <input className="input w-full" type="date" value={editForm.nextFollowUpAt ? editForm.nextFollowUpAt.slice(0, 10) : ''} onChange={e => setEdit('nextFollowUpAt', e.target.value)} />
+            </div>
+            <div className="border-t border-cardborder pt-4 mt-4">
+              <h4 className="text-xs font-semibold text-slatetext uppercase tracking-wide mb-3">Qualification</h4>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-slatetext">Monthly Units Sold</label>
+                  <input
+                    type="number" min="0"
+                    className="input mt-0.5 w-full text-sm"
+                    value={editForm.monthlyVehiclesSold ?? ''}
+                    onChange={e => setEdit('monthlyVehiclesSold', e.target.value === '' ? null : parseInt(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-slatetext">Sales Team Size</label>
+                  <input
+                    type="number" min="1"
+                    className="input mt-0.5 w-full text-sm"
+                    value={editForm.salesTeamSize ?? ''}
+                    onChange={e => setEdit('salesTeamSize', e.target.value === '' ? null : parseInt(e.target.value))}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-slatetext">Pain Level (1-5)</label>
+                  <select className="input mt-0.5 w-full text-sm"
+                    value={editForm.painLevel ?? ''}
+                    onChange={e => setEdit('painLevel', e.target.value === '' ? null : parseInt(e.target.value))}>
+                    <option value="">—</option>
+                    {[1,2,3,4,5].map(n => <option key={n} value={n}>{n} {n===1?'(mild)':n===5?'(critical)':''}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-slatetext">Buying Timeline</label>
+                  <select className="input mt-0.5 w-full text-sm"
+                    value={editForm.buyingTimeline ?? ''}
+                    onChange={e => setEdit('buyingTimeline', e.target.value || null)}>
+                    <option value="">Unknown</option>
+                    <option value="immediate">Immediate</option>
+                    <option value="1_month">~1 month</option>
+                    <option value="3_months">~3 months</option>
+                    <option value="6_months">~6 months</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-slatetext">Budget</label>
+                  <select className="input mt-0.5 w-full text-sm"
+                    value={editForm.budgetRange ?? ''}
+                    onChange={e => setEdit('budgetRange', e.target.value || null)}>
+                    <option value="">Unknown</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="likely">Likely</option>
+                    <option value="constrained">Constrained</option>
+                  </select>
+                </div>
+                <div className="flex items-center gap-2 mt-4">
+                  <input type="checkbox" id="dmAccess" className="rounded"
+                    checked={editForm.decisionMakerAccess ?? false}
+                    onChange={e => setEdit('decisionMakerAccess', e.target.checked)} />
+                  <label htmlFor="dmAccess" className="text-sm text-ink">Decision maker in conversation</label>
+                </div>
+              </div>
+              {prospect.qualificationTier && (() => {
+                const t = TIER_CONFIG[prospect.qualificationTier] || TIER_CONFIG.unqualified;
+                return (
+                  <div className={`mt-3 p-3 rounded-lg border ${t.border} ${t.bg} flex items-center justify-between`}>
+                    <span className={`text-sm font-semibold ${t.text}`}>{t.label}</span>
+                    <span className="text-xs text-slatetext">Score: {prospect.qualificationScore ?? '—'} / 100</span>
+                  </div>
+                );
+              })()}
             </div>
             {editMutation.isError && <p className="text-xs text-red-600">Save failed. Try again.</p>}
             <div className="flex gap-2 justify-end">

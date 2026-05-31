@@ -5,6 +5,42 @@ const { authenticate, requireRole } = require('../middleware/auth');
 
 const prisma = new PrismaClient();
 
+function calcQualification(data) {
+  let score = 0;
+
+  // Monthly vehicles (0-20 pts)
+  const vol = data.monthlyVehiclesSold || 0;
+  if (vol >= 20) score += 20;
+  else if (vol >= 10) score += 15;
+  else if (vol >= 5) score += 10;
+  else if (vol > 0) score += 5;
+
+  // Pain level (0-25 pts): 1-5 scale × 5
+  if (data.painLevel) score += Math.min(data.painLevel, 5) * 5;
+
+  // Buying timeline (0-20 pts)
+  const tl = { immediate: 20, '1_month': 15, '3_months': 10, '6_months': 5, unknown: 0 };
+  score += tl[data.buyingTimeline] || 0;
+
+  // Decision maker access (0-20 pts)
+  if (data.decisionMakerAccess) score += 20;
+
+  // Budget range (0-15 pts)
+  const bud = { confirmed: 15, likely: 10, unknown: 5, constrained: 0 };
+  score += bud[data.budgetRange] || 0;
+
+  const qualificationScore = score;
+  const qualificationTier =
+    score >= 70 ? 'hot' :
+    score >= 40 ? 'warm' :
+    score >= 20 ? 'cold' : 'unqualified';
+
+  return { qualificationScore, qualificationTier };
+}
+
+const qualFields = ['monthlyVehiclesSold','salesTeamSize','currentDms','currentLeadProcess',
+  'painLevel','buyingTimeline','decisionMakerAccess','budgetRange'];
+
 // GET /admin/prospects
 router.get('/admin/prospects', authenticate, requireRole('admin'), async (req, res, next) => {
   try {
@@ -45,10 +81,15 @@ router.post('/admin/prospects', authenticate, requireRole('admin'), async (req, 
       dealerName, contactName, phone, email, location, branches,
       inventorySize, currentSystem, source, stage, owner,
       expectedMrr, closeProbability, notes,
+      monthlyVehiclesSold, salesTeamSize, currentDms, currentLeadProcess,
+      painLevel, buyingTimeline, decisionMakerAccess, budgetRange,
     } = req.body;
 
     if (!dealerName) return res.status(400).json({ error: 'dealerName is required' });
     if (!contactName) return res.status(400).json({ error: 'contactName is required' });
+
+    const hasQualData = qualFields.some(f => req.body[f] !== undefined && req.body[f] !== null);
+    const qualCalc = hasQualData ? calcQualification(req.body) : {};
 
     const prospect = await prisma.dealerProspect.create({
       data: {
@@ -66,6 +107,15 @@ router.post('/admin/prospects', authenticate, requireRole('admin'), async (req, 
         expectedMrr,
         closeProbability: closeProbability ?? 10,
         notes,
+        monthlyVehiclesSold,
+        salesTeamSize,
+        currentDms,
+        currentLeadProcess,
+        painLevel,
+        buyingTimeline,
+        decisionMakerAccess: decisionMakerAccess ?? false,
+        budgetRange,
+        ...qualCalc,
         activities: {
           create: {
             type: 'stage_changed',
@@ -114,6 +164,8 @@ router.patch('/admin/prospects/:id', authenticate, requireRole('admin'), async (
       inventorySize, currentSystem, source, stage, owner,
       expectedMrr, closeProbability, notes, lostReason,
       nextFollowUpAt, status,
+      monthlyVehiclesSold, salesTeamSize, currentDms, currentLeadProcess,
+      painLevel, buyingTimeline, decisionMakerAccess, budgetRange,
     } = req.body;
 
     const updates = {};
@@ -133,6 +185,20 @@ router.patch('/admin/prospects/:id', authenticate, requireRole('admin'), async (
     if (lostReason !== undefined) updates.lostReason = lostReason;
     if (nextFollowUpAt !== undefined) updates.nextFollowUpAt = new Date(nextFollowUpAt);
     if (status !== undefined) updates.status = status;
+    if (monthlyVehiclesSold !== undefined) updates.monthlyVehiclesSold = monthlyVehiclesSold;
+    if (salesTeamSize !== undefined) updates.salesTeamSize = salesTeamSize;
+    if (currentDms !== undefined) updates.currentDms = currentDms;
+    if (currentLeadProcess !== undefined) updates.currentLeadProcess = currentLeadProcess;
+    if (painLevel !== undefined) updates.painLevel = painLevel;
+    if (buyingTimeline !== undefined) updates.buyingTimeline = buyingTimeline;
+    if (decisionMakerAccess !== undefined) updates.decisionMakerAccess = decisionMakerAccess;
+    if (budgetRange !== undefined) updates.budgetRange = budgetRange;
+
+    const qualFieldsUpdated = qualFields.some(f => updates[f] !== undefined);
+    if (qualFieldsUpdated) {
+      const merged = { ...existing, ...updates };
+      Object.assign(updates, calcQualification(merged));
+    }
 
     const activityCreates = [];
 
