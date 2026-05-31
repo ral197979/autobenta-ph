@@ -34,7 +34,7 @@ router.post('/', authenticate, [
     });
 
     if (listing.dealer) {
-      await prisma.lead.create({
+      const lead = await prisma.lead.create({
         data: {
           dealerId: listing.dealer.id,
           inquiryId: inquiry.id,
@@ -44,6 +44,18 @@ router.post('/', authenticate, [
           buyerPhone: contactPhone,
         },
       });
+
+      const { dispatchWebhook } = require('../services/webhookDispatcher');
+      dispatchWebhook(lead.dealerId, 'lead.created', {
+        lead: {
+          id:       lead.id,
+          source:   'ryderr_marketplace',
+          listing:  { id: listing.id, make: listing.make, model: listing.model, year: listing.year },
+          buyer:    { name: lead.buyerName, email: lead.buyerEmail, phone: lead.buyerPhone },
+          message:  inquiry.message,
+          createdAt: lead.createdAt,
+        },
+      }).catch(() => {}); // fire-and-forget, never block the response
     }
 
     res.status(201).json(inquiry);

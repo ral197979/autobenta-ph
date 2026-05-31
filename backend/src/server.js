@@ -59,6 +59,9 @@ const adoptionMetricsRoutes = require('./routes/adoptionMetrics');
 const csTasksRoutes = require('./routes/csTasks');
 const renewalReadinessRoutes = require('./routes/renewalReadiness');
 const valueProofRoutes = require('./routes/valueProof');
+const apiKeysRoutes   = require('./routes/apiKeys');
+const publicApiRoutes = require('./routes/publicApi');
+const webhooksRoutes  = require('./routes/webhooks');
 
 // Register V8Atlas providers if enabled
 require('./services/v8atlas/V8AtlasAdapter').registerV8AtlasProviders();
@@ -248,6 +251,9 @@ app.use('/api', adoptionMetricsRoutes);
 app.use('/api', csTasksRoutes);
 app.use('/api', renewalReadinessRoutes);
 app.use('/api', valueProofRoutes);
+app.use('/api/dealer/api-keys',  apiKeysRoutes);
+app.use('/api/dealer/webhooks',  webhooksRoutes);
+app.use('/api/v1',               publicApiRoutes);  // third-party: /api/v1/inventory/batch, /api/v1/leads
 
 // ─── Job queue poll loop ──────────────────────────────────────────────────────
 const { startPolling } = require('./services/queue/jobQueue');

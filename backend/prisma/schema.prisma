@@ -275,6 +275,8 @@ model Dealer {
   adoptionSnapshots AdoptionSnapshot[]
   csTasks          CustomerSuccessTask[]
   renewalReadiness RenewalReadiness?
+  apiKeys          DealerApiKey[]
+  webhooks         DealerWebhook[]
 
   @@map("dealers")
 }
@@ -1594,4 +1596,39 @@ model RenewalReadiness {
   notes                 String?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
+}
+
+// ─── API Keys & Webhooks ──────────────────────────────────────────────────────
+
+model DealerApiKey {
+  id          String    @id @default(cuid())
+  dealerId    String
+  dealer      Dealer    @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  name        String
+  keyHash     String    @unique
+  keyPrefix   String
+  permissions String[]  @default(["inventory:write","leads:read"])
+  isActive    Boolean   @default(true)
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("dealer_api_keys")
+}
+
+model DealerWebhook {
+  id          String    @id @default(cuid())
+  dealerId    String
+  dealer      Dealer    @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  url         String
+  events      String[]
+  secret      String
+  isActive    Boolean   @default(true)
+  lastFiredAt DateTime?
+  failCount   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("dealer_webhooks")
 }
