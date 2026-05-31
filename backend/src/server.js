@@ -47,6 +47,12 @@ const prospectsRoutes = require('./routes/prospects');
 const demoBookingsRoutes = require('./routes/demoBookings');
 const growthAdminRoutes = require('./routes/growthAdmin');
 const feedbackRoutes = require('./routes/feedback');
+const closingRoutes = require('./routes/closing');
+const proposalRoutes = require('./routes/proposals');
+const agreementRoutes = require('./routes/agreements');
+const invoicesClosingRoutes = require('./routes/invoices');
+const successScoreRoutes = require('./routes/successScores');
+const churnRiskRoutes = require('./routes/churnRisk');
 
 // Register V8Atlas providers if enabled
 require('./services/v8atlas/V8AtlasAdapter').registerV8AtlasProviders();
@@ -224,6 +230,12 @@ app.use('/api', prospectsRoutes);
 app.use('/api', demoBookingsRoutes);
 app.use('/api', growthAdminRoutes);
 app.use('/api', feedbackRoutes);
+app.use('/api', closingRoutes);
+app.use('/api', proposalRoutes);
+app.use('/api', agreementRoutes);
+app.use('/api', invoicesClosingRoutes);
+app.use('/api', successScoreRoutes);
+app.use('/api', churnRiskRoutes);
 
 // ─── Job queue poll loop ──────────────────────────────────────────────────────
 const { startPolling } = require('./services/queue/jobQueue');

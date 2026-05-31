@@ -35,6 +35,8 @@ import ForDealers from './pages/ForDealers';
 import FoundingDealer from './pages/FoundingDealer';
 import FoundingDealersCRM from './pages/admin/FoundingDealersCRM';
 import GrowthDashboard from './pages/admin/GrowthDashboard';
+import ClosingCenter from './pages/admin/ClosingCenter';
+import OnboardingCenter from './pages/admin/OnboardingCenter';
 import BookDemo from './pages/BookDemo';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
@@ -89,6 +91,8 @@ function AppRoutes() {
           <Route path="/for-dealers/founding" element={<FoundingDealer />} />
           <Route path="/admin/founding-dealers" element={<ProtectedRoute roles={['admin']}><FoundingDealersCRM /></ProtectedRoute>} />
           <Route path="/admin/growth" element={<ProtectedRoute roles={['admin']}><GrowthDashboard /></ProtectedRoute>} />
+          <Route path="/admin/closing" element={<ProtectedRoute roles={['admin']}><ClosingCenter /></ProtectedRoute>} />
+          <Route path="/admin/onboarding" element={<ProtectedRoute roles={['admin']}><OnboardingCenter /></ProtectedRoute>} />
           <Route path="/book-demo" element={<BookDemo />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
@@ -131,6 +135,8 @@ function AppRoutes() {
                 <li><a href="/for-dealers/founding" className="hover:text-white transition-colors">Founding Dealer Program</a></li>
                 <li><a href="/dealer/apply" className="hover:text-white transition-colors">Apply as Dealer</a></li>
                 <li><a href="/book-demo" className="hover:text-white transition-colors">Book a Demo</a></li>
+                <li><a href="/admin/closing" className="hover:text-white transition-colors">Closing Center</a></li>
+                <li><a href="/admin/onboarding" className="hover:text-white transition-colors">Onboarding Center</a></li>
               </ul>
             </div>
             <div>

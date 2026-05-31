@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Users, CalendarCheck, TrendingUp, Trophy, DollarSign, XCircle, CheckCircle, BarChart2 } from 'lucide-react';
 import api from '../../api/client';
@@ -73,7 +74,126 @@ const GOALS = [
   { label: 'First paying dealer', check: (d) => (d?.dealers?.won || 0) >= 1 },
 ];
 
+function loadBullets(key, defaults) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : defaults;
+  } catch {
+    return defaults;
+  }
+}
+
+function BulletEditor({ storageKey, title, defaults }) {
+  const [items, setItems] = useState(() => loadBullets(storageKey, defaults));
+  useEffect(() => { localStorage.setItem(storageKey, JSON.stringify(items)); }, [storageKey, items]);
+  return (
+    <div className="card p-4 space-y-2">
+      <p className="text-xs font-bold text-slatetext uppercase tracking-wide">{title}</p>
+      {items.map((item, i) => (
+        <input
+          key={i}
+          className="input w-full text-sm"
+          value={item}
+          onChange={e => setItems(arr => arr.map((v, j) => j === i ? e.target.value : v))}
+          placeholder={`Bullet ${i + 1}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ExecutiveView() {
+  const { data: closingSummary } = useQuery({
+    queryKey: ['admin-closing-summary'],
+    queryFn: () => api.get('/admin/closing/summary').then(r => r.data),
+  });
+  const { data: churnRisks } = useQuery({
+    queryKey: ['admin-churn-risk'],
+    queryFn: () => api.get('/admin/churn-risk').then(r => r.data),
+  });
+
+  const risks = Array.isArray(churnRisks) ? churnRisks : churnRisks?.risks || [];
+  const topRisks = risks.slice(0, 3);
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+      {/* Dealer #1 Status */}
+      <div className="card p-5 col-span-1">
+        <p className="text-xs font-bold text-slatetext uppercase tracking-wide mb-3">Dealer #1 Status</p>
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div>
+            <p className="text-xs text-slatetext">Current MRR</p>
+            <p className="font-bold text-ink">₱0</p>
+          </div>
+          <div>
+            <p className="text-xs text-slatetext">Pipeline MRR</p>
+            <p className="font-bold text-ink">₱{(closingSummary?.totalPipeline || 0).toLocaleString()}</p>
+          </div>
+        </div>
+        <div className="mt-3 space-y-1 text-sm">
+          {[
+            { label: 'Agreement', value: '—' },
+            { label: 'Invoice', value: '—' },
+            { label: 'Onboarding', value: '—' },
+            { label: 'Renewal Probability', value: '—' },
+          ].map(({ label, value }) => (
+            <div key={label} className="flex justify-between">
+              <span className="text-slatetext text-xs">{label}</span>
+              <span className="font-semibold text-ink text-xs">{value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Churn Risk */}
+      <div className="card p-5">
+        <p className="text-xs font-bold text-slatetext uppercase tracking-wide mb-3">
+          Churn Risk
+          {risks.length > 0 && (
+            <span className="ml-2 inline-flex items-center rounded-full bg-red-100 text-red-700 px-2 py-0.5 text-[10px]">
+              {risks.length} open
+            </span>
+          )}
+        </p>
+        {topRisks.length === 0 ? (
+          <p className="text-xs text-slatetext">No churn risks detected.</p>
+        ) : (
+          <div className="space-y-2">
+            {topRisks.map((r, i) => (
+              <div key={i} className="flex items-center justify-between text-sm">
+                <span className="text-ink font-medium truncate">{r.dealerName || r.name || '—'}</span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-xs text-slatetext">{r.trigger || r.topTrigger || '—'}</span>
+                  <span className="inline-flex items-center rounded-full bg-red-100 text-red-700 px-2 py-0.5 text-[10px] font-bold">
+                    {r.riskScore ?? r.score ?? '—'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Top Blockers */}
+      <BulletEditor
+        storageKey="exec_blockers"
+        title="Top Blockers"
+        defaults={['', '', '']}
+      />
+
+      {/* Top Opportunities */}
+      <BulletEditor
+        storageKey="exec_opportunities"
+        title="Top Opportunities"
+        defaults={['', '', '']}
+      />
+    </div>
+  );
+}
+
 export default function GrowthDashboard() {
+  const [execView, setExecView] = useState(false);
+
   const { data: growth, isLoading } = useQuery({
     queryKey: ['admin-growth'],
     queryFn: () => api.get('/admin/growth').then(r => r.data),
@@ -104,10 +224,22 @@ export default function GrowthDashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-bold text-ink">Growth Dashboard</h1>
-        <p className="text-sm text-slatetext mt-1">Path to first 5 paying dealers</p>
+      <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="text-xl font-bold text-ink">Growth Dashboard</h1>
+          <p className="text-sm text-slatetext mt-1">Path to first 5 paying dealers</p>
+        </div>
+        <button
+          onClick={() => setExecView(v => !v)}
+          className={`rounded-lg border px-4 py-2 text-xs font-semibold transition-colors ${
+            execView ? 'bg-deepblue text-white border-deepblue' : 'border-cardborder text-slatetext hover:text-ink hover:bg-softbg'
+          }`}
+        >
+          {execView ? 'Full Dashboard' : 'Executive View'}
+        </button>
       </div>
+
+      {execView && <ExecutiveView />}
 
       {/* Progress bar — 5 founding dealer slots */}
       <div className="card p-5">

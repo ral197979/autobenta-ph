@@ -253,6 +253,10 @@ model Dealer {
   dealerMetrics    DealerMetrics?
   application      DealerApplication?
   invoices         Invoice[]
+  closingInvoices  ClosingInvoice[]
+  successScore     DealerSuccessScore?
+  churnRisks       ChurnRisk[]
+  caseStudies      CaseStudy[]
   usageMetrics     UsageMetric[]
   automationRules  AutomationRule[]
   featuredListings FeaturedListing[]
@@ -1263,8 +1267,15 @@ model DealerProspect {
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
 
+  // Closing kit fields
+  closingStage     String?
+  nextAction       String?
+  riskFlags        String[]       @default([])
+  ownedBy          String?
+
   activities       ProspectActivity[]
   demoBookings     DemoBooking[]
+  proposals        Proposal[]
 }
 
 model ProspectActivity {
@@ -1370,4 +1381,124 @@ model NPSResponse {
   score     Int
   comment   String?
   createdAt DateTime @default(now())
+}
+
+// ─── Dealer Closing Kit ───────────────────────────────────────────────────────
+
+model Proposal {
+  id               String         @id @default(cuid())
+  dealerProspectId String
+  dealerProspect   DealerProspect @relation(fields: [dealerProspectId], references: [id])
+  dealerName       String
+  contactName      String
+  location         String?
+  currentProcess   String?
+  painPoints       String?
+  recommendedPlan  String         @default("founding_dealer")
+  monthlyVehicles  Int?
+  avgGrossProfit   Int?
+  projectedLeads   Int?
+  roiEstimate      Json?
+  pricingMonthly   Int            @default(3599)
+  discount         Int            @default(0)
+  status           String         @default("draft")
+  sentAt           DateTime?
+  viewedAt         DateTime?
+  acceptedAt       DateTime?
+  notes            String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  agreement        Agreement?
+}
+
+model Agreement {
+  id           String    @id @default(cuid())
+  proposalId   String    @unique
+  proposal     Proposal  @relation(fields: [proposalId], references: [id])
+  version      String    @default("1.0")
+  status       String    @default("generated")
+  generatedAt  DateTime  @default(now())
+  sentAt       DateTime?
+  viewedAt     DateTime?
+  signedAt     DateTime?
+  signerName   String?
+  signerEmail  String?
+  signerTitle  String?
+  auditLog     Json      @default("[]")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  invoice      ClosingInvoice?
+}
+
+model ClosingInvoice {
+  id            String     @id @default(cuid())
+  agreementId   String?    @unique
+  agreement     Agreement? @relation(fields: [agreementId], references: [id])
+  dealerId      String?
+  dealer        Dealer?    @relation(fields: [dealerId], references: [id])
+  invoiceNumber String     @unique
+  dealerName    String
+  dealerEmail   String
+  planName      String     @default("Founding Dealer Plan")
+  billingPeriod String
+  amount        Int
+  discount      Int        @default(0)
+  totalAmount   Int
+  status        String     @default("draft")
+  issuedAt      DateTime?
+  dueDate       DateTime?
+  paidAt        DateTime?
+  paymentMethod String?
+  paymentRef    String?
+  notes         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model DealerSuccessScore {
+  id               String   @id @default(cuid())
+  dealerId         String   @unique
+  dealer           Dealer   @relation(fields: [dealerId], references: [id])
+  loginFrequency   Int      @default(0)
+  listingsAdded    Int      @default(0)
+  leadResponseRate Float    @default(0)
+  crmUsageScore    Int      @default(0)
+  inventoryQuality Int      @default(0)
+  supportRequests  Int      @default(0)
+  totalScore       Int      @default(0)
+  healthStatus     String   @default("watch")
+  calculatedAt     DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model ChurnRisk {
+  id                String    @id @default(cuid())
+  dealerId          String
+  dealer            Dealer    @relation(fields: [dealerId], references: [id])
+  riskScore         Int
+  triggers          Json      @default("[]")
+  recommendedAction String?
+  status            String    @default("open")
+  resolvedAt        DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model CaseStudy {
+  id                  String    @id @default(cuid())
+  dealerId            String
+  dealer              Dealer    @relation(fields: [dealerId], references: [id])
+  title               String
+  summary             String?
+  leadsGenerated      Int?
+  responseImprovement String?
+  crmAdoption         String?
+  revenueImpact       String?
+  timeSaved           String?
+  testimonial         String?
+  status              String    @default("draft")
+  publishedAt         DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 }
