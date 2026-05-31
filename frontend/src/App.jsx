@@ -33,6 +33,9 @@ import DealerFeatured from './pages/dealer/DealerFeatured';
 import RevenueInsights from './pages/admin/RevenueInsights';
 import ForDealers from './pages/ForDealers';
 import FoundingDealer from './pages/FoundingDealer';
+import FoundingDealersCRM from './pages/admin/FoundingDealersCRM';
+import GrowthDashboard from './pages/admin/GrowthDashboard';
+import BookDemo from './pages/BookDemo';
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth();
@@ -81,6 +84,9 @@ function AppRoutes() {
           <Route path="/safe-buying" element={<SafeBuying />} />
           <Route path="/for-dealers" element={<ForDealers />} />
           <Route path="/for-dealers/founding" element={<FoundingDealer />} />
+          <Route path="/admin/founding-dealers" element={<ProtectedRoute roles={['admin']}><FoundingDealersCRM /></ProtectedRoute>} />
+          <Route path="/admin/growth" element={<ProtectedRoute roles={['admin']}><GrowthDashboard /></ProtectedRoute>} />
+          <Route path="/book-demo" element={<BookDemo />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
@@ -118,6 +124,7 @@ function AppRoutes() {
                 <li><a href="/for-dealers" className="hover:text-white transition-colors">Dealer Platform</a></li>
                 <li><a href="/for-dealers/founding" className="hover:text-white transition-colors">Founding Dealer Program</a></li>
                 <li><a href="/dealer/apply" className="hover:text-white transition-colors">Apply as Dealer</a></li>
+                <li><a href="/book-demo" className="hover:text-white transition-colors">Book a Demo</a></li>
               </ul>
             </div>
             <div>

@@ -257,6 +257,7 @@ model Dealer {
   automationRules  AutomationRule[]
   featuredListings FeaturedListing[]
   leadCredits      LeadCredit?
+  successPlan      DealerSuccessPlan?
 
   @@map("dealers")
 }
@@ -1151,4 +1152,211 @@ model JobQueue {
   @@index([status, nextRetryAt])
   @@index([type, status])
   @@map("job_queue")
+}
+
+// ─── Dealer Acquisition Engine ────────────────────────────────────────────────
+
+enum ProspectStage {
+  prospect
+  contacted
+  demo_scheduled
+  demo_completed
+  proposal_sent
+  negotiating
+  won
+  lost
+}
+
+enum DemoType {
+  marketplace
+  crm
+  v8atlas
+  full_platform
+}
+
+enum DemoStatus {
+  pending
+  confirmed
+  completed
+  cancelled
+  no_show
+}
+
+enum TicketStatus {
+  open
+  in_progress
+  resolved
+  closed
+}
+
+enum TicketPriority {
+  low
+  normal
+  high
+  urgent
+}
+
+enum FeedbackCategory {
+  onboarding
+  crm
+  listings
+  leads
+  billing
+  general
+}
+
+enum FeatureRequestStatus {
+  open
+  planned
+  in_progress
+  shipped
+  declined
+}
+
+enum RenewalLikelihood {
+  high
+  medium
+  low
+  at_risk
+  unknown
+}
+
+enum RiskLevel {
+  low
+  medium
+  high
+  critical
+}
+
+model DealerProspect {
+  id               String         @id @default(cuid())
+  dealerName       String
+  contactName      String
+  phone            String?
+  email            String?
+  location         String?
+  branches         Int            @default(1)
+  inventorySize    String?
+  currentSystem    String?
+  source           String?
+  stage            ProspectStage  @default(prospect)
+  owner            String?
+  lastContactAt    DateTime?
+  nextFollowUpAt   DateTime?
+  status           String         @default("active")
+  expectedMrr      Int?
+  closeProbability Int            @default(10)
+  notes            String?
+  lostReason       String?
+  wonAt            DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  activities       ProspectActivity[]
+  demoBookings     DemoBooking[]
+}
+
+model ProspectActivity {
+  id          String         @id @default(cuid())
+  prospectId  String
+  prospect    DealerProspect @relation(fields: [prospectId], references: [id], onDelete: Cascade)
+  type        String
+  content     String
+  createdBy   String?
+  createdAt   DateTime       @default(now())
+}
+
+model DemoBooking {
+  id              String          @id @default(cuid())
+  prospectId      String?
+  prospect        DealerProspect? @relation(fields: [prospectId], references: [id])
+  name            String
+  company         String
+  email           String
+  phone           String?
+  inventoryCount  String?
+  currentProcess  String?
+  challenges      String?
+  demoType        DemoType        @default(full_platform)
+  scheduledAt     DateTime
+  status          DemoStatus      @default(pending)
+  notes           String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model CompetitorProfile {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  category    String
+  pricing     String?
+  strengths   Json     @default("[]")
+  weaknesses  Json     @default("[]")
+  objections  Json     @default("[]")
+  positioning String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model DealerSuccessPlan {
+  id                   String            @id @default(cuid())
+  dealerId             String            @unique
+  dealer               Dealer            @relation(fields: [dealerId], references: [id])
+  inventoryImported    Boolean           @default(false)
+  firstListingLive     Boolean           @default(false)
+  firstLeadReceived    Boolean           @default(false)
+  firstLeadResponded   Boolean           @default(false)
+  firstSaleReported    Boolean           @default(false)
+  subscriptionActive   Boolean           @default(false)
+  crmAdoptionRate      Float?
+  renewalLikelihood    RenewalLikelihood @default(unknown)
+  riskLevel            RiskLevel         @default(low)
+  thirtyDayScore       Int?
+  notes                String?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+}
+
+model FeatureRequest {
+  id            String               @id @default(cuid())
+  dealerId      String?
+  title         String
+  description   String
+  frequency     Int                  @default(1)
+  priority      String               @default("low")
+  revenueImpact Int?
+  status        FeatureRequestStatus @default(open)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+}
+
+model DealerFeedback {
+  id        String           @id @default(cuid())
+  dealerId  String?
+  category  FeedbackCategory @default(general)
+  rating    Int?
+  content   String
+  createdAt DateTime         @default(now())
+}
+
+model SupportTicket {
+  id          String         @id @default(cuid())
+  dealerId    String?
+  subject     String
+  description String
+  category    String         @default("general")
+  priority    TicketPriority @default(normal)
+  status      TicketStatus   @default(open)
+  resolution  String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model NPSResponse {
+  id        String   @id @default(cuid())
+  dealerId  String?
+  score     Int
+  comment   String?
+  createdAt DateTime @default(now())
 }

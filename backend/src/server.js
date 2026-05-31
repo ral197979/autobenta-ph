@@ -43,6 +43,10 @@ const dealerApplicationRoutes = require('./routes/dealerApplication');
 const billingRoutes = require('./routes/billing');
 const featuredRoutes = require('./routes/featured');
 const creditsRoutes = require('./routes/credits');
+const prospectsRoutes = require('./routes/prospects');
+const demoBookingsRoutes = require('./routes/demoBookings');
+const growthAdminRoutes = require('./routes/growthAdmin');
+const feedbackRoutes = require('./routes/feedback');
 
 // Register V8Atlas providers if enabled
 require('./services/v8atlas/V8AtlasAdapter').registerV8AtlasProviders();
@@ -216,6 +220,10 @@ app.use('/api/dealers', dealerApplicationRoutes);
 app.use('/api', billingRoutes);
 app.use('/api', featuredRoutes);
 app.use('/api', creditsRoutes);
+app.use('/api', prospectsRoutes);
+app.use('/api', demoBookingsRoutes);
+app.use('/api', growthAdminRoutes);
+app.use('/api', feedbackRoutes);
 
 // ─── Job queue poll loop ──────────────────────────────────────────────────────
 const { startPolling } = require('./services/queue/jobQueue');
