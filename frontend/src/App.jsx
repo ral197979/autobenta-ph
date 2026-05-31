@@ -30,6 +30,8 @@ import DealerOnboarding from './pages/dealer/DealerOnboarding';
 import DealerOperations from './pages/admin/DealerOperations';
 import DealerCustomers from './pages/dealer/DealerCustomers';
 import DealerFeatured from './pages/dealer/DealerFeatured';
+import DealerIntegrations from './pages/dealer/DealerIntegrations';
+import NetworkDashboard from './pages/admin/NetworkDashboard';
 import RevenueInsights from './pages/admin/RevenueInsights';
 import ForDealers from './pages/ForDealers';
 import FoundingDealer from './pages/FoundingDealer';
@@ -78,6 +80,7 @@ function AppRoutes() {
             <Route path="onboarding" element={<DealerOnboarding />} />
             <Route path="customers" element={<DealerCustomers />} />
             <Route path="featured" element={<DealerFeatured />} />
+            <Route path="integrations" element={<DealerIntegrations />} />
           </Route>
           <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminPanel /></ProtectedRoute>} />
           <Route path="/admin/dealers" element={<ProtectedRoute roles={['admin']}><DealerOperations /></ProtectedRoute>} />
@@ -95,6 +98,7 @@ function AppRoutes() {
           <Route path="/admin/closing" element={<ProtectedRoute roles={['admin']}><ClosingCenter /></ProtectedRoute>} />
           <Route path="/admin/onboarding" element={<ProtectedRoute roles={['admin']}><OnboardingCenter /></ProtectedRoute>} />
           <Route path="/admin/dealer-success" element={<ProtectedRoute roles={['admin']}><DealerSuccess /></ProtectedRoute>} />
+          <Route path="/admin/network" element={<ProtectedRoute roles={['admin']}><NetworkDashboard /></ProtectedRoute>} />
           <Route path="/book-demo" element={<BookDemo />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />

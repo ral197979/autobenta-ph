@@ -2,7 +2,7 @@ import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   Building2, LayoutDashboard, Users, Car, BarChart2, Settings,
-  CreditCard, Plus, ChevronRight, BadgeCheck, Crown, Star,
+  CreditCard, Plus, ChevronRight, BadgeCheck, Crown, Star, Plug,
 } from 'lucide-react';
 import api from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
@@ -14,6 +14,7 @@ const NAV = [
   { to: '/dealer/analytics', icon: BarChart2, label: 'Analytics' },
   { to: '/dealer/customers', icon: Users, label: 'Customers' },
   { to: '/dealer/featured', icon: Star, label: 'Featured' },
+  { to: '/dealer/integrations', icon: Plug, label: 'Integrations' },
   { to: '/dealer/settings', icon: Settings, label: 'Settings' },
   { to: '/dealer/subscription', icon: CreditCard, label: 'Subscription' },
 ];

@@ -174,6 +174,13 @@ enum DocumentType {
   other
 }
 
+enum DealerSourceType {
+  MANUAL
+  CSV
+  V8ATLAS
+  API
+}
+
 // ─── Core Models ──────────────────────────────────────────────────────────────
 
 model User {
@@ -238,6 +245,8 @@ model Dealer {
   firstLeadAt     DateTime?
   firstSaleAt     DateTime?
   onboardingStep  Int          @default(0)   // 0-5 steps completed
+  sourceType      DealerSourceType @default(MANUAL)
+  integrationMeta Json?            // stores provider-specific config (api keys, sync timestamps, etc.)
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -277,6 +286,8 @@ model VehicleListing {
   dealerId       String?
   dealer         Dealer?        @relation(fields: [dealerId], references: [id])
   sellerType     SellerType     @default(private)
+  inventorySource DealerSourceType? // which system this listing came from
+  externalId      String?           // ID in the source system (e.g. V8Atlas vehicle ID)
   status         ListingStatus  @default(draft)
 
   make           String
@@ -360,6 +371,7 @@ model VehicleListing {
   metrics              ListingMetrics?
   featuredListings     FeaturedListing[]
 
+  @@unique([externalId, dealerId])
   @@index([status])
   @@index([make, model])
   @@index([city])
