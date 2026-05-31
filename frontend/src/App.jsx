@@ -31,6 +31,8 @@ import DealerOperations from './pages/admin/DealerOperations';
 import DealerCustomers from './pages/dealer/DealerCustomers';
 import DealerFeatured from './pages/dealer/DealerFeatured';
 import RevenueInsights from './pages/admin/RevenueInsights';
+import ForDealers from './pages/ForDealers';
+import FoundingDealer from './pages/FoundingDealer';
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth();
@@ -77,12 +79,14 @@ function AppRoutes() {
           <Route path="/ownership-transfer" element={<OwnershipTransfer />} />
           <Route path="/insurance" element={<Insurance />} />
           <Route path="/safe-buying" element={<SafeBuying />} />
+          <Route path="/for-dealers" element={<ForDealers />} />
+          <Route path="/for-dealers/founding" element={<FoundingDealer />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
       <footer className="bg-gray-900 text-gray-400 py-10 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 mb-8">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5 mb-8">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Buy</p>
               <ul className="space-y-2 text-sm">
@@ -106,6 +110,14 @@ function AppRoutes() {
               <ul className="space-y-2 text-sm">
                 <li><a href="/sell" className="hover:text-white transition-colors">List Your Car</a></li>
                 <li><a href="/dashboard" className="hover:text-white transition-colors">My Listings</a></li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Dealers</p>
+              <ul className="space-y-2 text-sm">
+                <li><a href="/for-dealers" className="hover:text-white transition-colors">Dealer Platform</a></li>
+                <li><a href="/for-dealers/founding" className="hover:text-white transition-colors">Founding Dealer Program</a></li>
+                <li><a href="/dealer/apply" className="hover:text-white transition-colors">Apply as Dealer</a></li>
               </ul>
             </div>
             <div>
