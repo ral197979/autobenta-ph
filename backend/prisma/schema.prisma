@@ -262,6 +262,10 @@ model Dealer {
   featuredListings FeaturedListing[]
   leadCredits      LeadCredit?
   successPlan      DealerSuccessPlan?
+  timeToValue      TimeToValue?
+  adoptionSnapshots AdoptionSnapshot[]
+  csTasks          CustomerSuccessTask[]
+  renewalReadiness RenewalReadiness?
 
   @@map("dealers")
 }
@@ -1501,4 +1505,81 @@ model CaseStudy {
   publishedAt         DateTime?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
+}
+
+// ─── Dealer Success System ────────────────────────────────────────────────────
+
+model TimeToValue {
+  id                    String    @id @default(cuid())
+  dealerId              String    @unique
+  dealer                Dealer    @relation(fields: [dealerId], references: [id])
+  agreementSignedAt     DateTime?
+  invoicePaidAt         DateTime?
+  firstLoginAt          DateTime?
+  firstListingAt        DateTime?
+  firstLeadAt           DateTime?
+  firstResponseAt       DateTime?
+  firstQualifiedLeadAt  DateTime?
+  firstSaleAt           DateTime?
+  daysToFirstLogin      Int?
+  daysToFirstListing    Int?
+  daysToFirstLead       Int?
+  daysToFirstResponse   Int?
+  daysToFirstSale       Int?
+  bottleneck            String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model AdoptionSnapshot {
+  id                 String   @id @default(cuid())
+  dealerId           String
+  dealer             Dealer   @relation(fields: [dealerId], references: [id])
+  weekNumber         Int
+  year               Int
+  logins             Int      @default(0)
+  listingsAdded      Int      @default(0)
+  leadsUpdated       Int      @default(0)
+  crmNotesAdded      Int      @default(0)
+  pipelineMovements  Int      @default(0)
+  analyticsViews     Int      @default(0)
+  lowAdoptionAlert   Boolean  @default(false)
+  alertReason        String?
+  createdAt          DateTime @default(now())
+
+  @@unique([dealerId, weekNumber, year])
+}
+
+model CustomerSuccessTask {
+  id           String    @id @default(cuid())
+  dealerId     String
+  dealer       Dealer    @relation(fields: [dealerId], references: [id])
+  dayNumber    Int
+  taskType     String
+  title        String
+  description  String
+  dueDate      DateTime
+  status       String    @default("pending")
+  completedAt  DateTime?
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model RenewalReadiness {
+  id                    String    @id @default(cuid())
+  dealerId              String    @unique
+  dealer                Dealer    @relation(fields: [dealerId], references: [id])
+  renewalDate           DateTime?
+  daysUntilRenewal      Int?
+  healthReviewDone      Boolean   @default(false)
+  usageReviewDone       Boolean   @default(false)
+  roiReviewDone         Boolean   @default(false)
+  expansionOpportunity  String?
+  renewalProposalSent   Boolean   @default(false)
+  renewalConfirmed      Boolean   @default(false)
+  readinessScore        Int       @default(0)
+  notes                 String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 }

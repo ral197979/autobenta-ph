@@ -37,6 +37,7 @@ import FoundingDealersCRM from './pages/admin/FoundingDealersCRM';
 import GrowthDashboard from './pages/admin/GrowthDashboard';
 import ClosingCenter from './pages/admin/ClosingCenter';
 import OnboardingCenter from './pages/admin/OnboardingCenter';
+import DealerSuccess from './pages/admin/DealerSuccess';
 import BookDemo from './pages/BookDemo';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
@@ -93,6 +94,7 @@ function AppRoutes() {
           <Route path="/admin/growth" element={<ProtectedRoute roles={['admin']}><GrowthDashboard /></ProtectedRoute>} />
           <Route path="/admin/closing" element={<ProtectedRoute roles={['admin']}><ClosingCenter /></ProtectedRoute>} />
           <Route path="/admin/onboarding" element={<ProtectedRoute roles={['admin']}><OnboardingCenter /></ProtectedRoute>} />
+          <Route path="/admin/dealer-success" element={<ProtectedRoute roles={['admin']}><DealerSuccess /></ProtectedRoute>} />
           <Route path="/book-demo" element={<BookDemo />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
@@ -137,6 +139,7 @@ function AppRoutes() {
                 <li><a href="/book-demo" className="hover:text-white transition-colors">Book a Demo</a></li>
                 <li><a href="/admin/closing" className="hover:text-white transition-colors">Closing Center</a></li>
                 <li><a href="/admin/onboarding" className="hover:text-white transition-colors">Onboarding Center</a></li>
+                <li><a href="/admin/dealer-success" className="hover:text-white transition-colors">Dealer Success</a></li>
               </ul>
             </div>
             <div>
