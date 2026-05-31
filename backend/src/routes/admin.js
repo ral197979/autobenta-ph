@@ -187,6 +187,224 @@ router.patch('/dealers/:id/verify', async (req, res, next) => {
   }
 });
 
+// ─── Extended Dealer Admin Routes ─────────────────────────────────────────────
+
+// GET /admin/dealers/:id — full dealer profile
+router.get('/dealers/:id', async (req, res, next) => {
+  try {
+    const dealer = await prisma.dealer.findUnique({
+      where: { id: req.params.id },
+      include: {
+        user: { select: { id: true, name: true, email: true, phone: true, isSuspended: true, suspendReason: true, role: true } },
+        subscription: true,
+        dealerMetrics: true,
+        branches: true,
+        _count: { select: { listings: true, leads: true, members: true } },
+      },
+    });
+    if (!dealer) return res.status(404).json({ error: 'Dealer not found' });
+    res.json(dealer);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// PATCH /admin/dealers/:id/suspend — suspend or unsuspend a dealer
+router.patch('/dealers/:id/suspend', async (req, res, next) => {
+  try {
+    const { suspend, reason } = req.body;
+    if (typeof suspend !== 'boolean') {
+      return res.status(400).json({ error: 'suspend (boolean) is required' });
+    }
+
+    const dealer = await prisma.dealer.findUnique({
+      where: { id: req.params.id },
+      select: { userId: true },
+    });
+    if (!dealer) return res.status(404).json({ error: 'Dealer not found' });
+
+    await prisma.user.update({
+      where: { id: dealer.userId },
+      data: {
+        isSuspended: suspend,
+        suspendReason: suspend ? (reason ?? null) : null,
+      },
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        userId: req.user.id,
+        action: suspend ? 'DEALER_SUSPENDED' : 'DEALER_UNSUSPENDED',
+        entityType: 'Dealer',
+        entityId: req.params.id,
+        details: { suspend, reason },
+      },
+    });
+
+    res.json({ success: true, dealerId: req.params.id, suspended: suspend });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// PATCH /admin/dealers/:id — update dealer tier and/or isVerified
+router.patch('/dealers/:id', async (req, res, next) => {
+  try {
+    const { tier, isVerified } = req.body;
+    const data = {
+      ...(tier !== undefined && { tier }),
+      ...(isVerified !== undefined && { isVerified }),
+    };
+
+    if (Object.keys(data).length === 0) {
+      return res.status(400).json({ error: 'Provide at least one field: tier or isVerified' });
+    }
+
+    const dealer = await prisma.dealer.update({
+      where: { id: req.params.id },
+      data,
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        userId: req.user.id,
+        action: 'DEALER_UPDATED',
+        entityType: 'Dealer',
+        entityId: req.params.id,
+        details: data,
+      },
+    });
+
+    res.json(dealer);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ─── Dealer Application Admin Routes ──────────────────────────────────────────
+
+// GET /admin/applications — list dealer applications
+router.get('/applications', async (req, res, next) => {
+  try {
+    const { status } = req.query;
+    const where = status ? { status } : {};
+
+    const applications = await prisma.dealerApplication.findMany({
+      where,
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+      },
+      orderBy: { submittedAt: 'desc' },
+    });
+
+    res.json(applications);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// PATCH /admin/applications/:id — review application (approve or reject)
+router.patch('/applications/:id', async (req, res, next) => {
+  try {
+    const { action, adminNotes, rejectionReason } = req.body;
+
+    if (!['approve', 'reject'].includes(action)) {
+      return res.status(400).json({ error: 'action must be "approve" or "reject"' });
+    }
+
+    const application = await prisma.dealerApplication.findUnique({
+      where: { id: req.params.id },
+      include: { user: true },
+    });
+    if (!application) return res.status(404).json({ error: 'Application not found' });
+
+    if (action === 'reject') {
+      const updated = await prisma.dealerApplication.update({
+        where: { id: req.params.id },
+        data: {
+          status: 'rejected',
+          reviewedBy: req.user.id,
+          reviewedAt: new Date(),
+          adminNotes: adminNotes ?? null,
+          rejectionReason: rejectionReason ?? null,
+        },
+      });
+
+      await prisma.auditLog.create({
+        data: {
+          userId: req.user.id,
+          action: 'APPLICATION_REJECTED',
+          entityType: 'DealerApplication',
+          entityId: req.params.id,
+          details: { rejectionReason, adminNotes },
+        },
+      });
+
+      return res.json(updated);
+    }
+
+    // approve — create Dealer record, assign plan, update user role
+    const plan = application.selectedPlan ?? 'free';
+
+    const dealer = await prisma.$transaction(async (tx) => {
+      // Create dealer
+      const newDealer = await tx.dealer.create({
+        data: {
+          userId: application.userId,
+          businessName: application.businessName ?? application.user.name,
+          address: application.address ?? '',
+          city: application.city ?? '',
+        },
+      });
+
+      // Create subscription
+      await tx.dealerSubscription.create({
+        data: {
+          dealerId: newDealer.id,
+          plan,
+          status: 'active',
+        },
+      });
+
+      // Update user role to dealer
+      await tx.user.update({
+        where: { id: application.userId },
+        data: { role: 'dealer' },
+      });
+
+      // Mark application approved and link to dealer
+      await tx.dealerApplication.update({
+        where: { id: req.params.id },
+        data: {
+          status: 'approved',
+          dealerId: newDealer.id,
+          reviewedBy: req.user.id,
+          reviewedAt: new Date(),
+          adminNotes: adminNotes ?? null,
+        },
+      });
+
+      return newDealer;
+    });
+
+    await prisma.auditLog.create({
+      data: {
+        userId: req.user.id,
+        action: 'APPLICATION_APPROVED',
+        entityType: 'DealerApplication',
+        entityId: req.params.id,
+        details: { dealerId: dealer.id, plan, adminNotes },
+      },
+    });
+
+    res.json({ application: { id: req.params.id, status: 'approved' }, dealer });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ─── Existing Audit / Financing Routes ────────────────────────────────────────
+
 router.get('/audit-logs', async (req, res, next) => {
   try {
     const logs = await prisma.auditLog.findMany({

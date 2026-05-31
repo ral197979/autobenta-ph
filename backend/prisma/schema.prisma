@@ -102,6 +102,14 @@ enum FraudFlagSeverity {
   critical
 }
 
+enum ApplicationStatus {
+  draft
+  submitted
+  under_review
+  approved
+  rejected
+}
+
 enum DealerActivityType {
   lead_created
   lead_updated
@@ -181,6 +189,7 @@ model User {
   verificationExpiry  DateTime?
 
   dealer              Dealer?
+  dealerApplication   DealerApplication?
   listings            VehicleListing[]
   favorites           Favorite[]
   inquiriesSent       Inquiry[]         @relation("BuyerInquiries")
@@ -233,6 +242,9 @@ model Dealer {
   subscription  DealerSubscription?
   events        MarketplaceEvent[]
   dealerMetrics DealerMetrics?
+  application   DealerApplication?
+  invoices      Invoice[]
+  usageMetrics  UsageMetric[]
 
   @@map("dealers")
 }
@@ -910,4 +922,102 @@ model ConversionFunnel {
 
   @@index([periodStart, periodEnd])
   @@map("conversion_funnels")
+}
+
+// ─── Phase 5: Dealer Growth Platform ─────────────────────────────────────────
+
+model DealerApplication {
+  id              String            @id @default(uuid())
+  userId          String            @unique
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dealerId        String?           @unique
+  dealer          Dealer?           @relation(fields: [dealerId], references: [id], onDelete: SetNull)
+  status          ApplicationStatus @default(draft)
+
+  // Step 1: Business info
+  businessName    String?
+  businessType    String?           // independent | multi_location | enterprise
+  contactName     String?
+  contactPhone    String?
+  address         String?
+  city            String?
+
+  // Step 2: Documents (stored as JSON array of { documentType, url, storageKey })
+  documents       Json?
+
+  // Step 3: Subscription tier selected
+  selectedPlan    String?           // free | verified | pro | enterprise
+
+  // Admin review
+  reviewedBy      String?
+  reviewedAt      DateTime?
+  rejectionReason String?
+  adminNotes      String?
+
+  submittedAt     DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@map("dealer_applications")
+}
+
+model Invoice {
+  id             String   @id @default(uuid())
+  dealerId       String
+  dealer         Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  invoiceNumber  String   @unique
+  amount         Decimal  @db.Decimal(12, 2)
+  currency       String   @default("PHP")
+  status         String   @default("pending")  // pending | paid | failed | refunded | void
+  plan           String?
+  billingCycle   String?  // monthly | annual
+  periodStart    DateTime?
+  periodEnd      DateTime?
+  dueAt          DateTime?
+  paidAt         DateTime?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  payments PaymentRecord[]
+
+  @@index([dealerId])
+  @@index([status])
+  @@map("invoices")
+}
+
+model PaymentRecord {
+  id            String   @id @default(uuid())
+  invoiceId     String
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  dealerId      String
+  amount        Decimal  @db.Decimal(12, 2)
+  currency      String   @default("PHP")
+  processor     String   // stripe | gcash | maya | bank_transfer | manual
+  processorRef  String?  // external transaction ID
+  status        String   @default("pending")  // pending | success | failed | refunded
+  metadata      Json?
+  processedAt   DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([invoiceId])
+  @@index([dealerId])
+  @@map("payment_records")
+}
+
+model UsageMetric {
+  id         String   @id @default(uuid())
+  dealerId   String
+  dealer     Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  metricType String   // active_listings | api_calls | lead_routing | exports
+  value      Int      @default(0)
+  period     String   // YYYY-MM for monthly snapshots
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([dealerId, metricType, period])
+  @@index([dealerId, period])
+  @@map("usage_metrics")
 }

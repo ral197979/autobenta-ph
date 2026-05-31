@@ -25,6 +25,9 @@ import DealerListings from './pages/dealer/DealerListings';
 import DealerAnalytics from './pages/dealer/DealerAnalytics';
 import DealerSettings from './pages/dealer/DealerSettings';
 import DealerSubscription from './pages/dealer/DealerSubscription';
+import DealerApply from './pages/dealer/DealerApply';
+import DealerOnboarding from './pages/dealer/DealerOnboarding';
+import DealerOperations from './pages/admin/DealerOperations';
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth();
@@ -50,6 +53,7 @@ function AppRoutes() {
           <Route path="/ai-wizard" element={<ProtectedRoute roles={['seller', 'dealer', 'admin']}><AIListingWizard /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/dealer-panel" element={<ProtectedRoute roles={['dealer', 'admin']}><DealerPanel /></ProtectedRoute>} />
+          <Route path="/dealer/apply" element={<ProtectedRoute><DealerApply /></ProtectedRoute>} />
           <Route path="/dealer" element={<ProtectedRoute roles={['dealer', 'admin']}><DealerLayout /></ProtectedRoute>}>
             <Route index element={<DealerDashboard />} />
             <Route path="leads" element={<DealerLeads />} />
@@ -57,8 +61,10 @@ function AppRoutes() {
             <Route path="analytics" element={<DealerAnalytics />} />
             <Route path="settings" element={<DealerSettings />} />
             <Route path="subscription" element={<DealerSubscription />} />
+            <Route path="onboarding" element={<DealerOnboarding />} />
           </Route>
           <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminPanel /></ProtectedRoute>} />
+          <Route path="/admin/dealers" element={<ProtectedRoute roles={['admin']}><DealerOperations /></ProtectedRoute>} />
           <Route path="/inspection-services" element={<InspectionServices />} />
           <Route path="/inspections" element={<ProtectedRoute><Inspections /></ProtectedRoute>} />
           <Route path="/financing" element={<Financing />} />
