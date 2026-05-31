@@ -193,6 +193,7 @@ model User {
   verificationRequests VerificationRequest[]
   verificationReviews  VerificationReview[]
   dealerMemberships    DealerMember[]
+  events              MarketplaceEvent[]
 
   @@map("users")
 }
@@ -230,6 +231,8 @@ model Dealer {
   branches      DealerBranch[]
   members       DealerMember[]
   subscription  DealerSubscription?
+  events        MarketplaceEvent[]
+  dealerMetrics DealerMetrics?
 
   @@map("dealers")
 }
@@ -320,6 +323,8 @@ model VehicleListing {
   moderationActions   ListingModerationAction[]
   recentlyViewed      RecentlyViewed[]
   verificationRequests VerificationRequest[]
+  events              MarketplaceEvent[]
+  metrics             ListingMetrics?
 
   @@index([status])
   @@index([make, model])
@@ -785,4 +790,124 @@ model VerificationStatusHistory {
 
   @@index([requestId])
   @@map("verification_status_history")
+}
+
+// ─── Phase 4: Marketplace Analytics ──────────────────────────────────────────
+
+enum EventType {
+  LISTING_VIEW
+  LISTING_SAVE
+  LISTING_SHARE
+  SELLER_CONTACT
+  FINANCING_REQUEST
+  INSPECTION_REQUEST
+  TRANSFER_CHECKLIST_STARTED
+  TRANSFER_CHECKLIST_COMPLETED
+  VEHICLE_HISTORY_VIEWED
+  SAFE_BUYING_VIEWED
+  VERIFICATION_VIEWED
+  LEAD_CREATED
+  LEAD_CONVERTED
+  DEALER_PAGE_VIEW
+  SEARCH_PERFORMED
+  FILTER_APPLIED
+  SALE_RECORDED
+}
+
+model MarketplaceEvent {
+  id             String    @id @default(cuid())
+  eventType      EventType
+  userId         String?
+  sessionId      String
+  listingId      String?
+  dealerId       String?
+  source         String?   // organic, google, facebook, direct, referral, dealer_campaign, marketplace_search
+  device         String?
+  referrer       String?
+  meta           Json?
+  idempotencyKey String?   @unique
+  createdAt      DateTime  @default(now())
+
+  user    User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  listing VehicleListing? @relation(fields: [listingId], references: [id], onDelete: SetNull)
+  dealer  Dealer?         @relation(fields: [dealerId], references: [id], onDelete: SetNull)
+
+  @@index([eventType, createdAt])
+  @@index([listingId, eventType])
+  @@index([dealerId, eventType])
+  @@index([sessionId])
+  @@index([createdAt])
+  @@map("marketplace_events")
+}
+
+model ListingMetrics {
+  id               String         @id @default(cuid())
+  listingId        String         @unique
+  listing          VehicleListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  viewCount        Int            @default(0)
+  saveCount        Int            @default(0)
+  shareCount       Int            @default(0)
+  inquiryCount     Int            @default(0)
+  financingCount   Int            @default(0)
+  inspectionCount  Int            @default(0)
+  performanceScore Int            @default(0)
+  lastCalculatedAt DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@map("listing_metrics")
+}
+
+model DealerMetrics {
+  id                String   @id @default(cuid())
+  dealerId          String   @unique
+  dealer            Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  totalLeads        Int      @default(0)
+  convertedLeads    Int      @default(0)
+  avgResponseTimeMs Int?
+  totalListings     Int      @default(0)
+  activeListings    Int      @default(0)
+  totalViews        Int      @default(0)
+  totalInquiries    Int      @default(0)
+  performanceScore  Int      @default(0)
+  lastCalculatedAt  DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("dealer_metrics")
+}
+
+model AnalyticsSnapshot {
+  id               String   @id @default(cuid())
+  snapshotDate     DateTime @unique
+  totalListings    Int      @default(0)
+  activeListings   Int      @default(0)
+  verifiedListings Int      @default(0)
+  transferReady    Int      @default(0)
+  totalDealers     Int      @default(0)
+  leadVolume       Int      @default(0)
+  inspectionVolume Int      @default(0)
+  financingVolume  Int      @default(0)
+  transferVolume   Int      @default(0)
+  newUsers         Int      @default(0)
+  eventVolume      Int      @default(0)
+  createdAt        DateTime @default(now())
+
+  @@map("analytics_snapshots")
+}
+
+model ConversionFunnel {
+  id           String   @id @default(cuid())
+  periodStart  DateTime
+  periodEnd    DateTime
+  visitors     Int      @default(0)
+  searches     Int      @default(0)
+  listingViews Int      @default(0)
+  inquiries    Int      @default(0)
+  inspections  Int      @default(0)
+  financing    Int      @default(0)
+  transfers    Int      @default(0)
+  sales        Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  @@index([periodStart, periodEnd])
+  @@map("conversion_funnels")
 }

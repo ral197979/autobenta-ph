@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { SlidersHorizontal, X, ArrowUpDown } from 'lucide-react';
 import api from '../api/client';
+import { trackEvent } from '../utils/analytics';
 import CarCard from '../components/CarCard';
 import FilterPanel from '../components/FilterPanel';
 import useGeolocation from '../hooks/useGeolocation';
@@ -53,6 +54,22 @@ export default function Browse() {
   useEffect(() => {
     if (geo.active) setSort('nearby_asc');
   }, [geo.active]);
+
+  // Track SEARCH_PERFORMED — debounced 1s, only when non-empty
+  useEffect(() => {
+    if (!filters.search) return;
+    const t = setTimeout(() => {
+      trackEvent('SEARCH_PERFORMED', { meta: { query: filters.search } });
+    }, 1000);
+    return () => clearTimeout(t);
+  }, [filters.search]);
+
+  // Track FILTER_APPLIED when any non-search filter is set
+  useEffect(() => {
+    const hasFilter = Object.entries(filters).some(([k, v]) => k !== 'search' && k !== 'radius' && v);
+    if (!hasFilter) return;
+    trackEvent('FILTER_APPLIED', { meta: { filters } });
+  }, [filters.make, filters.fuelType, filters.transmission, filters.sellerType, filters.condition]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const buildQuery = () => {
     const isNearby = sort === 'nearby_asc' && geo.active;

@@ -7,8 +7,9 @@ import ModerationQueue from './admin/ModerationQueue';
 import FraudReview from './admin/FraudReview';
 import SellerRiskDashboard from './admin/SellerRiskDashboard';
 import VerificationQueue from './admin/VerificationQueue';
+import MarketplaceAnalytics from './admin/MarketplaceAnalytics';
 
-const TABS = ['overview', 'verifications', 'moderation', 'fraud', 'seller-risk', 'listings', 'users', 'dealers', 'financing', 'logs'];
+const TABS = ['overview', 'analytics', 'verifications', 'moderation', 'fraud', 'seller-risk', 'listings', 'users', 'dealers', 'financing', 'logs'];
 
 export default function AdminPanel() {
   const [tab, setTab] = useState('overview');
@@ -83,6 +84,7 @@ export default function AdminPanel() {
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
         <TabBtn id="overview" icon={BarChart3} label="Overview" />
+        <TabBtn id="analytics" icon={BarChart3} label="Analytics" />
         <TabBtn id="verifications" icon={BadgeCheck} label="Verifications" />
         <TabBtn id="moderation" icon={AlertTriangle} label="Moderation" />
         <TabBtn id="fraud" icon={AlertOctagon} label="Fraud" />
@@ -130,6 +132,8 @@ export default function AdminPanel() {
           </div>
         </div>
       )}
+
+      {tab === 'analytics' && <MarketplaceAnalytics />}
 
       {tab === 'verifications' && (
         <div>

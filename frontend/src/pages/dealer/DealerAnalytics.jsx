@@ -49,10 +49,59 @@ function InventoryAging({ aging }) {
   );
 }
 
+const SCORE_COLORS = {
+  A: 'text-emerald-600 bg-emerald-100',
+  B: 'text-blue-600 bg-blue-100',
+  C: 'text-yellow-600 bg-yellow-100',
+  D: 'text-red-600 bg-red-100',
+};
+
+function ScorecardSection({ scorecard }) {
+  if (!scorecard) return null;
+
+  const rank = scorecard.rank || 'B';
+  const rankColor = SCORE_COLORS[rank] || SCORE_COLORS.B;
+
+  return (
+    <div className="card p-5">
+      <h3 className="font-bold text-sm text-ink mb-4">Performance Score</h3>
+      <div className="flex items-center gap-5">
+        <div className={`h-16 w-16 rounded-2xl flex flex-col items-center justify-center shrink-0 ${rankColor}`}>
+          <span className="text-2xl font-bold leading-none">{rank}</span>
+          <span className="text-xs font-semibold mt-0.5">{scorecard.score ?? '—'}</span>
+        </div>
+        <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-slatetext text-xs">Verified</span>
+            <span className="font-medium text-ink">{scorecard.verified ? 'Yes' : 'No'}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-slatetext text-xs">Tier</span>
+            <span className="font-medium text-ink capitalize">{scorecard.tier || '—'}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-slatetext text-xs">Win Rate</span>
+            <span className="font-medium text-ink">{scorecard.winRate != null ? `${scorecard.winRate}%` : '—'}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-slatetext text-xs">Response Time</span>
+            <span className="font-medium text-ink">{scorecard.responseTime || '—'}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DealerAnalytics() {
   const { data, isLoading } = useQuery({
     queryKey: ['dealer-analytics'],
     queryFn: () => api.get('/dealer/analytics').then(r => r.data),
+  });
+
+  const { data: scorecard } = useQuery({
+    queryKey: ['dealer-scorecard'],
+    queryFn: () => api.get('/dealer/analytics/scorecard').then(r => r.data),
   });
 
   if (isLoading) {
@@ -73,6 +122,8 @@ export default function DealerAnalytics() {
   return (
     <div className="space-y-6">
       <h1 className="text-xl font-bold text-ink">Analytics</h1>
+
+      <ScorecardSection scorecard={scorecard} />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon={Car} label="Active Listings" value={listings.active} sub={`${listings.total} total`} color="text-deepblue bg-deepblue/10" />

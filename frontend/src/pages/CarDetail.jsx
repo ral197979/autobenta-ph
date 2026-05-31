@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { MapPin, Gauge, Fuel, Settings, Calendar, Users, Heart, Share2, AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, MessageCircle, Wrench, CreditCard, Bot, Shield, FileCheck } from 'lucide-react';
 import api from '../api/client';
+import { trackEvent } from '../utils/analytics';
 import { formatPrice, formatMileage, formatRelativeTime, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_COLORS, CONDITION_LABELS } from '../utils/format';
 import { useAuth } from '../context/AuthContext';
 import ReadinessScore from '../components/ReadinessScore';
@@ -32,6 +33,16 @@ export default function CarDetail() {
     queryFn: () => api.get(`/ai/listing/${id}/analysis`).then(r => r.data),
     enabled: !!id,
   });
+
+  useEffect(() => {
+    if (listing?.id) {
+      trackEvent('LISTING_VIEW', {
+        listingId: listing.id,
+        dealerId: listing.dealerId || undefined,
+        idempotencyKey: `view_${listing.id}_${sessionStorage.getItem('abph_sid') || 'x'}`,
+      });
+    }
+  }, [listing?.id]);
 
   const sendInquiry = async () => {
     if (!user) return navigate('/login');
