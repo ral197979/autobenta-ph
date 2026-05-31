@@ -36,6 +36,9 @@ import FoundingDealer from './pages/FoundingDealer';
 import FoundingDealersCRM from './pages/admin/FoundingDealersCRM';
 import GrowthDashboard from './pages/admin/GrowthDashboard';
 import BookDemo from './pages/BookDemo';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
+import DealerAgreement from './pages/DealerAgreement';
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth();
@@ -87,6 +90,9 @@ function AppRoutes() {
           <Route path="/admin/founding-dealers" element={<ProtectedRoute roles={['admin']}><FoundingDealersCRM /></ProtectedRoute>} />
           <Route path="/admin/growth" element={<ProtectedRoute roles={['admin']}><GrowthDashboard /></ProtectedRoute>} />
           <Route path="/book-demo" element={<BookDemo />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/dealer-agreement" element={<DealerAgreement />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
@@ -131,12 +137,20 @@ function AppRoutes() {
               <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Company</p>
               <ul className="space-y-2 text-sm">
                 <li><a href="/#how-it-works" className="hover:text-white transition-colors">How It Works</a></li>
+                <li><a href="/terms" className="hover:text-white transition-colors">Terms of Service</a></li>
+                <li><a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="/dealer-agreement" className="hover:text-white transition-colors">Dealer Agreement</a></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm">
             <p className="font-semibold text-white">AutoBenta<span className="text-blue-400">PH</span></p>
             <p>The Philippines&apos; trusted new &amp; used car marketplace. © {new Date().getFullYear()}</p>
+            <div className="flex gap-4 text-xs text-gray-500">
+              <a href="/terms" className="hover:text-gray-300 transition-colors">Terms</a>
+              <a href="/privacy" className="hover:text-gray-300 transition-colors">Privacy</a>
+              <a href="/dealer-agreement" className="hover:text-gray-300 transition-colors">Dealer Agreement</a>
+            </div>
           </div>
         </div>
       </footer>
