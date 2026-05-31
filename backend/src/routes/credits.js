@@ -102,34 +102,36 @@ router.post('/admin/credits/award/:dealerId', authenticate, requireRole('admin')
 
     const creditAmount = parseInt(credits);
 
-    // Upsert LeadCredit record
+    // Atomic: upsert credit balance + create transaction record together
     const existingCredit = await prisma.leadCredit.findUnique({ where: { dealerId } });
     const balanceBefore = existingCredit?.balance || 0;
     const balanceAfter = balanceBefore + creditAmount;
 
-    const leadCredit = await prisma.leadCredit.upsert({
-      where: { dealerId },
-      update: {
-        balance: { increment: creditAmount },
-        lifetimeCredits: { increment: creditAmount },
-      },
-      create: {
-        dealerId,
-        balance: creditAmount,
-        lifetimeCredits: creditAmount,
-      },
-    });
-
-    const transaction = await prisma.creditTransaction.create({
-      data: {
-        dealerId,
-        creditId: leadCredit.id,
-        type: 'bonus',
-        credits: creditAmount,
-        balanceBefore,
-        balanceAfter,
-        description: description || `Manual award of ${creditAmount} credits`,
-      },
+    const [leadCredit, transaction] = await prisma.$transaction(async (tx) => {
+      const lc = await tx.leadCredit.upsert({
+        where: { dealerId },
+        update: {
+          balance: { increment: creditAmount },
+          lifetimeCredits: { increment: creditAmount },
+        },
+        create: {
+          dealerId,
+          balance: creditAmount,
+          lifetimeCredits: creditAmount,
+        },
+      });
+      const t = await tx.creditTransaction.create({
+        data: {
+          dealerId,
+          creditId: lc.id,
+          type: 'bonus',
+          credits: creditAmount,
+          balanceBefore,
+          balanceAfter,
+          description: description || `Manual award of ${creditAmount} credits`,
+        },
+      });
+      return [lc, t];
     });
 
     res.status(201).json({ leadCredit, transaction });

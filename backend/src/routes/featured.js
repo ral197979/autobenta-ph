@@ -31,8 +31,12 @@ router.post('/dealer/featured', authenticate, requireRole('dealer', 'admin'), as
     if (!dealer) return res.status(404).json({ error: 'Dealer not found' });
 
     const { listingId, featureType, endAt, pricePhp } = req.body;
+    const validFeatureTypes = ['homepage', 'search_boost', 'featured_dealer', 'sponsored'];
     if (!listingId || !featureType || !endAt || pricePhp == null) {
       return res.status(400).json({ error: 'listingId, featureType, endAt, and pricePhp are required' });
+    }
+    if (!validFeatureTypes.includes(featureType)) {
+      return res.status(400).json({ error: `featureType must be one of: ${validFeatureTypes.join(', ')}` });
     }
 
     // Verify dealer owns the listing

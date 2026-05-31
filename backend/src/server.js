@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 // ─── Environment validation ───────────────────────────────────────────────────
-const REQUIRED_ENV = ['DATABASE_URL', 'JWT_SECRET'];
+const REQUIRED_ENV = ['DATABASE_URL', 'JWT_SECRET', 'FRONTEND_URL'];
 const missing = REQUIRED_ENV.filter(k => !process.env[k]);
 if (missing.length > 0) {
   console.error(`Missing required env vars: ${missing.join(', ')}`);
@@ -83,8 +83,10 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+// Public uploads (listing photos only)
 app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
-app.use('/uploads/documents', express.static(path.join(__dirname, '../../uploads/documents')));
+// Confidential documents require authentication — served via /api/documents/:filename
+// DO NOT serve uploads/documents as static (verification IDs, business permits, etc.)
 
 // ─── Swagger ──────────────────────────────────────────────────────────────────
 const swaggerSpec = swaggerJsdoc({

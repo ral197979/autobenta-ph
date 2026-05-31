@@ -6,7 +6,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 // GET /dealer/billing/invoices — authenticated dealer, returns their invoices
-router.get('/dealer/billing/invoices', authenticate, async (req, res, next) => {
+router.get('/dealer/billing/invoices', authenticate, requireRole('dealer', 'admin'), async (req, res, next) => {
   try {
     const dealer = await prisma.dealer.findUnique({ where: { userId: req.user.id } });
     if (!dealer) return res.status(404).json({ error: 'Dealer not found' });
@@ -24,7 +24,7 @@ router.get('/dealer/billing/invoices', authenticate, async (req, res, next) => {
 });
 
 // GET /dealer/billing/invoices/:invoiceId — single invoice with payment records
-router.get('/dealer/billing/invoices/:invoiceId', authenticate, async (req, res, next) => {
+router.get('/dealer/billing/invoices/:invoiceId', authenticate, requireRole('dealer', 'admin'), async (req, res, next) => {
   try {
     const dealer = await prisma.dealer.findUnique({ where: { userId: req.user.id } });
     if (!dealer) return res.status(404).json({ error: 'Dealer not found' });

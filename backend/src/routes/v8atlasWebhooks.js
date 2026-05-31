@@ -14,7 +14,13 @@ const prisma = new PrismaClient();
 // ─── Signature verification middleware ────────────────────────────────────────
 
 function verifyV8AtlasSignature(req, res, next) {
-  if (!process.env.V8ATLAS_WEBHOOK_SECRET) return next();  // skip in dev if not configured
+  if (!process.env.V8ATLAS_WEBHOOK_SECRET) {
+    // In production this must be set — reject all webhooks if secret is missing
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(500).json({ error: 'Webhook secret not configured' });
+    }
+    return next(); // dev-only bypass
+  }
   const signature = req.headers['x-v8atlas-signature'];
   if (!signature) return res.status(401).json({ error: 'Missing webhook signature' });
 
