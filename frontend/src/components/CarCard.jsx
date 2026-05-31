@@ -5,10 +5,15 @@ import TrustBadges from './TrustBadges';
 import api from '../api/client';
 import { useState } from 'react';
 
+const carPlaceholder = (text) => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="280"><rect fill="#e2e8f0" width="400" height="280"/><text fill="#94a3b8" font-family="sans-serif" font-size="16" font-weight="500" text-anchor="middle" x="200" y="148">${text}</text></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+};
+
 export default function CarCard({ listing, onFavoriteToggle }) {
   const [favorited, setFavorited] = useState(listing.isFavorited || false);
 
-  const primaryPhoto = listing.photos?.[0]?.url || `https://placehold.co/400x280/e2e8f0/64748b?text=${encodeURIComponent(listing.make + ' ' + listing.model)}`;
+  const primaryPhoto = listing.photos?.[0]?.url || carPlaceholder(`${listing.make} ${listing.model}`);
 
   const handleFavorite = async (e) => {
     e.preventDefault();
@@ -33,7 +38,7 @@ export default function CarCard({ listing, onFavoriteToggle }) {
           src={primaryPhoto}
           alt={`${listing.year} ${listing.make} ${listing.model}`}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          onError={e => { e.target.src = `https://placehold.co/400x280/e2e8f0/64748b?text=${encodeURIComponent(listing.make)}`; }}
+          onError={e => { e.target.onerror = null; e.target.src = carPlaceholder(listing.make); }}
         />
         <button
           onClick={handleFavorite}
