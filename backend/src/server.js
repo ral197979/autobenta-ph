@@ -18,6 +18,9 @@ const pinoHttp = require('pino-http');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 const authRoutes = require('./routes/auth');
 const listingRoutes = require('./routes/listings');
 const dealerRoutes = require('./routes/dealers');
@@ -114,13 +117,79 @@ app.get('/api/docs.json', (_req, res) => res.json(swaggerSpec));
 app.use('/api', apiLimiter);
 
 // ─── Health ───────────────────────────────────────────────────────────────────
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
+app.get('/api/health', async (req, res) => {
+  const startMs = Date.now();
+  const checks = {};
+  let overall = 'ok';
+
+  // Database check
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    checks.database = { status: 'ok' };
+  } catch (err) {
+    checks.database = { status: 'error', error: 'Database unreachable' };
+    overall = 'error';
+  }
+
+  // Queue stats (only if DB is ok)
+  if (checks.database.status === 'ok') {
+    try {
+      const { getStats } = require('./services/queue/jobQueue');
+      const stats = await getStats();
+      checks.queue = {
+        status: stats.dead > 10 ? 'degraded' : 'ok',
+        pending: stats.pending,
+        processing: stats.processing,
+        dead: stats.dead,
+      };
+      if (stats.dead > 10 && overall === 'ok') overall = 'degraded';
+    } catch {
+      checks.queue = { status: 'unknown' };
+    }
+  }
+
+  // V8Atlas connectivity (if enabled)
+  if (process.env.V8ATLAS_ENABLED === 'true' && process.env.V8ATLAS_BASE_URL) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 3000);
+      const r = await fetch(`${process.env.V8ATLAS_BASE_URL}/health`, {
+        signal: controller.signal,
+        headers: { 'x-api-key': process.env.V8ATLAS_API_KEY || '' },
+      });
+      clearTimeout(timeout);
+      checks.v8atlas = { status: r.ok ? 'ok' : 'degraded', httpStatus: r.status };
+      if (!r.ok && overall === 'ok') overall = 'degraded';
+    } catch {
+      checks.v8atlas = { status: 'degraded', error: 'V8Atlas unreachable' };
+      if (overall === 'ok') overall = 'degraded';
+    }
+  }
+
+  // Storage write check
+  try {
+    const fs = require('fs');
+    const testPath = require('path').join(__dirname, '../../uploads/.health');
+    fs.writeFileSync(testPath, '1');
+    fs.unlinkSync(testPath);
+    checks.storage = { status: 'ok' };
+  } catch {
+    checks.storage = { status: 'error', error: 'Upload directory not writable' };
+    if (overall === 'ok') overall = 'degraded';
+  }
+
+  const httpStatus = overall === 'error' ? 503 : 200;
+
+  res.status(httpStatus).json({
+    status: overall,
     service: 'AutoBenta PH API',
     version: '2.0.0',
+    environment: process.env.NODE_ENV || 'development',
+    uptime: Math.round(process.uptime()),
+    timestamp: new Date().toISOString(),
     requestId: req.id,
+    responseTimeMs: Date.now() - startMs,
+    checks,
   });
 });
 
@@ -147,6 +216,10 @@ app.use('/api/dealers', dealerApplicationRoutes);
 app.use('/api', billingRoutes);
 app.use('/api', featuredRoutes);
 app.use('/api', creditsRoutes);
+
+// ─── Job queue poll loop ──────────────────────────────────────────────────────
+const { startPolling } = require('./services/queue/jobQueue');
+startPolling(10_000);
 
 // ─── Frontend (production only) ───────────────────────────────────────────────
 if (process.env.NODE_ENV === 'production') {

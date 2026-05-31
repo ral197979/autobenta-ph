@@ -1122,3 +1122,33 @@ model CreditTransaction {
   @@index([creditId])
   @@map("credit_transactions")
 }
+
+// ─── Job Queue ────────────────────────────────────────────────────────────────
+
+enum JobStatus {
+  pending
+  processing
+  completed
+  failed
+  dead
+}
+
+model JobQueue {
+  id           String    @id @default(uuid())
+  type         String    // lead_sync | inventory_sync | trust_sync | webhook_retry
+  payload      Json
+  status       JobStatus @default(pending)
+  attempts     Int       @default(0)
+  maxAttempts  Int       @default(5)
+  scheduledAt  DateTime  @default(now())
+  processedAt  DateTime?
+  completedAt  DateTime?
+  lastError    String?
+  nextRetryAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([status, nextRetryAt])
+  @@index([type, status])
+  @@map("job_queue")
+}

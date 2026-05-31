@@ -1,5 +1,7 @@
 // Lead provider interface — DMS systems implement this to receive and sync leads.
 
+const { enqueue, registerHandler } = require('../queue/jobQueue');
+
 class LeadProvider {
   constructor(name) {
     this.name = name;
@@ -22,7 +24,6 @@ class LeadProvider {
 }
 
 const _providers = {};
-const _queue = [];  // retry queue for failed pushes
 
 function registerLeadProvider(name, provider) {
   _providers[name] = provider;
@@ -33,7 +34,7 @@ function getLeadProvider(name) {
   return _providers[name];
 }
 
-// Push lead to all registered providers for a dealer, with retry queue
+// Push lead to all registered providers for a dealer, with persistent retry queue
 async function distributeLeadToProviders(lead, providerNames = []) {
   const results = [];
   for (const name of providerNames) {
@@ -43,16 +44,19 @@ async function distributeLeadToProviders(lead, providerNames = []) {
       const result = await provider.pushLead(lead);
       results.push({ provider: name, success: true, externalLeadId: result?.id });
     } catch (err) {
-      // Queue for retry — in production this would be a persistent queue (Redis/pg)
-      _queue.push({ lead, providerName: name, failedAt: new Date(), attempts: 1, error: err.message });
-      results.push({ provider: name, success: false, error: err.message });
+      // Enqueue for persistent retry instead of in-memory queue
+      await enqueue('lead_sync', { lead, providerName: name }, { maxAttempts: 5 });
+      results.push({ provider: name, success: false, error: err.message, queued: true });
     }
   }
   return results;
 }
 
-function getRetryQueue() {
-  return [..._queue];
-}
+// Register handler for lead_sync jobs (called by poll loop)
+registerHandler('lead_sync', async ({ lead, providerName }) => {
+  const provider = _providers[providerName];
+  if (!provider) throw new Error(`Provider '${providerName}' not registered`);
+  await provider.pushLead(lead);
+});
 
-module.exports = { LeadProvider, registerLeadProvider, getLeadProvider, distributeLeadToProviders, getRetryQueue };
+module.exports = { LeadProvider, registerLeadProvider, getLeadProvider, distributeLeadToProviders };
