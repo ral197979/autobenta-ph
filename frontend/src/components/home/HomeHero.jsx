@@ -56,7 +56,7 @@ export default function HomeHero() {
               variant: '2.4 V Diesel 4x2 AT',
               price: '1,780,000',
               city: 'Makati City', km: '35,000',
-              photo: 'https://upload.wikimedia.org/wikipedia/commons/d/d5/2022_Toyota_Fortuner_2.8_VRZ_GR_Sport_4x2_GUN166R_%2820220428%29.jpg',
+              gradient: 'from-[#0f2744] via-[#1a3a6b] to-[#0B1220]',
               badges: ['Verified', 'Financing'],
             },
             {
@@ -64,7 +64,7 @@ export default function HomeHero() {
               variant: '1.5 Turbo Prestige 4x2 CVT',
               price: '1,250,000',
               city: 'Quezon City', km: '42,000',
-              photo: 'https://upload.wikimedia.org/wikipedia/commons/1/10/2021_Honda_CR-V_1.5_Turbo_Prestige_%28front_left%29%2C_Central_Surabaya.jpg',
+              gradient: 'from-[#1a0a0a] via-[#5c1a1a] to-[#0B1220]',
               badges: ['Verified', 'Inspection-ready'],
             },
             {
@@ -72,7 +72,7 @@ export default function HomeHero() {
               variant: 'GLS Premium 4x2 AT',
               price: '1,950,000',
               city: 'BGC, Taguig', km: '18,000',
-              photo: 'https://upload.wikimedia.org/wikipedia/commons/7/7b/2021_Mitsubishi_Montero_Sport_Limited_%28cropped%29.jpg',
+              gradient: 'from-[#1a0a2e] via-[#3b1f6b] to-[#0B1220]',
               badges: ['Verified', 'Financing'],
             },
           ].map((car) => (
@@ -81,13 +81,9 @@ export default function HomeHero() {
               href="#"
               className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur transition hover:bg-white/10"
             >
-              {/* Real car photo thumbnail */}
-              <div className="h-16 w-24 shrink-0 overflow-hidden rounded-xl">
-                <img
-                  src={car.photo}
-                  alt={`${car.year} ${car.make} ${car.model}`}
-                  className="h-full w-full object-cover"
-                />
+              {/* Car make gradient thumbnail */}
+              <div className={`h-16 w-24 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br ${car.gradient} flex items-center justify-center`}>
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-white/60">{car.make}</span>
               </div>
 
               {/* Details */}
