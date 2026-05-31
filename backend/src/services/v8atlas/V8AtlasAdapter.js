@@ -36,15 +36,18 @@ class V8AtlasDealerProvider extends DealerProvider {
   constructor() { super('v8atlas'); }
 
   async getDealerProfile(externalDealerId) {
-    return v8atlasRequest('GET', `/api/dealers/${externalDealerId}`);
+    const result = await v8atlasRequest('GET', `/v1/dealers/${externalDealerId}`);
+    return { name: result.name, address: result.address, city: result.city, licenseNumber: result.licenseNumber, isVerified: result.isVerified, tier: result.tier };
   }
 
   async syncVerificationStatus(externalDealerId) {
-    return v8atlasRequest('GET', `/api/dealers/${externalDealerId}/verification`);
+    const result = await v8atlasRequest('GET', `/v1/dealers/${externalDealerId}/verification`);
+    return { isVerified: result.isVerified, verifiedAt: result.verifiedAt, tier: result.tier };
   }
 
   async getBranches(externalDealerId) {
-    return v8atlasRequest('GET', `/api/dealers/${externalDealerId}/branches`);
+    const result = await v8atlasRequest('GET', `/v1/dealers/${externalDealerId}/branches`);
+    return result.map(b => ({ name: b.name, address: b.address, city: b.city, region: b.region, phone: b.phone, isMain: b.isMain }));
   }
 }
 
@@ -53,6 +56,21 @@ class V8AtlasDealerProvider extends DealerProvider {
 class V8AtlasInventoryProvider extends InventoryProvider {
   constructor() { super('v8atlas'); }
 
+  async syncInventory(externalDealerId, listings) {
+    const result = await v8atlasRequest('POST', `/v1/dealers/${externalDealerId}/inventory/sync`, { listings });
+    return { synced: result.synced, errors: result.errors };
+  }
+
+  async getInventoryList(externalDealerId) {
+    return v8atlasRequest('GET', `/v1/dealers/${externalDealerId}/inventory`);
+  }
+
+  async deactivateListing(externalListingId) {
+    await v8atlasRequest('DELETE', `/v1/inventory/${externalListingId}`);
+    return { success: true };
+  }
+
+  // Legacy methods kept for backward compatibility
   async getInventory(externalDealerId) {
     return v8atlasRequest('GET', `/api/inventory?dealerId=${externalDealerId}`);
   }
@@ -76,24 +94,23 @@ class V8AtlasLeadProvider extends LeadProvider {
   constructor() { super('v8atlas'); }
 
   async pushLead(lead) {
-    return v8atlasRequest('POST', '/api/leads', {
-      source: 'autobenta',
-      externalListingId: lead.listingId,
-      buyerName: lead.buyerName,
-      buyerEmail: lead.buyerEmail,
-      buyerPhone: lead.buyerPhone,
-      message: lead.message,
-      autobentaLeadId: lead.id,
-      receivedAt: lead.createdAt,
+    const result = await v8atlasRequest('POST', '/v1/leads', {
+      externalDealerId: lead.dealerExternalId,
+      buyer: { name: lead.buyerName, email: lead.buyerEmail, phone: lead.buyerPhone },
+      listing: { id: lead.listingId, make: lead.make, model: lead.model, year: lead.year },
+      source: 'autobentaph',
+      inquiryMessage: lead.notes,
     });
+    return { id: result.leadId };
   }
 
   async updateLeadStatus(externalLeadId, status, notes) {
-    return v8atlasRequest('PATCH', `/api/leads/${externalLeadId}`, { status, notes });
+    await v8atlasRequest('PATCH', `/v1/leads/${externalLeadId}`, { status, notes });
+    return { success: true };
   }
 
   async pullLeadUpdates(externalDealerId, since) {
-    return v8atlasRequest('GET', `/api/leads?dealerId=${externalDealerId}&since=${since.toISOString()}`);
+    return v8atlasRequest('GET', `/v1/dealers/${externalDealerId}/leads?since=${since.toISOString()}`);
   }
 }
 
@@ -102,6 +119,16 @@ class V8AtlasLeadProvider extends LeadProvider {
 class V8AtlasTrustProvider extends TrustProvider {
   constructor() { super('v8atlas'); }
 
+  async propagateTrustVerification(listingId, trustFields) {
+    await v8atlasRequest('POST', '/v1/trust/verify', { listingId, ...trustFields });
+    return { success: true };
+  }
+
+  async getTrustStatus(externalListingId) {
+    return v8atlasRequest('GET', `/v1/listings/${externalListingId}/trust`);
+  }
+
+  // Legacy methods kept for backward compatibility
   async pushTrustUpdate(listingId, badges) {
     return v8atlasRequest('POST', '/api/trust/badge-update', { autobentaListingId: listingId, badges });
   }
@@ -116,8 +143,6 @@ class V8AtlasTrustProvider extends TrustProvider {
   }
 
   async receiveVerificationClaim(payload) {
-    // Validate signature and return normalized claim
-    const { crypto } = require('crypto');
     const sig = payload._signature;
     const body = { ...payload };
     delete body._signature;
@@ -135,6 +160,16 @@ class V8AtlasTrustProvider extends TrustProvider {
 class V8AtlasAnalyticsProvider extends AnalyticsProvider {
   constructor() { super('v8atlas'); }
 
+  async getDealerPerformance(externalDealerId) {
+    const result = await v8atlasRequest('GET', `/v1/dealers/${externalDealerId}/analytics`);
+    return { totalLeads: result.totalLeads, convertedLeads: result.convertedLeads, avgResponseHours: result.avgResponseHours, performanceScore: result.performanceScore };
+  }
+
+  async getMarketplaceStats() {
+    return v8atlasRequest('GET', '/v1/marketplace/stats');
+  }
+
+  // Legacy methods kept for backward compatibility
   async pushAnalyticsSnapshot(dealerId, metrics) {
     return v8atlasRequest('POST', '/api/analytics/snapshot', {
       autobentaDealerId: dealerId,

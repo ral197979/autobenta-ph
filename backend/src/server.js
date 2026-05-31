@@ -38,6 +38,8 @@ const v8atlasWebhookRoutes = require('./routes/v8atlasWebhooks');
 const analyticsRoutes = require('./routes/analytics');
 const dealerApplicationRoutes = require('./routes/dealerApplication');
 const billingRoutes = require('./routes/billing');
+const featuredRoutes = require('./routes/featured');
+const creditsRoutes = require('./routes/credits');
 
 // Register V8Atlas providers if enabled
 require('./services/v8atlas/V8AtlasAdapter').registerV8AtlasProviders();
@@ -141,6 +143,8 @@ app.use('/api/webhooks/v8atlas', v8atlasWebhookRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/dealers', dealerApplicationRoutes);
 app.use('/api', billingRoutes);
+app.use('/api', featuredRoutes);
+app.use('/api', creditsRoutes);
 
 // ─── Frontend (production only) ───────────────────────────────────────────────
 if (process.env.NODE_ENV === 'production') {

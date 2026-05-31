@@ -115,18 +115,144 @@ router.patch('/me/leads/:leadId', authenticate, requireRole('dealer', 'admin'), 
     });
     if (!lead) return res.status(404).json({ error: 'Lead not found' });
 
-    const { status, notes } = req.body;
+    const { status, notes, assignedUserId, nextFollowUpAt, leadScore, lostReason } = req.body;
 
     // Track first sale lifecycle
     if (status === 'closed_won' && dealer && !dealer.firstSaleAt) {
       await prisma.dealer.update({ where: { id: dealer.id }, data: { firstSaleAt: new Date() } });
     }
 
+    const updateData = {};
+    if (status !== undefined) updateData.status = status;
+    if (notes !== undefined) updateData.notes = notes;
+    if (assignedUserId !== undefined) updateData.assignedUserId = assignedUserId;
+    if (nextFollowUpAt !== undefined) updateData.nextFollowUpAt = nextFollowUpAt ? new Date(nextFollowUpAt) : null;
+    if (leadScore !== undefined) updateData.leadScore = leadScore;
+    if (lostReason !== undefined) updateData.lostReason = lostReason;
+
     const updated = await prisma.lead.update({
       where: { id: req.params.leadId },
-      data: { ...(status && { status }), ...(notes !== undefined && { notes }) },
+      data: updateData,
     });
+
+    // Log status change activity
+    if (status && status !== lead.status) {
+      await prisma.dealerActivity.create({
+        data: {
+          dealerId: dealer.id,
+          leadId: lead.id,
+          actorId: req.user.id,
+          type: 'lead_updated',
+          description: `Status changed to ${status}`,
+        },
+      });
+    }
+
     res.json(updated);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ─── POST /me/leads/:leadId/activities ───────────────────────────────────────
+
+const ALLOWED_ACTIVITY_TYPES = new Set([
+  'call_made', 'sms_sent', 'email_sent', 'meeting_held',
+  'test_drive_completed', 'note_added', 'manual_note',
+]);
+
+router.post('/me/leads/:leadId/activities', authenticate, requireRole('dealer', 'admin'), async (req, res, next) => {
+  try {
+    const dealer = await prisma.dealer.findFirst({ where: { userId: req.user.id } });
+    if (!dealer) return res.status(404).json({ error: 'Dealer not found' });
+
+    const lead = await prisma.lead.findFirst({ where: { id: req.params.leadId, dealerId: dealer.id } });
+    if (!lead) return res.status(404).json({ error: 'Lead not found' });
+
+    const { type, description, metadata } = req.body;
+    if (!type || !ALLOWED_ACTIVITY_TYPES.has(type)) {
+      return res.status(400).json({ error: 'Invalid activity type' });
+    }
+    if (!description) return res.status(400).json({ error: 'description is required' });
+
+    const activity = await prisma.dealerActivity.create({
+      data: {
+        dealerId: dealer.id,
+        leadId: lead.id,
+        actorId: req.user.id,
+        type,
+        description,
+        metadata: metadata || null,
+      },
+    });
+    res.status(201).json(activity);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ─── GET /me/leads/:leadId/activities ─────────────────────────────────────────
+
+router.get('/me/leads/:leadId/activities', authenticate, requireRole('dealer', 'admin'), async (req, res, next) => {
+  try {
+    const dealer = await prisma.dealer.findFirst({ where: { userId: req.user.id } });
+    if (!dealer) return res.status(404).json({ error: 'Dealer not found' });
+
+    const lead = await prisma.lead.findFirst({ where: { id: req.params.leadId, dealerId: dealer.id } });
+    if (!lead) return res.status(404).json({ error: 'Lead not found' });
+
+    const activities = await prisma.dealerActivity.findMany({
+      where: { leadId: lead.id },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json(activities);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ─── GET /me/customers ────────────────────────────────────────────────────────
+
+router.get('/me/customers', authenticate, requireRole('dealer', 'admin'), async (req, res, next) => {
+  try {
+    const dealer = await prisma.dealer.findFirst({ where: { userId: req.user.id } });
+    if (!dealer) return res.status(404).json({ error: 'Dealer not found' });
+
+    const leads = await prisma.lead.findMany({
+      where: { dealerId: dealer.id },
+      include: { listing: { select: { year: true, make: true, model: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Group by buyerEmail (preferred) or buyerPhone
+    const customerMap = new Map();
+    for (const lead of leads) {
+      const key = lead.buyerEmail || lead.buyerPhone || `unknown-${lead.id}`;
+      if (!customerMap.has(key)) {
+        customerMap.set(key, {
+          buyerName: lead.buyerName,
+          buyerEmail: lead.buyerEmail,
+          buyerPhone: lead.buyerPhone,
+          leadCount: 0,
+          wonLeads: 0,
+          lastContactAt: lead.createdAt,
+          vehicles: [],
+        });
+      }
+      const customer = customerMap.get(key);
+      customer.leadCount++;
+      if (lead.status === 'closed_won') customer.wonLeads++;
+      if (lead.createdAt > customer.lastContactAt) customer.lastContactAt = lead.createdAt;
+      if (lead.listing) {
+        customer.vehicles.push({ year: lead.listing.year, make: lead.listing.make, model: lead.listing.model });
+      }
+    }
+
+    const customers = Array.from(customerMap.values())
+      .sort((a, b) => b.lastContactAt - a.lastContactAt)
+      .slice(0, 100);
+
+    res.json(customers);
   } catch (err) {
     next(err);
   }

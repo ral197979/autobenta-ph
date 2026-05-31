@@ -28,6 +28,9 @@ import DealerSubscription from './pages/dealer/DealerSubscription';
 import DealerApply from './pages/dealer/DealerApply';
 import DealerOnboarding from './pages/dealer/DealerOnboarding';
 import DealerOperations from './pages/admin/DealerOperations';
+import DealerCustomers from './pages/dealer/DealerCustomers';
+import DealerFeatured from './pages/dealer/DealerFeatured';
+import RevenueInsights from './pages/admin/RevenueInsights';
 
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth();
@@ -62,9 +65,12 @@ function AppRoutes() {
             <Route path="settings" element={<DealerSettings />} />
             <Route path="subscription" element={<DealerSubscription />} />
             <Route path="onboarding" element={<DealerOnboarding />} />
+            <Route path="customers" element={<DealerCustomers />} />
+            <Route path="featured" element={<DealerFeatured />} />
           </Route>
           <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminPanel /></ProtectedRoute>} />
           <Route path="/admin/dealers" element={<ProtectedRoute roles={['admin']}><DealerOperations /></ProtectedRoute>} />
+          <Route path="/admin/revenue" element={<ProtectedRoute roles={['admin']}><RevenueInsights /></ProtectedRoute>} />
           <Route path="/inspection-services" element={<InspectionServices />} />
           <Route path="/inspections" element={<ProtectedRoute><Inspections /></ProtectedRoute>} />
           <Route path="/financing" element={<Financing />} />

@@ -417,4 +417,52 @@ router.get('/exports/dealer/:dealerId', authenticate, async (req, res, next) => 
   }
 });
 
+// GET /api/analytics/revenue — admin revenue dashboard metrics
+router.get('/revenue', authenticate, requireRole('admin'), async (req, res, next) => {
+  try {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+    const [
+      totalDealers,
+      activeSubs,
+      planBreakdown,
+      paidInvoicesThisMonth,
+      paidInvoicesLastMonth,
+      featuredListings,
+      creditTransactions,
+    ] = await Promise.all([
+      prisma.dealer.count(),
+      prisma.dealerSubscription.count({ where: { status: 'active', plan: { not: 'free' } } }),
+      prisma.dealerSubscription.groupBy({ by: ['plan'], _count: { id: true } }),
+      prisma.invoice.aggregate({ where: { status: 'paid', paidAt: { gte: monthStart } }, _sum: { amount: true }, _count: { id: true } }),
+      prisma.invoice.aggregate({ where: { status: 'paid', paidAt: { gte: lastMonthStart, lt: monthStart } }, _sum: { amount: true } }),
+      prisma.featuredListing.aggregate({ where: { status: 'active' }, _count: { id: true }, _sum: { pricePhp: true } }),
+      prisma.creditTransaction.aggregate({ where: { type: 'purchase', createdAt: { gte: monthStart } }, _sum: { credits: true }, _count: { id: true } }),
+    ]);
+
+    const mrr = Number(paidInvoicesThisMonth._sum.amount || 0);
+    const lastMrr = Number(paidInvoicesLastMonth._sum.amount || 0);
+    const arpu = activeSubs > 0 ? mrr / activeSubs : 0;
+    const mrrGrowth = lastMrr > 0 ? ((mrr - lastMrr) / lastMrr) * 100 : 0;
+
+    res.json({
+      mrr,
+      lastMrr,
+      mrrGrowth: Math.round(mrrGrowth * 10) / 10,
+      arpu: Math.round(arpu),
+      totalDealers,
+      activePaidDealers: activeSubs,
+      planBreakdown: planBreakdown.reduce((acc, p) => { acc[p.plan] = p._count.id; return acc; }, {}),
+      featuredRevenue: Number(featuredListings._sum.pricePhp || 0),
+      activeFeatured: featuredListings._count.id,
+      creditRevenue: creditTransactions._count.id,
+      invoicesThisMonth: paidInvoicesThisMonth._count.id,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

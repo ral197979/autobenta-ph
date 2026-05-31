@@ -34,6 +34,9 @@ enum InquiryStatus {
   financing
   closed_won
   closed_lost
+  qualified
+  test_drive_scheduled
+  negotiating
 }
 
 enum InspectionStatus {
@@ -119,6 +122,12 @@ enum DealerActivityType {
   listing_sold
   inquiry_received
   financing_requested
+  call_made
+  sms_sent
+  email_sent
+  meeting_held
+  test_drive_completed
+  automation_triggered
 }
 
 enum SubscriptionPlan {
@@ -233,18 +242,21 @@ model Dealer {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  listings      VehicleListing[]
-  leads         Lead[]
-  activities    DealerActivity[]
-  reminders     DealerReminder[]
-  branches      DealerBranch[]
-  members       DealerMember[]
-  subscription  DealerSubscription?
-  events        MarketplaceEvent[]
-  dealerMetrics DealerMetrics?
-  application   DealerApplication?
-  invoices      Invoice[]
-  usageMetrics  UsageMetric[]
+  listings         VehicleListing[]
+  leads            Lead[]
+  activities       DealerActivity[]
+  reminders        DealerReminder[]
+  branches         DealerBranch[]
+  members          DealerMember[]
+  subscription     DealerSubscription?
+  events           MarketplaceEvent[]
+  dealerMetrics    DealerMetrics?
+  application      DealerApplication?
+  invoices         Invoice[]
+  usageMetrics     UsageMetric[]
+  automationRules  AutomationRule[]
+  featuredListings FeaturedListing[]
+  leadCredits      LeadCredit?
 
   @@map("dealers")
 }
@@ -324,19 +336,20 @@ model VehicleListing {
   updatedAt      DateTime       @updatedAt
   soldAt         DateTime?
 
-  photos              VehiclePhoto[]
-  favorites           Favorite[]
-  inquiries           Inquiry[]
-  inspectionRequests  InspectionRequest[]
-  financingRequests   FinancingRequest[]
-  aiAnalyses          AIAnalysis[]
-  leads               Lead[]
-  fraudFlagRecords    FraudFlag[]
-  moderationActions   ListingModerationAction[]
-  recentlyViewed      RecentlyViewed[]
+  photos               VehiclePhoto[]
+  favorites            Favorite[]
+  inquiries            Inquiry[]
+  inspectionRequests   InspectionRequest[]
+  financingRequests    FinancingRequest[]
+  aiAnalyses           AIAnalysis[]
+  leads                Lead[]
+  fraudFlagRecords     FraudFlag[]
+  moderationActions    ListingModerationAction[]
+  recentlyViewed       RecentlyViewed[]
   verificationRequests VerificationRequest[]
-  events              MarketplaceEvent[]
-  metrics             ListingMetrics?
+  events               MarketplaceEvent[]
+  metrics              ListingMetrics?
+  featuredListings     FeaturedListing[]
 
   @@index([status])
   @@index([make, model])
@@ -410,13 +423,16 @@ model Lead {
   buyerName  String
   buyerEmail String?
   buyerPhone String?
-  status     InquiryStatus @default(new)
-  notes      String?
-  source     String?       @default("inquiry") // inquiry, direct, referral, walk-in
-  lostReason String?
-  closedAt   DateTime?
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+  status          InquiryStatus @default(new)
+  notes           String?
+  source          String?       @default("inquiry") // inquiry, direct, referral, walk-in
+  lostReason      String?
+  closedAt        DateTime?
+  assignedUserId  String?
+  nextFollowUpAt  DateTime?
+  leadScore       Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   activities DealerActivity[]
 
@@ -1020,4 +1036,89 @@ model UsageMetric {
   @@unique([dealerId, metricType, period])
   @@index([dealerId, period])
   @@map("usage_metrics")
+}
+
+// ─── CRM & Revenue Activation ────────────────────────────────────────────────
+
+model AutomationRule {
+  id          String   @id @default(uuid())
+  dealerId    String
+  dealer      Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  name        String
+  trigger     String   // lead_created | no_response_24h | no_response_72h | financing_requested | inspection_requested
+  conditions  Json?    // e.g. { source: 'inquiry' }
+  actions     Json     // array of { type: 'add_note'|'set_status'|'create_reminder', payload }
+  isActive    Boolean  @default(true)
+  runCount    Int      @default(0)
+  lastRunAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([dealerId, isActive])
+  @@map("automation_rules")
+}
+
+model FeaturedListing {
+  id          String   @id @default(uuid())
+  listingId   String
+  listing     VehicleListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  dealerId    String
+  dealer      Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  featureType String   // homepage | search_boost | featured_dealer | sponsored
+  startAt     DateTime @default(now())
+  endAt       DateTime
+  pricePhp    Decimal  @db.Decimal(10, 2)
+  status      String   @default("pending") // pending | active | expired | cancelled
+  adminNote   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([listingId])
+  @@index([dealerId])
+  @@index([status, endAt])
+  @@map("featured_listings")
+}
+
+model LeadCredit {
+  id              String   @id @default(uuid())
+  dealerId        String   @unique
+  dealer          Dealer   @relation(fields: [dealerId], references: [id], onDelete: Cascade)
+  balance         Int      @default(0)
+  lifetimeCredits Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  transactions CreditTransaction[]
+
+  @@map("lead_credits")
+}
+
+model CreditPackage {
+  id        String   @id @default(uuid())
+  name      String
+  credits   Int
+  pricePhp  Decimal  @db.Decimal(10, 2)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("credit_packages")
+}
+
+model CreditTransaction {
+  id            String      @id @default(uuid())
+  dealerId      String
+  creditId      String
+  credit        LeadCredit  @relation(fields: [creditId], references: [id], onDelete: Cascade)
+  packageId     String?
+  leadId        String?
+  type          String      // purchase | consumption | refund | bonus | manual_adjustment
+  credits       Int         // positive for additions, negative for consumption
+  balanceBefore Int
+  balanceAfter  Int
+  description   String?
+  createdAt     DateTime    @default(now())
+
+  @@index([dealerId])
+  @@index([creditId])
+  @@map("credit_transactions")
 }

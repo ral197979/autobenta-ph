@@ -305,4 +305,66 @@ router.get('/user/my-listings', authenticate, async (req, res, next) => {
   }
 });
 
+// Requires: npm install csv-parse
+// CSV inventory importer
+let csvParse = null;
+try { csvParse = require('csv-parse/sync'); } catch (_) { /* csv-parse not installed */ }
+
+const csvUpload = require('multer')({ storage: require('multer').memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
+
+router.post('/import/csv', authenticate, requireRole('dealer', 'admin'), csvUpload.single('file'), async (req, res, next) => {
+  try {
+    if (!csvParse) return res.status(501).json({ error: 'csv-parse package not installed. Run: npm install csv-parse' });
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+    const dealer = await prisma.dealer.findFirst({ where: { userId: req.user.id } });
+    if (!dealer) return res.status(403).json({ error: 'Not a dealer' });
+
+    const text = req.file.buffer.toString('utf-8');
+    const records = csvParse.parse(text, { columns: true, skip_empty_lines: true, trim: true });
+
+    const results = { created: 0, errors: [] };
+    for (const [i, row] of records.entries()) {
+      try {
+        const make = row.make || row.Make || row.MAKE;
+        const model = row.model || row.Model || row.MODEL;
+        const year = parseInt(row.year || row.Year);
+        const price = parseFloat(row.price || row.Price);
+        const mileage = parseInt(row.mileage || row.Mileage);
+
+        if (!make || !model || !year || !price || isNaN(mileage)) {
+          results.errors.push({ row: i + 2, error: 'Missing required field (make, model, year, price, mileage)' });
+          continue;
+        }
+
+        await prisma.vehicleListing.create({
+          data: {
+            sellerId: req.user.id,
+            dealerId: dealer.id,
+            sellerType: 'dealer',
+            status: 'draft',
+            make, model, year, price, mileage,
+            variant: row.variant || row.Variant || null,
+            color: row.color || row.Color || null,
+            fuelType: (row.fuelType || row.fuel_type || 'gasoline').toLowerCase(),
+            transmission: (row.transmission || row.Transmission || 'automatic').toLowerCase(),
+            condition: (row.condition || row.Condition || 'good').toLowerCase(),
+            description: row.description || row.Description || null,
+            city: row.city || row.City || dealer.city,
+            region: row.region || row.Region || '',
+            location: row.location || row.Location || dealer.address || '',
+          },
+        });
+        results.created++;
+      } catch (err) {
+        results.errors.push({ row: i + 2, error: err.message });
+      }
+    }
+
+    res.json({ ...results, total: records.length, message: `Imported ${results.created} listings as drafts` });
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;
