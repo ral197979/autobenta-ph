@@ -1,7 +1,47 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Users, CalendarCheck, TrendingUp, Trophy, DollarSign, XCircle, CheckCircle, BarChart2 } from 'lucide-react';
+import { Users, CalendarCheck, TrendingUp, Trophy, DollarSign, XCircle, CheckCircle, BarChart2, FlaskConical } from 'lucide-react';
 import api from '../../api/client';
+
+function SeedAccountsButton() {
+  const [state, setState] = useState('idle'); // idle | loading | done | error
+  const [results, setResults] = useState(null);
+
+  const run = async () => {
+    setState('loading');
+    try {
+      const { data } = await api.post('/admin/seed-accounts');
+      setResults(data.results);
+      setState('done');
+    } catch {
+      setState('error');
+    }
+  };
+
+  if (state === 'done') {
+    return (
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm">
+        <p className="font-semibold text-emerald-800 mb-2">✅ Seed accounts ready — password: <code className="font-mono">AutoBenta2026!</code></p>
+        <ul className="space-y-0.5 text-emerald-700">
+          {results.map(r => (
+            <li key={r.email}>{r.status === 'skipped' ? '⏭' : '✓'} {r.email}{r.listings > 0 ? ` · ${r.listings} listings` : ''} <span className="text-emerald-500">({r.status})</span></li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={run}
+      disabled={state === 'loading'}
+      className="inline-flex items-center gap-2 rounded-lg border border-cardborder px-3 py-2 text-xs font-semibold text-slatetext hover:text-ink hover:bg-softbg transition-colors disabled:opacity-50"
+    >
+      <FlaskConical className="h-3.5 w-3.5" />
+      {state === 'loading' ? 'Seeding…' : state === 'error' ? 'Failed — retry' : 'Seed Test Accounts'}
+    </button>
+  );
+}
 
 const STAGES = [
   { key: 'prospect',       label: 'Prospect' },
@@ -229,14 +269,17 @@ export default function GrowthDashboard() {
           <h1 className="text-xl font-bold text-ink">Growth Dashboard</h1>
           <p className="text-sm text-slatetext mt-1">Path to first 5 paying dealers</p>
         </div>
-        <button
-          onClick={() => setExecView(v => !v)}
-          className={`rounded-lg border px-4 py-2 text-xs font-semibold transition-colors ${
-            execView ? 'bg-deepblue text-white border-deepblue' : 'border-cardborder text-slatetext hover:text-ink hover:bg-softbg'
-          }`}
-        >
-          {execView ? 'Full Dashboard' : 'Executive View'}
-        </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <SeedAccountsButton />
+          <button
+            onClick={() => setExecView(v => !v)}
+            className={`rounded-lg border px-4 py-2 text-xs font-semibold transition-colors ${
+              execView ? 'bg-deepblue text-white border-deepblue' : 'border-cardborder text-slatetext hover:text-ink hover:bg-softbg'
+            }`}
+          >
+            {execView ? 'Full Dashboard' : 'Executive View'}
+          </button>
+        </div>
       </div>
 
       {execView && <ExecutiveView />}
