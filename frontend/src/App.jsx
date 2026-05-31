@@ -17,6 +17,7 @@ import AIListingWizard from './pages/AIListingWizard';
 import OwnershipTransfer from './pages/OwnershipTransfer';
 import Insurance from './pages/Insurance';
 import SafeBuying from './pages/SafeBuying';
+import InspectionServices from './pages/InspectionServices';
 import DealerLayout from './pages/dealer/DealerLayout';
 import DealerDashboard from './pages/dealer/DealerDashboard';
 import DealerLeads from './pages/dealer/DealerLeads';
@@ -58,6 +59,7 @@ function AppRoutes() {
             <Route path="subscription" element={<DealerSubscription />} />
           </Route>
           <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminPanel /></ProtectedRoute>} />
+          <Route path="/inspection-services" element={<InspectionServices />} />
           <Route path="/inspections" element={<ProtectedRoute><Inspections /></ProtectedRoute>} />
           <Route path="/financing" element={<Financing />} />
           <Route path="/ownership-transfer" element={<OwnershipTransfer />} />
@@ -74,7 +76,7 @@ function AppRoutes() {
               <ul className="space-y-2 text-sm">
                 <li><a href="/cars" className="hover:text-white transition-colors">Browse Cars</a></li>
                 <li><a href="/safe-buying" className="hover:text-white transition-colors">Safe Buying Guide</a></li>
-                <li><a href="/inspections" className="hover:text-white transition-colors">Book Inspection</a></li>
+                <li><a href="/inspection-services" className="hover:text-white transition-colors">Book Inspection</a></li>
                 <li><a href="/financing" className="hover:text-white transition-colors">Car Financing</a></li>
               </ul>
             </div>

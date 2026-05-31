@@ -22,7 +22,7 @@ const ITEMS = [
     title: 'Inspection-ready',
     desc: '120-point mechanical and cosmetic inspection at trusted PH bays.',
     cta: 'Book an inspection',
-    to: '/inspections',
+    to: '/inspection-services',
   },
   {
     Icon: Banknote,
