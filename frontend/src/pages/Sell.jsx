@@ -13,9 +13,6 @@ const INPUT =
 const BTN_PRIMARY = 'bg-primary text-on-primary rounded-xl px-lg py-md font-label-md hover:opacity-90 active:scale-95 transition-all disabled:opacity-50';
 const BTN_SECONDARY = 'rounded-xl border border-border-subtle text-on-surface px-lg py-md font-label-md hover:bg-surface-container transition-colors';
 
-const SELL_IMG =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuCJ85zTadMOZKa2DCoV7IkaZjLdTCsPkimhR299XQ1JTtLaAkbdQln4xWOVeorRsSuupbgoNt-A5fKI1jhz676tnNz6hBVZhf4z2KG85zJ4_fVbOiKthOMR1rycNqj15T1jsSmI3KpbNipSNje6keemnJfeYro5oVi8QmgLURq-np_GsSmau4H2bZaeSGGVCaM1s7qva9AbepIzcOYdnOEWIN01yUmIvrAdKyutU8ohpITOaa-ix8Ri_UOvGamsv0mhbNJcS0X0U6o';
-
 const TRUST = [
   { icon: 'groups', color: 'text-on-tertiary-container', title: 'Reach thousands', body: 'Your listing is shown to our database of active, qualified buyers across the Philippines.' },
   { icon: 'verified_user', color: 'text-trust-emerald', title: 'Verified status', body: "Build instant trust with the 'Ryderr Verified' badge — proven to increase sale speed." },
@@ -126,8 +123,8 @@ export default function Sell() {
             </div>
           </div>
           <div className="hidden md:block md:w-1/2 relative">
-            <div className="aspect-video rounded-xl overflow-hidden shadow-xl">
-              <img className="w-full h-full object-cover" src={SELL_IMG} alt="Sell your car with Ryderr" />
+            <div className="aspect-video rounded-xl overflow-hidden shadow-xl bg-gradient-to-br from-[#1e3a5f] to-[#0B1220] flex items-center justify-center">
+              <span className="material-symbols-outlined text-white/30" style={{ fontSize: '96px' }}>sell</span>
             </div>
             <div className="absolute -bottom-4 -left-4 bg-surface p-md rounded-lg shadow-lg border border-border-subtle flex items-center gap-md">
               <div className="bg-trust-emerald text-white p-sm rounded-full">

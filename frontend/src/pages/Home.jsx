@@ -2,9 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import FeaturedListings from '../components/home/FeaturedListings';
 
-const HERO_IMG =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuD-vrDwHtyBgVcmht_LRmmztVGmtuFzeFTWmRqjPGREVXGyL6wTRAiIX0MoAOOG_VtBrv6DtAPUkWzsYn1l8gvftLGgdceqZvLGbmXfkVSbzLLyyvO6Gr8qG9sofD3_bb3JRyB9bNn6GXR54Svg98fxKjMQ3Yt-2rmJLKE-hKkrbpttzUB6I6fZfpi9daZhGmwfOH9cKua3A1wIv4aB-jILfO7vXU6oLH-7cptZUmhUmc7W9KrB31lR8g4mqPGb-tQIWb6KQErp7Yo';
-
 const BRANDS = ['Toyota', 'Mitsubishi', 'Honda', 'Ford', 'BMW', 'Nissan', 'Hyundai', 'Isuzu'];
 
 const DEALERS = [
@@ -35,10 +32,12 @@ function HeroSearch() {
   };
 
   return (
-    <section className="relative w-full h-[600px] md:h-[720px] flex items-center justify-center px-gutter-mobile md:px-gutter-desktop">
+    <section className="relative w-full h-[600px] md:h-[720px] flex items-center justify-center px-gutter-mobile md:px-gutter-desktop overflow-hidden bg-ink">
       <div className="absolute inset-0 z-0">
-        <img className="w-full h-full object-cover" src={HERO_IMG} alt="Premium vehicle at dusk" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0B1220] via-[#131b2e] to-[#1e3a5f]" />
+        <div className="absolute -top-24 -right-24 w-[28rem] h-[28rem] rounded-full bg-electric/20 blur-3xl" />
+        <div className="absolute -bottom-32 -left-20 w-[26rem] h-[26rem] rounded-full bg-accent/10 blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
       </div>
       <div className="relative z-10 max-w-container-max w-full text-center">
         <h1 className="text-white font-display-lg text-display-lg mb-lg max-w-3xl mx-auto">
@@ -125,12 +124,8 @@ function SellCTA() {
             </Link>
           </div>
         </div>
-        <div className="relative z-10 w-full md:w-[400px] h-[300px] rounded-2xl overflow-hidden shadow-2xl">
-          <img
-            className="w-full h-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJ85zTadMOZKa2DCoV7IkaZjLdTCsPkimhR299XQ1JTtLaAkbdQln4xWOVeorRsSuupbgoNt-A5fKI1jhz676tnNz6hBVZhf4z2KG85zJ4_fVbOiKthOMR1rycNqj15T1jsSmI3KpbNipSNje6keemnJfeYro5oVi8QmgLURq-np_GsSmau4H2bZaeSGGVCaM1s7qva9AbepIzcOYdnOEWIN01yUmIvrAdKyutU8ohpITOaa-ix8Ri_UOvGamsv0mhbNJcS0X0U6o"
-            alt="Sell your car with Ryderr"
-          />
+        <div className="relative z-10 w-full md:w-[400px] h-[300px] rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-[#1e3a5f] to-[#0B1220] flex items-center justify-center">
+          <span className="material-symbols-outlined text-white/30" style={{ fontSize: '96px' }}>directions_car</span>
         </div>
       </div>
     </section>
