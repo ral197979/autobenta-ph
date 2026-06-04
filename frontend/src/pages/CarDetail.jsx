@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { MapPin, Gauge, Fuel, Settings, Calendar, Users, Heart, Share2, AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, MessageCircle, Wrench, CreditCard, Bot, Shield, FileCheck } from 'lucide-react';
 import api from '../api/client';
 import { trackEvent } from '../utils/analytics';
-import { formatPrice, formatMileage, formatRelativeTime, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_COLORS, CONDITION_LABELS } from '../utils/format';
+import { formatPrice, formatMileage, formatRelativeTime, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_COLORS, CONDITION_LABELS, carPlaceholder } from '../utils/format';
 import { useAuth } from '../context/AuthContext';
 import ReadinessScore from '../components/ReadinessScore';
 import VehicleHistoryCard from '../components/VehicleHistoryCard';
@@ -93,7 +93,7 @@ export default function CarDetail() {
   );
 
   const photos = listing.photos || [];
-  const currentPhoto = photos[photoIdx]?.url || `https://placehold.co/800x500/e2e8f0/64748b?text=${encodeURIComponent(listing.make)}`;
+  const currentPhoto = photos[photoIdx]?.url || carPlaceholder(listing.make);
   const fraudFlags = listing.fraudFlags || aiAnalysis?.fraudFlags || [];
   const hasInspection = listing.inspectionRequests?.some(r => r.status === 'completed');
 
@@ -110,7 +110,7 @@ export default function CarDetail() {
           <div className="card overflow-hidden">
             <div className="relative aspect-[16/10] bg-gray-100">
               <img src={currentPhoto} alt="" className="w-full h-full object-cover"
-                onError={e => { e.target.src = `https://placehold.co/800x500/e2e8f0/64748b?text=${encodeURIComponent(listing.make)}`; }} />
+                onError={e => { e.target.onerror = null; e.target.src = carPlaceholder(listing.make); }} />
               {photos.length > 1 && (
                 <>
                   <button onClick={() => setPhotoIdx(p => (p - 1 + photos.length) % photos.length)} className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2"><ChevronLeft className="w-5 h-5" /></button>

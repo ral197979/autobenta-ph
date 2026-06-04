@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Shield, Users, Car, BarChart3, FileCheck, CreditCard, CheckCircle, XCircle, AlertTriangle, Building2, AlertOctagon, UserX, BadgeCheck } from 'lucide-react';
 import api from '../api/client';
-import { formatPrice, formatRelativeTime, STATUS_COLORS } from '../utils/format';
+import { formatPrice, formatRelativeTime, STATUS_COLORS, photoOrFallback } from '../utils/format';
 import ModerationQueue from './admin/ModerationQueue';
 import FraudReview from './admin/FraudReview';
 import SellerRiskDashboard from './admin/SellerRiskDashboard';
@@ -159,7 +159,7 @@ export default function AdminPanel() {
             {listings?.listings?.map(l => (
               <div key={l.id} className="p-4 flex items-center gap-4">
                 <div className="w-16 h-12 rounded overflow-hidden bg-gray-100 shrink-0">
-                  <img src={l.photos?.[0]?.url || 'https://placehold.co/64x48/e2e8f0/64748b?text=Car'} alt="" className="w-full h-full object-cover" />
+                  <img src={photoOrFallback(l.photos?.[0]?.url, l.make)} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm">{l.year} {l.make} {l.model}</p>

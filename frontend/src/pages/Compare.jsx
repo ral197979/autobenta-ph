@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { X, Plus, Bot } from 'lucide-react';
 import api from '../api/client';
-import { formatPrice, formatMileage, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_LABELS } from '../utils/format';
+import { formatPrice, formatMileage, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_LABELS, photoOrFallback } from '../utils/format';
 
 const MAX_COMPARE = 3;
 
@@ -121,7 +121,7 @@ export default function Compare() {
                         <div className="card overflow-hidden relative">
                           <button onClick={() => removeId(id)} className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1 z-10"><X className="w-3 h-3" /></button>
                           <div className="aspect-[4/3] bg-gray-100">
-                            {l && <img src={l.photos?.[0]?.url || 'https://placehold.co/400x300/e2e8f0/64748b?text=Car'} alt="" className="w-full h-full object-cover" />}
+                            {l && <img src={photoOrFallback(l.photos?.[0]?.url, l.make)} alt="" className="w-full h-full object-cover" />}
                           </div>
                           <div className="p-3 text-left">
                             {l ? (

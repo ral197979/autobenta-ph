@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Car, Heart, MessageCircle, Wrench, CreditCard, Plus, BadgeCheck } from 'lucide-react';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
-import { formatPrice, formatRelativeTime, STATUS_COLORS } from '../utils/format';
+import { formatPrice, formatRelativeTime, STATUS_COLORS, photoOrFallback } from '../utils/format';
 import SellerVerification from '../components/seller/SellerVerification';
 
 const TABS = ['my-listings', 'favorites', 'inquiries', 'inspections', 'financing', 'verification'];
@@ -73,7 +73,7 @@ export default function Dashboard() {
           {myListings?.map(l => (
             <div key={l.id} className="card p-4 flex items-center gap-4">
               <div className="w-20 h-14 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                <img src={l.photos?.[0]?.url || 'https://placehold.co/80x56/e2e8f0/64748b?text=Car'} alt="" className="w-full h-full object-cover" />
+                <img src={photoOrFallback(l.photos?.[0]?.url, l.make)} alt="" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-sm truncate">{l.year} {l.make} {l.model}</p>
@@ -100,7 +100,7 @@ export default function Dashboard() {
           {favorites?.map(f => (
             <Link key={f.id} to={`/cars/${f.listingId}`} className="card p-3 flex gap-3 hover:shadow-md transition-shadow">
               <div className="w-20 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                <img src={f.listing?.photos?.[0]?.url || 'https://placehold.co/80x64/e2e8f0/64748b?text=Car'} alt="" className="w-full h-full object-cover" />
+                <img src={photoOrFallback(f.listing?.photos?.[0]?.url, f.listing?.make)} alt="" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm truncate">{f.listing?.year} {f.listing?.make} {f.listing?.model}</p>

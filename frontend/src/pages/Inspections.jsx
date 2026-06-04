@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Wrench, CheckCircle, AlertTriangle, XCircle, Calendar } from 'lucide-react';
 import api from '../api/client';
-import { formatRelativeTime, formatDate } from '../utils/format';
+import { formatRelativeTime, formatDate, photoOrFallback } from '../utils/format';
 import { useAuth } from '../context/AuthContext';
 
 const RESULT_ICONS = {
@@ -66,7 +66,7 @@ export default function Inspections() {
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div className="flex items-center gap-3">
                     <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                      <img src={ins.listing?.photos?.[0]?.url || 'https://placehold.co/64x48/e2e8f0/64748b?text=Car'} alt="" className="w-full h-full object-cover" />
+                      <img src={photoOrFallback(ins.listing?.photos?.[0]?.url, ins.listing?.make)} alt="" className="w-full h-full object-cover" />
                     </div>
                     <div>
                       <Link to={`/cars/${ins.listingId}`} className="font-semibold text-sm text-primary-600 hover:underline">

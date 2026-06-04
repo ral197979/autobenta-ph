@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Building2, Users, Car, Plus, AlertCircle, BarChart2, Bell } from 'lucide-react';
 import api from '../api/client';
+import { photoOrFallback } from '../utils/format';
 import { formatPrice, formatRelativeTime } from '../utils/format';
 import DealerAnalytics from './dealer/DealerAnalytics';
 import DealerReminders from './dealer/DealerReminders';
@@ -129,7 +130,7 @@ export default function DealerPanel() {
                 <div key={lead.id} className="p-4 hover:bg-gray-50 transition-colors">
                   <div className="flex items-center gap-3">
                     <div className="w-14 h-10 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                      <img src={lead.listing?.photos?.[0]?.url || 'https://placehold.co/56x40/e2e8f0/64748b?text=Car'} alt="" className="w-full h-full object-cover" />
+                      <img src={photoOrFallback(lead.listing?.photos?.[0]?.url, lead.listing?.make)} alt="" className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -171,7 +172,7 @@ export default function DealerPanel() {
               {myListings?.filter(l => l.status === 'active').map(l => (
                 <Link key={l.id} to={`/cars/${l.id}`} className="flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors">
                   <div className="w-12 h-9 rounded overflow-hidden bg-gray-100 shrink-0">
-                    <img src={l.photos?.[0]?.url || 'https://placehold.co/48x36/e2e8f0/64748b?text=Car'} alt="" className="w-full h-full object-cover" />
+                    <img src={photoOrFallback(l.photos?.[0]?.url, l.make)} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium truncate">{l.year} {l.make} {l.model}</p>

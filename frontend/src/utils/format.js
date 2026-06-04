@@ -27,3 +27,14 @@ export const STATUS_COLORS = {
   archived: 'text-gray-600 bg-gray-100', rejected: 'text-red-700 bg-red-100',
 };
 export const SELLER_TYPE_LABELS = { private: 'Private', dealer: 'Dealer', repossessed: 'Repossessed' };
+
+/** Inline SVG fallback — never fails, no external dependency */
+export const carPlaceholder = (text = 'Car') => {
+  const safe = String(text).replace(/[<>&"]/g, '');
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="280"><rect fill="#e2e8f0" width="400" height="280"/><text fill="#94a3b8" font-family="sans-serif" font-size="16" font-weight="500" text-anchor="middle" x="200" y="148">${safe}</text></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+};
+
+/** Returns a photo URL or SVG fallback. Pass make/model as label. */
+export const photoOrFallback = (url, label = 'Car') =>
+  (!url || url.includes('placehold.co')) ? carPlaceholder(label) : url;
