@@ -27,6 +27,7 @@ import PromoteListing from './pages/PromoteListing';
 import EditListing from './pages/EditListing';
 import ReportDispute from './pages/ReportDispute';
 import Verification from './pages/Verification';
+import VehicleDocumentVerification from './pages/VehicleDocumentVerification';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AIListingWizard from './pages/AIListingWizard';
@@ -79,6 +80,7 @@ function AppRoutes() {
           <Route path="/cars" element={<Browse />} />
           <Route path="/cars/:id" element={<CarDetail />} />
           <Route path="/listings/:id/edit" element={<ProtectedRoute roles={['seller', 'dealer', 'admin']}><EditListing /></ProtectedRoute>} />
+          <Route path="/listings/:listingId/documents" element={<ProtectedRoute roles={['seller', 'dealer', 'admin']}><VehicleDocumentVerification /></ProtectedRoute>} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

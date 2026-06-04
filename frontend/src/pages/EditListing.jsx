@@ -111,6 +111,7 @@ export default function EditListing() {
           <div className="flex flex-wrap items-center gap-md pt-lg border-t border-border-subtle">
             <button type="submit" disabled={saving} className="bg-primary text-on-primary rounded-xl px-lg py-sm font-label-md hover:opacity-90 disabled:opacity-50">{saving ? 'Saving…' : 'Save Changes'}</button>
             <Link to={`/cars/${id}`} className="rounded-xl border border-border-subtle text-on-surface px-lg py-sm font-label-md hover:bg-surface-container transition-colors">View Listing</Link>
+            <Link to={`/listings/${id}/documents`} className="rounded-xl border border-border-subtle text-on-surface px-lg py-sm font-label-md hover:bg-surface-container transition-colors flex items-center gap-1"><Icon name="description" className="text-[18px]" /> Verify Documents</Link>
             <button type="button" onClick={() => setStatus('sold')} className="rounded-xl border border-trust-emerald/40 text-trust-emerald px-lg py-sm font-label-md hover:bg-trust-emerald/10 transition-colors">Mark as Sold</button>
             <button type="button" onClick={remove} className="ml-auto rounded-xl border border-error/40 text-error px-lg py-sm font-label-md hover:bg-error/10 transition-colors flex items-center gap-1"><Icon name="delete" className="text-[18px]" /> Delete</button>
           </div>
