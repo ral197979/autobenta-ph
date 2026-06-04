@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 const Section = ({ title, children }) => (
   <section className="mb-10">
-    <h2 className="text-xl font-semibold text-gray-900 mb-4">{title}</h2>
-    <div className="space-y-3 text-gray-700 leading-relaxed">{children}</div>
+    <h2 className="text-xl font-semibold text-on-surface mb-4">{title}</h2>
+    <div className="space-y-3 text-on-surface leading-relaxed">{children}</div>
   </section>
 );
 
@@ -14,11 +14,11 @@ export default function DealerAgreement() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface-container-lowest">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="mb-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Dealer Service Agreement</h1>
-          <p className="text-sm text-gray-500">Effective date: June 1, 2026 &nbsp;·&nbsp; Last updated: June 1, 2026</p>
+          <h1 className="text-3xl font-bold text-on-surface mb-2">Dealer Service Agreement</h1>
+          <p className="text-sm text-on-surface-variant">Effective date: June 1, 2026 &nbsp;·&nbsp; Last updated: June 1, 2026</p>
         </div>
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-5 mb-10">
@@ -119,7 +119,7 @@ export default function DealerAgreement() {
             <li><strong>Support:</strong> <a href="mailto:support@autobentaph.com" className="text-blue-600 hover:underline">support@autobentaph.com</a></li>
             <li><strong>Legal:</strong> <a href="mailto:legal@autobentaph.com" className="text-blue-600 hover:underline">legal@autobentaph.com</a></li>
           </ul>
-          <p className="text-sm text-gray-500 mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <p className="text-sm text-on-surface-variant mt-6 p-4 bg-surface-container rounded-lg border border-border-subtle">
             <strong>Note to Founding Dealers:</strong> This Agreement is provided for transparency and will be presented for
             formal acceptance before your first billing date. A personalized PDF copy will be sent to your registered email
             address once your account is activated. AutoBentaPH recommends that all Dealers have this Agreement reviewed

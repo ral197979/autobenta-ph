@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { BadgeCheck, Upload, CheckCircle, Clock, XCircle, AlertCircle, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { BadgeCheck, Upload, CheckCircle, Clock, XCircle, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import api from '../../api/client';
 
 const VERIFICATION_TYPES = [
@@ -13,7 +13,6 @@ const VERIFICATION_TYPES = [
       { type: 'selfie', label: 'Selfie holding your ID' },
     ],
     badge: 'Verified Seller',
-    badgeColor: 'bg-deepblue/5 text-deepblue border-deepblue/20',
   },
   {
     type: 'dealer_business',
@@ -25,18 +24,17 @@ const VERIFICATION_TYPES = [
       { type: 'proof_of_address', label: 'Proof of Business Address' },
     ],
     badge: 'Verified Dealer',
-    badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     dealerOnly: true,
   },
 ];
 
 const STATUS_CONFIG = {
-  pending: { icon: Clock, label: 'Pending Review', color: 'text-yellow-600 bg-yellow-50 border-yellow-200' },
-  under_review: { icon: AlertCircle, label: 'Under Review', color: 'text-blue-600 bg-blue-50 border-blue-200' },
-  approved: { icon: CheckCircle, label: 'Approved', color: 'text-emerald-600 bg-emerald-50 border-emerald-200' },
-  rejected: { icon: XCircle, label: 'Rejected', color: 'text-red-600 bg-red-50 border-red-200' },
-  expired: { icon: AlertCircle, label: 'Expired', color: 'text-gray-600 bg-gray-50 border-gray-200' },
-  suspended: { icon: XCircle, label: 'Suspended', color: 'text-orange-600 bg-orange-50 border-orange-200' },
+  pending: { icon: Clock, label: 'Pending Review', color: 'text-alert-orange bg-alert-orange/10 border-alert-orange/30' },
+  under_review: { icon: AlertCircle, label: 'Under Review', color: 'text-primary bg-primary/10 border-primary/30' },
+  approved: { icon: CheckCircle, label: 'Approved', color: 'text-trust-emerald bg-trust-emerald/10 border-trust-emerald/30' },
+  rejected: { icon: XCircle, label: 'Rejected', color: 'text-error bg-error/10 border-error/30' },
+  expired: { icon: AlertCircle, label: 'Expired', color: 'text-on-surface-variant bg-surface-container border-border-subtle' },
+  suspended: { icon: XCircle, label: 'Suspended', color: 'text-alert-orange bg-alert-orange/10 border-alert-orange/30' },
 };
 
 function VerificationCard({ config, existingRequest, user }) {
@@ -88,18 +86,18 @@ function VerificationCard({ config, existingRequest, user }) {
   };
 
   return (
-    <div className="card overflow-hidden">
+    <div className="bg-surface-container-lowest rounded-2xl border border-border-subtle overflow-hidden">
       <div
-        className="flex items-center justify-between p-4 cursor-pointer hover:bg-softbg"
+        className="flex items-center justify-between p-4 cursor-pointer hover:bg-surface-container"
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-deepblue/10">
-            <BadgeCheck className="h-5 w-5 text-deepblue" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+            <BadgeCheck className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <p className="font-semibold text-ink text-sm">{config.label}</p>
-            <p className="text-xs text-slatetext">{config.description}</p>
+            <p className="font-semibold text-on-surface text-sm">{config.label}</p>
+            <p className="text-xs text-on-surface-variant">{config.description}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -110,52 +108,52 @@ function VerificationCard({ config, existingRequest, user }) {
             </span>
           )}
           {!existingRequest && (
-            <span className="rounded-full bg-deepblue px-2.5 py-1 text-xs font-semibold text-white">Not Submitted</span>
+            <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-on-primary">Not Submitted</span>
           )}
-          {expanded ? <ChevronUp className="h-4 w-4 text-slatetext" /> : <ChevronDown className="h-4 w-4 text-slatetext" />}
+          {expanded ? <ChevronUp className="h-4 w-4 text-on-surface-variant" /> : <ChevronDown className="h-4 w-4 text-on-surface-variant" />}
         </div>
       </div>
 
       {expanded && (
-        <div className="border-t border-cardborder p-4 bg-softbg space-y-4">
+        <div className="border-t border-border-subtle p-4 bg-surface-container space-y-4">
           {existingRequest?.status === 'approved' ? (
-            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 flex items-center gap-3">
-              <CheckCircle className="h-5 w-5 text-emerald-600 shrink-0" />
+            <div className="rounded-xl border border-trust-emerald/30 bg-trust-emerald/10 p-4 flex items-center gap-3">
+              <CheckCircle className="h-5 w-5 text-trust-emerald shrink-0" />
               <div>
-                <p className="font-semibold text-emerald-800 text-sm">Verification approved</p>
-                <p className="text-xs text-emerald-600">
+                <p className="font-semibold text-trust-emerald text-sm">Verification approved</p>
+                <p className="text-xs text-on-surface-variant">
                   Badge active until {existingRequest.expiresAt ? new Date(existingRequest.expiresAt).toLocaleDateString('en-PH') : 'N/A'}
                 </p>
               </div>
             </div>
           ) : existingRequest?.status === 'rejected' ? (
-            <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-              <p className="font-semibold text-red-800 text-sm">Verification rejected</p>
+            <div className="rounded-xl border border-error/30 bg-error/10 p-4">
+              <p className="font-semibold text-error text-sm">Verification rejected</p>
               {existingRequest.rejectionReason && (
-                <p className="text-xs text-red-600 mt-1">{existingRequest.rejectionReason}</p>
+                <p className="text-xs text-on-surface-variant mt-1">{existingRequest.rejectionReason}</p>
               )}
-              <p className="text-xs text-red-500 mt-2">You may re-submit with corrected documents.</p>
+              <p className="text-xs text-on-surface-variant mt-2">You may re-submit with corrected documents.</p>
             </div>
           ) : existingRequest ? (
-            <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
-              <p className="font-semibold text-blue-800 text-sm">Your submission is being reviewed</p>
-              <p className="text-xs text-blue-600 mt-1">Typically 24–48 hours. We will notify you once complete.</p>
+            <div className="rounded-xl border border-primary/30 bg-primary/10 p-4">
+              <p className="font-semibold text-primary text-sm">Your submission is being reviewed</p>
+              <p className="text-xs text-on-surface-variant mt-1">Typically 24–48 hours. We will notify you once complete.</p>
             </div>
           ) : null}
 
           {canSubmit && (
             <>
               <div>
-                <p className="text-xs font-semibold text-slatetext uppercase tracking-wide mb-3">Required Documents</p>
+                <p className="text-xs font-semibold text-on-surface-variant uppercase tracking-wide mb-3">Required Documents</p>
                 <div className="space-y-3">
                   {config.requiredDocs.map((doc) => (
                     <label key={doc.type} className="flex items-center gap-3 cursor-pointer group">
-                      <div className={`flex h-8 w-8 items-center justify-center rounded-lg border transition-colors ${files[doc.type] ? 'border-emerald-300 bg-emerald-50' : 'border-cardborder bg-white group-hover:border-deepblue/30'}`}>
-                        {files[doc.type] ? <CheckCircle className="h-4 w-4 text-emerald-600" /> : <Upload className="h-4 w-4 text-slatetext" />}
+                      <div className={`flex h-8 w-8 items-center justify-center rounded-lg border transition-colors ${files[doc.type] ? 'border-trust-emerald/40 bg-trust-emerald/10' : 'border-border-subtle bg-surface-container-lowest group-hover:border-primary/40'}`}>
+                        {files[doc.type] ? <CheckCircle className="h-4 w-4 text-trust-emerald" /> : <Upload className="h-4 w-4 text-on-surface-variant" />}
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-ink">{doc.label}</p>
-                        {files[doc.type] && <p className="text-xs text-emerald-600">{files[doc.type].name}</p>}
+                        <p className="text-sm font-medium text-on-surface">{doc.label}</p>
+                        {files[doc.type] && <p className="text-xs text-trust-emerald">{files[doc.type].name}</p>}
                       </div>
                       <input
                         type="file"
@@ -169,13 +167,13 @@ function VerificationCard({ config, existingRequest, user }) {
               </div>
 
               {error && (
-                <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">{error}</p>
+                <p className="rounded-lg bg-error/10 border border-error/30 px-3 py-2 text-xs text-error">{error}</p>
               )}
 
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="w-full rounded-xl bg-deepblue py-2.5 text-sm font-semibold text-white transition-colors hover:bg-deepblue/90 disabled:opacity-50"
+                className="w-full rounded-xl bg-primary py-2.5 text-sm font-semibold text-on-primary transition-all hover:opacity-90 active:scale-[0.99] disabled:opacity-50"
               >
                 {submitting ? 'Submitting...' : 'Submit for Verification'}
               </button>

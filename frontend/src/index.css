@@ -2,15 +2,144 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Ryderr Kinetic (light) + Kinetic Dark design tokens from Google Stitch.
+  Values are space-separated RGB channels so Tailwind's `<alpha-value>` opacity
+  modifier works (see tailwind.config.js). `.dark` on <html> swaps the palette.
+*/
 @layer base {
-  body { @apply bg-gray-50 text-gray-900 font-sans antialiased; }
+  :root {
+    --surface: 248 249 250;
+    --surface-dim: 217 218 219;
+    --surface-bright: 248 249 250;
+    --surface-container-lowest: 255 255 255;
+    --surface-container-low: 243 244 245;
+    --surface-container: 237 238 239;
+    --surface-container-high: 231 232 233;
+    --surface-container-highest: 225 227 228;
+    --on-surface: 25 28 29;
+    --on-surface-variant: 69 70 77;
+    --inverse-surface: 46 49 50;
+    --inverse-on-surface: 240 241 242;
+    --outline: 118 119 125;
+    --outline-variant: 198 198 205;
+    --surface-tint: 86 94 116;
+    --surface-variant: 225 227 228;
+    --primary: 0 0 0;
+    --on-primary: 255 255 255;
+    --primary-container: 19 27 46;
+    --on-primary-container: 124 131 155;
+    --inverse-primary: 190 198 224;
+    --secondary: 81 95 116;
+    --on-secondary: 255 255 255;
+    --secondary-container: 213 227 253;
+    --on-secondary-container: 87 101 123;
+    --tertiary: 0 0 0;
+    --on-tertiary: 255 255 255;
+    --tertiary-container: 0 26 66;
+    --on-tertiary-container: 57 128 244;
+    --error: 186 26 26;
+    --on-error: 255 255 255;
+    --error-container: 255 218 214;
+    --on-error-container: 147 0 10;
+    --primary-fixed: 218 226 253;
+    --primary-fixed-dim: 190 198 224;
+    --on-primary-fixed: 19 27 46;
+    --on-primary-fixed-variant: 63 70 92;
+    --secondary-fixed: 213 227 253;
+    --secondary-fixed-dim: 185 199 224;
+    --on-secondary-fixed: 13 28 47;
+    --on-secondary-fixed-variant: 58 72 92;
+    --tertiary-fixed: 216 226 255;
+    --tertiary-fixed-dim: 173 198 255;
+    --on-tertiary-fixed: 0 26 66;
+    --on-tertiary-fixed-variant: 0 67 149;
+    --background: 248 249 250;
+    --on-background: 25 28 29;
+    --trust-emerald: 16 185 129;
+    --alert-orange: 245 158 11;
+    --border-subtle: 226 232 240;
+  }
+
+  .dark {
+    --surface: 11 19 38;
+    --surface-dim: 11 19 38;
+    --surface-bright: 49 57 77;
+    --surface-container-lowest: 6 14 32;
+    --surface-container-low: 19 27 46;
+    --surface-container: 23 31 51;
+    --surface-container-high: 34 42 61;
+    --surface-container-highest: 45 52 73;
+    --on-surface: 218 226 253;
+    --on-surface-variant: 189 200 209;
+    --inverse-surface: 218 226 253;
+    --inverse-on-surface: 40 48 68;
+    --outline: 135 146 154;
+    --outline-variant: 62 72 79;
+    --surface-tint: 123 208 255;
+    --surface-variant: 45 52 73;
+    --primary: 142 213 255;
+    --on-primary: 0 53 74;
+    --primary-container: 56 189 248;
+    --on-primary-container: 0 73 101;
+    --inverse-primary: 0 102 138;
+    --secondary: 189 194 255;
+    --on-secondary: 19 30 140;
+    --secondary-container: 47 58 163;
+    --on-secondary-container: 168 175 255;
+    --tertiary: 255 185 216;
+    --on-tertiary: 98 0 64;
+    --tertiary-container: 255 140 197;
+    --on-tertiary-container: 129 16 87;
+    --error: 255 180 171;
+    --on-error: 105 0 5;
+    --error-container: 147 0 10;
+    --on-error-container: 255 218 214;
+    --primary-fixed: 196 231 255;
+    --primary-fixed-dim: 123 208 255;
+    --on-primary-fixed: 0 30 44;
+    --on-primary-fixed-variant: 0 76 105;
+    --secondary-fixed: 224 224 255;
+    --secondary-fixed-dim: 189 194 255;
+    --on-secondary-fixed: 0 7 103;
+    --on-secondary-fixed-variant: 47 58 163;
+    --tertiary-fixed: 255 216 231;
+    --tertiary-fixed-dim: 255 175 211;
+    --on-tertiary-fixed: 61 0 38;
+    --on-tertiary-fixed-variant: 133 20 90;
+    --background: 11 19 38;
+    --on-background: 218 226 253;
+    --trust-emerald: 52 211 153;
+    --alert-orange: 251 191 36;
+    --border-subtle: 45 52 73;
+  }
+
+  body {
+    @apply bg-background text-on-background font-sans antialiased;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
 @layer components {
-  .btn-primary { @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed; }
-  .btn-secondary { @apply bg-white hover:bg-gray-50 text-gray-700 font-semibold px-4 py-2 rounded-lg border border-gray-300 transition-colors duration-150; }
-  .btn-danger { @apply bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors duration-150; }
-  .input { @apply block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent; }
-  .card { @apply bg-white rounded-xl shadow-sm border border-gray-100; }
+  /* Legacy helpers — now token-based so un-converted pages stay coherent in
+     both themes until they get a bespoke Stitch pass. */
+  .btn-primary { @apply bg-primary text-on-primary font-semibold px-4 py-2 rounded-lg transition-all duration-150 hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed; }
+  .btn-secondary { @apply bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold px-4 py-2 rounded-lg border border-border-subtle transition-colors duration-150; }
+  .btn-danger { @apply bg-error text-on-error font-semibold px-4 py-2 rounded-lg transition-all duration-150 hover:opacity-90; }
+  .input { @apply block w-full rounded-xl border border-border-subtle bg-surface-container px-3 py-2 text-sm text-on-surface placeholder-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent; }
+  .card { @apply bg-surface-container-lowest rounded-2xl shadow-sm border border-border-subtle; }
   .badge { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium; }
 }

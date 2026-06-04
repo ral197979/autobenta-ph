@@ -1,16 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, MapPin, Gauge, Fuel, Settings, ShieldCheck, BadgeCheck, Sparkles } from 'lucide-react';
 import {
   formatPrice,
   formatMileage,
   TRANSMISSION_LABELS,
   FUEL_LABELS,
 } from '../../utils/format';
-import { estimateMonthly } from '../../data/mockListings';
-import TrustBadges from '../TrustBadges';
 
-// Deterministic gradient per make so each brand has a consistent colour swatch
+// Deterministic gradient per make so each brand has a consistent swatch when a
+// photo is missing.
 const MAKE_GRADIENT = {
   Toyota:     'from-[#0f2744] via-[#1a3a6b] to-[#0B1220]',
   Honda:      'from-[#1a0a0a] via-[#5c1a1a] to-[#0B1220]',
@@ -26,55 +24,58 @@ const gradientFor = (make) =>
 
 const isPlaceholder = (url) => !url || url.includes('placehold.co');
 
-function formatDistance(km) {
-  if (km == null) return null;
-  return km < 1 ? '< 1 km' : `${Math.round(km)} km`;
+function FilledIcon({ name, className = '' }) {
+  return (
+    <span
+      className={`material-symbols-outlined ${className}`}
+      style={{ fontVariationSettings: "'FILL' 1" }}
+    >
+      {name}
+    </span>
+  );
 }
 
 export default function ListingCard({ listing }) {
   const rawPhoto = listing.photos?.[0]?.url;
   const [imgError, setImgError] = useState(false);
+  const [saved, setSaved] = useState(false);
   const showGradient = isPlaceholder(rawPhoto) || imgError;
 
   const isNew = listing.condition === 'brand_new';
   const inspected = !isNew && listing.inspectionRequests?.some((r) => r.status === 'completed');
   const verified = listing.dealer?.isVerified;
-  const monthly = estimateMonthly(listing.price);
+  const km = isNew ? '0 KM' : formatMileage(listing.mileage);
 
   return (
     <Link
       to={`/cars/${listing.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-cardborder bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl"
+      className="group bg-surface-container-lowest rounded-xl overflow-hidden border border-border-subtle hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex flex-col"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-softbg">
+      <div className="relative h-60 overflow-hidden">
         {showGradient ? (
           <div className={`h-full w-full bg-gradient-to-br ${gradientFor(listing.make)} flex flex-col items-center justify-center gap-1`}>
-            <p className="text-[11px] font-medium uppercase tracking-widest text-white/40">{listing.year} {listing.bodyType}</p>
-            <p className="text-lg font-bold text-white/90">{listing.make} {listing.model}</p>
+            <p className="text-label-sm uppercase tracking-widest text-white/40">{listing.year} {listing.bodyType}</p>
+            <p className="text-headline-sm font-bold text-white/90">{listing.make} {listing.model}</p>
           </div>
         ) : (
           <img
             src={rawPhoto}
             alt={`${listing.year} ${listing.make} ${listing.model}`}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             onError={() => setImgError(true)}
           />
         )}
 
-        <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+        <div className="absolute top-4 left-4 flex gap-2">
+          {(verified || inspected) && (
+            <span className="bg-trust-emerald text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+              <FilledIcon name="verified" className="text-[12px]" />
+              CERTIFIED
+            </span>
+          )}
           {isNew && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-[11px] font-bold text-ink shadow">
-              <Sparkles className="h-3 w-3" /> Brand New
-            </span>
-          )}
-          {verified && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-deepblue px-2 py-0.5 text-[11px] font-semibold text-white shadow">
-              <BadgeCheck className="h-3 w-3" /> Verified
-            </span>
-          )}
-          {inspected && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-0.5 text-[11px] font-semibold text-white shadow">
-              <ShieldCheck className="h-3 w-3" /> Inspected
+            <span className="bg-alert-orange text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+              NEW
             </span>
           )}
         </div>
@@ -83,62 +84,48 @@ export default function ListingCard({ listing }) {
           type="button"
           onClick={(e) => {
             e.preventDefault();
+            setSaved((s) => !s);
           }}
-          aria-label="Save"
-          className="absolute right-3 top-3 rounded-full bg-white/95 p-2 text-slatetext shadow-sm transition-colors hover:text-rose-500"
+          aria-label="Save vehicle"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/40 transition-colors"
         >
-          <Heart className="h-4 w-4" />
+          {saved ? <FilledIcon name="favorite" className="text-sm" /> : <span className="material-symbols-outlined text-sm">favorite</span>}
         </button>
       </div>
 
-      <div className="flex flex-1 flex-col p-4">
-        <div className="mb-1 text-xs font-medium uppercase tracking-wide text-slatetext">
-          {listing.year} {listing.bodyType || ''}
-        </div>
-        <h3 className="line-clamp-1 text-base font-semibold text-ink">
-          {listing.make} {listing.model}
-          {listing.variant && (
-            <span className="font-normal text-slatetext"> {listing.variant}</span>
-          )}
-        </h3>
-
-        <div className="mt-2 flex items-baseline gap-2">
-          <p className="text-xl font-bold text-deepblue">{formatPrice(listing.price)}</p>
-          <p className="text-xs text-slatetext">~ ₱{monthly.toLocaleString()}/mo</p>
-        </div>
-
-        <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-slatetext">
-          <div className="flex items-center gap-1">
-            <Gauge className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">{isNew ? '0 km' : formatMileage(listing.mileage)}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Settings className="h-3.5 w-3.5 shrink-0" />
-            <span>{TRANSMISSION_LABELS[listing.transmission]}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Fuel className="h-3.5 w-3.5 shrink-0" />
-            <span>{FUEL_LABELS[listing.fuelType]}</span>
-          </div>
-        </div>
-
-        {/* Trust badges — max 3, compact */}
-        <TrustBadges listing={listing} size="xs" maxCount={3} />
-
-        <div className="mt-3 flex items-center justify-between border-t border-cardborder pt-3">
-          <div className="flex items-center gap-1 text-xs text-slatetext">
-            <MapPin className="h-3.5 w-3.5" />
-            <span className="truncate">{listing.city}</span>
-            {listing.distanceKm != null && (
-              <span className="ml-1 rounded-full bg-electric/10 px-1.5 py-0.5 text-[10px] font-semibold text-electric">
-                {formatDistance(listing.distanceKm)}
-              </span>
-            )}
-          </div>
-          <span className="text-xs font-semibold text-electric group-hover:underline">
-            View details
+      <div className="p-md flex flex-1 flex-col">
+        <div className="flex justify-between items-start mb-2 gap-2">
+          <h3 className="text-headline-sm font-headline-sm text-primary line-clamp-1">
+            {listing.make} {listing.model}
+          </h3>
+          <span className="text-headline-sm font-headline-sm text-primary whitespace-nowrap">
+            {formatPrice(listing.price)}
           </span>
         </div>
+        <p className="text-on-surface-variant font-body-sm text-body-sm mb-md">
+          {listing.year}
+          {listing.variant ? ` • ${listing.variant}` : ''} • {km}
+        </p>
+        <div className="flex gap-2 flex-wrap mb-lg">
+          {listing.transmission && (
+            <span className="bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-on-secondary-fixed-variant">
+              {TRANSMISSION_LABELS[listing.transmission] || listing.transmission}
+            </span>
+          )}
+          {listing.fuelType && (
+            <span className="bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-on-secondary-fixed-variant">
+              {FUEL_LABELS[listing.fuelType] || listing.fuelType}
+            </span>
+          )}
+          {listing.city && (
+            <span className="bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-on-secondary-fixed-variant">
+              {listing.city}
+            </span>
+          )}
+        </div>
+        <span className="mt-auto block w-full text-center bg-primary-container text-white py-sm rounded-lg font-label-md text-label-md group-hover:bg-primary transition-colors">
+          View Details
+        </span>
       </div>
     </Link>
   );

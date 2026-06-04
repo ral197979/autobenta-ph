@@ -89,7 +89,7 @@ export default function TransferChecklist({ listingId }) {
     progress === 100
       ? 'bg-emerald-500'
       : progress >= 60
-      ? 'bg-deepblue'
+      ? 'bg-primary'
       : progress >= 30
       ? 'bg-electric'
       : 'bg-accent';
@@ -99,18 +99,18 @@ export default function TransferChecklist({ listingId }) {
       {/* Progress bar */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-semibold text-ink">
+          <span className="text-sm font-semibold text-on-surface">
             {checked.length} of {STEPS.length} completed
           </span>
           <span
             className={`text-sm font-bold ${
-              progress === 100 ? 'text-emerald-600' : 'text-deepblue'
+              progress === 100 ? 'text-emerald-600' : 'text-primary'
             }`}
           >
             {progress}%
           </span>
         </div>
-        <div className="h-2 w-full rounded-full bg-softbg overflow-hidden">
+        <div className="h-2 w-full rounded-full bg-surface-container overflow-hidden">
           <div
             className={`h-2 rounded-full transition-all duration-500 ${progressColor}`}
             style={{ width: `${progress}%` }}
@@ -135,7 +135,7 @@ export default function TransferChecklist({ listingId }) {
               className={`rounded-xl border transition-all duration-150 ${
                 done
                   ? 'border-emerald-200 bg-emerald-50/60'
-                  : 'border-cardborder bg-white'
+                  : 'border-border-subtle bg-surface-container-lowest'
               }`}
             >
               <div className="flex items-center gap-3 p-4">
@@ -157,7 +157,7 @@ export default function TransferChecklist({ listingId }) {
                 <div className="flex flex-1 min-w-0 items-center gap-3">
                   <span
                     className={`hidden sm:flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                      done ? 'bg-emerald-500 text-white' : 'bg-softbg text-slatetext'
+                      done ? 'bg-emerald-500 text-white' : 'bg-surface-container text-on-surface-variant'
                     }`}
                   >
                     {idx + 1}
@@ -165,12 +165,12 @@ export default function TransferChecklist({ listingId }) {
                   <div className="flex items-center gap-2 min-w-0">
                     <Icon
                       className={`h-4 w-4 shrink-0 ${
-                        done ? 'text-emerald-500' : 'text-slatetext'
+                        done ? 'text-emerald-500' : 'text-on-surface-variant'
                       }`}
                     />
                     <span
                       className={`text-sm font-semibold truncate ${
-                        done ? 'line-through text-slatetext' : 'text-ink'
+                        done ? 'line-through text-on-surface-variant' : 'text-on-surface'
                       }`}
                     >
                       {step.label}
@@ -182,7 +182,7 @@ export default function TransferChecklist({ listingId }) {
                 <button
                   type="button"
                   onClick={() => setExpanded(open ? null : step.id)}
-                  className="shrink-0 rounded-md p-1 text-slatetext transition-colors hover:bg-softbg"
+                  className="shrink-0 rounded-md p-1 text-on-surface-variant transition-colors hover:bg-surface-container"
                   aria-label="Toggle details"
                 >
                   {open ? (
@@ -195,7 +195,7 @@ export default function TransferChecklist({ listingId }) {
 
               {open && (
                 <div className="px-4 pb-4 pl-[3.25rem]">
-                  <p className="text-sm text-slatetext leading-relaxed">{step.detail}</p>
+                  <p className="text-sm text-on-surface-variant leading-relaxed">{step.detail}</p>
                 </div>
               )}
             </div>
@@ -207,7 +207,7 @@ export default function TransferChecklist({ listingId }) {
         <button
           type="button"
           onClick={() => setChecked([])}
-          className="mt-4 text-xs text-slatetext underline hover:text-ink transition-colors"
+          className="mt-4 text-xs text-on-surface-variant underline hover:text-on-surface transition-colors"
         >
           Reset progress
         </button>

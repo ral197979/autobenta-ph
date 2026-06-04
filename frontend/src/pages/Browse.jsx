@@ -98,27 +98,29 @@ export default function Browse() {
   const activeFilterCount = Object.values(filters).filter(v => v !== '').length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
+    <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-lg">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
+      <div className="flex items-center justify-between mb-lg gap-3 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Browse Cars</h1>
-          <p className="text-sm text-gray-500">
-            {isLoading ? 'Loading...' : `${data?.pagination?.total?.toLocaleString() || 0} cars found`}
+          <h1 className="text-headline-lg font-headline-lg text-on-surface">Browse Cars</h1>
+          <p className="text-body-sm text-on-surface-variant mt-1">
+            {isLoading
+              ? 'Loading…'
+              : <>Showing <span className="font-bold text-on-surface">{data?.pagination?.total?.toLocaleString() || 0}</span> vehicles</>}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-md">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 btn-secondary text-sm ${activeFilterCount > 0 ? 'border-primary-500 text-primary-700' : ''}`}
+            className={`lg:hidden flex items-center gap-2 rounded-xl border px-md py-sm text-label-md transition-colors ${activeFilterCount > 0 ? 'border-primary text-primary' : 'border-border-subtle text-on-surface'}`}
           >
             <SlidersHorizontal className="w-4 h-4" />
-            Filters{activeFilterCount > 0 && <span className="bg-primary-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">{activeFilterCount}</span>}
+            Filters{activeFilterCount > 0 && <span className="bg-primary text-on-primary rounded-full w-5 h-5 flex items-center justify-center text-[11px]">{activeFilterCount}</span>}
           </button>
           <div className="flex items-center gap-2">
-            <ArrowUpDown className="w-4 h-4 text-gray-400" />
-            <select value={sort} onChange={e => setSort(e.target.value)} className="input text-sm py-2">
-              {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            <ArrowUpDown className="w-4 h-4 text-on-surface-variant" />
+            <select value={sort} onChange={e => setSort(e.target.value)} className="bg-surface-container border border-border-subtle rounded-xl text-on-surface text-body-sm font-semibold py-sm px-md focus:ring-2 focus:ring-primary outline-none cursor-pointer">
+              {SORT_OPTIONS.map(o => <option key={o.value} value={o.value} className="bg-surface">{o.label}</option>)}
             </select>
           </div>
         </div>
@@ -127,12 +129,12 @@ export default function Browse() {
       {/* Active filter chips */}
       {filters.verified === 'true' && (
         <div className="flex items-center gap-2 mb-4">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-deepblue/20 bg-deepblue/5 px-3 py-1 text-xs font-semibold text-deepblue">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-label-sm text-primary">
             Verified sellers only
             <button
               type="button"
               onClick={() => setFilters(p => ({ ...p, verified: '' }))}
-              className="ml-0.5 hover:text-ink transition-colors"
+              className="ml-0.5 hover:opacity-70 transition-opacity"
               aria-label="Remove filter"
             >
               <X className="h-3 w-3" />
@@ -142,19 +144,20 @@ export default function Browse() {
       )}
 
       {/* Search bar */}
-      <div className="mb-5">
+      <div className="mb-lg relative">
+        <span className="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
         <input
           type="text"
-          placeholder="Search by make, model, or description..."
+          placeholder="Search by brand, model, or body style…"
           value={filters.search}
           onChange={e => setFilters(p => ({ ...p, search: e.target.value }))}
-          className="input"
+          className="w-full bg-surface-container border border-border-subtle rounded-full pl-12 pr-md py-sm text-on-surface text-body-md focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-on-surface-variant/60"
         />
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex gap-xl">
         {/* Sidebar filters (desktop) */}
-        <div className="hidden lg:block w-64 shrink-0">
+        <div className="hidden lg:block w-80 shrink-0">
           <FilterPanel filters={filters} onChange={setFilters} onReset={resetFilters} geo={geo} />
         </div>
 
@@ -162,13 +165,13 @@ export default function Browse() {
         {showFilters && (
           <div className="fixed inset-0 z-50 lg:hidden">
             <div className="absolute inset-0 bg-black/50" onClick={() => setShowFilters(false)} />
-            <div className="absolute right-0 top-0 bottom-0 w-80 bg-white overflow-y-auto p-4">
+            <div className="absolute right-0 top-0 bottom-0 w-80 bg-surface overflow-y-auto p-4">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-bold">Filters</h2>
-                <button onClick={() => setShowFilters(false)}><X className="w-5 h-5" /></button>
+                <h2 className="font-bold text-on-surface">Filters</h2>
+                <button onClick={() => setShowFilters(false)} className="text-on-surface"><X className="w-5 h-5" /></button>
               </div>
               <FilterPanel filters={filters} onChange={setFilters} onReset={resetFilters} geo={geo} />
-              <button onClick={() => setShowFilters(false)} className="mt-4 w-full btn-primary">
+              <button onClick={() => setShowFilters(false)} className="mt-4 w-full bg-primary text-on-primary rounded-xl py-sm font-label-md">
                 Show {data?.pagination?.total || 0} Results
               </button>
             </div>
@@ -178,26 +181,26 @@ export default function Browse() {
         {/* Listings grid */}
         <div className="flex-1 min-w-0">
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-xl">
               {Array.from({ length: 9 }).map((_, i) => (
-                <div key={i} className="card overflow-hidden animate-pulse">
-                  <div className="aspect-[4/3] bg-gray-200" />
-                  <div className="p-4 space-y-2">
-                    <div className="h-4 bg-gray-200 rounded w-3/4" />
-                    <div className="h-5 bg-gray-200 rounded w-1/2" />
+                <div key={i} className="rounded-2xl border border-border-subtle bg-surface-container overflow-hidden animate-pulse">
+                  <div className="h-56 bg-surface-container-high" />
+                  <div className="p-lg space-y-2">
+                    <div className="h-4 bg-surface-container-high rounded w-3/4" />
+                    <div className="h-5 bg-surface-container-high rounded w-1/2" />
                   </div>
                 </div>
               ))}
             </div>
           ) : data?.listings?.length === 0 ? (
             <div className="text-center py-20">
-              <div className="text-5xl mb-4">🚗</div>
-              <p className="text-gray-500 text-lg">No cars match your filters.</p>
-              <button onClick={resetFilters} className="mt-4 btn-primary">Clear Filters</button>
+              <span className="material-symbols-outlined text-6xl text-on-surface-variant mb-4">no_crash</span>
+              <p className="text-on-surface-variant text-body-lg">No cars match your filters.</p>
+              <button onClick={resetFilters} className="mt-4 bg-primary text-on-primary rounded-xl px-lg py-sm font-label-md">Clear Filters</button>
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-xl">
                 {data?.listings?.map(listing => (
                   <CarCard key={listing.id} listing={listing} />
                 ))}
@@ -205,10 +208,10 @@ export default function Browse() {
 
               {/* Pagination */}
               {data?.pagination?.pages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-8">
-                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="btn-secondary text-sm disabled:opacity-40">← Prev</button>
-                  <span className="text-sm text-gray-600">Page {page} of {data.pagination.pages}</span>
-                  <button onClick={() => setPage(p => Math.min(data.pagination.pages, p + 1))} disabled={page === data.pagination.pages} className="btn-secondary text-sm disabled:opacity-40">Next →</button>
+                <div className="flex items-center justify-center gap-md mt-2xl">
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="rounded-xl border border-border-subtle text-on-surface px-md py-sm text-label-md disabled:opacity-40 hover:bg-surface-container transition-colors">← Prev</button>
+                  <span className="text-body-sm text-on-surface-variant">Page {page} of {data.pagination.pages}</span>
+                  <button onClick={() => setPage(p => Math.min(data.pagination.pages, p + 1))} disabled={page === data.pagination.pages} className="rounded-xl border border-border-subtle text-on-surface px-md py-sm text-label-md disabled:opacity-40 hover:bg-surface-container transition-colors">Next →</button>
                 </div>
               )}
             </>

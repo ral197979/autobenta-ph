@@ -9,9 +9,9 @@ function StatCard({ icon: Icon, label, value, sub, color }) {
         <Icon className="h-5 w-5" />
       </div>
       <div>
-        <p className="text-2xl font-bold text-ink">{value ?? '—'}</p>
-        <p className="text-xs text-slatetext">{label}</p>
-        {sub && <p className="text-[11px] text-slatetext/70 mt-0.5">{sub}</p>}
+        <p className="text-2xl font-bold text-on-surface">{value ?? '—'}</p>
+        <p className="text-xs text-on-surface-variant">{label}</p>
+        {sub && <p className="text-[11px] text-on-surface-variant/70 mt-0.5">{sub}</p>}
       </div>
     </div>
   );
@@ -20,15 +20,15 @@ function StatCard({ icon: Icon, label, value, sub, color }) {
 function SectionSkeleton() {
   return (
     <div className="space-y-3 animate-pulse">
-      <div className="h-5 w-40 bg-softbg rounded" />
-      <div className="h-24 bg-softbg rounded-xl" />
+      <div className="h-5 w-40 bg-surface-container rounded" />
+      <div className="h-24 bg-surface-container rounded-xl" />
     </div>
   );
 }
 
 function EmptyState() {
   return (
-    <p className="text-sm text-slatetext py-6 text-center">
+    <p className="text-sm text-on-surface-variant py-6 text-center">
       No data yet — events will appear as users interact with the platform.
     </p>
   );
@@ -41,8 +41,8 @@ function FunnelSection({ data, isLoading }) {
 
   return (
     <div className="card p-5">
-      <h2 className="text-sm font-bold text-ink mb-4 flex items-center gap-2">
-        <BarChart3 className="h-4 w-4 text-deepblue" /> Conversion Funnel
+      <h2 className="text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+        <BarChart3 className="h-4 w-4 text-primary" /> Conversion Funnel
       </h2>
       {stages.length === 0 ? (
         <EmptyState />
@@ -56,17 +56,17 @@ function FunnelSection({ data, isLoading }) {
             return (
               <div key={stage.name}>
                 <div className="flex items-center justify-between mb-1 text-xs">
-                  <span className="font-medium text-ink">{stage.name}</span>
+                  <span className="font-medium text-on-surface">{stage.name}</span>
                   <div className="flex items-center gap-3">
                     {dropoff !== null && (
                       <span className="text-red-500">-{dropoff}%</span>
                     )}
-                    <span className="text-slatetext font-semibold">{stage.count.toLocaleString()}</span>
+                    <span className="text-on-surface-variant font-semibold">{stage.count.toLocaleString()}</span>
                   </div>
                 </div>
-                <div className="relative h-8 rounded-lg bg-softbg overflow-hidden">
+                <div className="relative h-8 rounded-lg bg-surface-container overflow-hidden">
                   <div
-                    className="h-full bg-deepblue rounded-lg transition-all"
+                    className="h-full bg-primary rounded-lg transition-all"
                     style={{ width: `${pct}%` }}
                   />
                 </div>
@@ -86,8 +86,8 @@ function TrustImpactSection({ data, isLoading }) {
 
   return (
     <div className="card p-5">
-      <h2 className="text-sm font-bold text-ink mb-4 flex items-center gap-2">
-        <CheckCircle className="h-4 w-4 text-deepblue" /> Trust Badge Impact
+      <h2 className="text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+        <CheckCircle className="h-4 w-4 text-primary" /> Trust Badge Impact
       </h2>
       {badges.length === 0 ? (
         <EmptyState />
@@ -95,7 +95,7 @@ function TrustImpactSection({ data, isLoading }) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-xs text-slatetext border-b border-cardborder">
+              <tr className="text-xs text-on-surface-variant border-b border-border-subtle">
                 <th className="pb-2 text-left font-semibold">Badge</th>
                 <th className="pb-2 text-right font-semibold">With Badge</th>
                 <th className="pb-2 text-right font-semibold">Without Badge</th>
@@ -104,11 +104,11 @@ function TrustImpactSection({ data, isLoading }) {
             </thead>
             <tbody className="divide-y divide-cardborder">
               {badges.map(b => (
-                <tr key={b.badge} className="hover:bg-softbg">
-                  <td className="py-2.5 font-medium text-ink">{b.badge}</td>
-                  <td className="py-2.5 text-right text-slatetext">{b.withBadge?.toFixed(1)}</td>
-                  <td className="py-2.5 text-right text-slatetext">{b.withoutBadge?.toFixed(1)}</td>
-                  <td className={`py-2.5 text-right font-semibold ${b.uplift > 0 ? 'text-emerald-600' : 'text-slatetext'}`}>
+                <tr key={b.badge} className="hover:bg-surface-container">
+                  <td className="py-2.5 font-medium text-on-surface">{b.badge}</td>
+                  <td className="py-2.5 text-right text-on-surface-variant">{b.withBadge?.toFixed(1)}</td>
+                  <td className="py-2.5 text-right text-on-surface-variant">{b.withoutBadge?.toFixed(1)}</td>
+                  <td className={`py-2.5 text-right font-semibold ${b.uplift > 0 ? 'text-emerald-600' : 'text-on-surface-variant'}`}>
                     {b.uplift > 0 ? `+${b.uplift}%` : `${b.uplift}%`}
                   </td>
                 </tr>
@@ -143,18 +143,18 @@ export default function MarketplaceAnalytics() {
     <div className="space-y-8">
       {/* Section 1 — Marketplace Health */}
       <div>
-        <h2 className="text-sm font-bold text-ink mb-4 flex items-center gap-2">
-          <ShoppingBag className="h-4 w-4 text-deepblue" /> Marketplace Health
+        <h2 className="text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+          <ShoppingBag className="h-4 w-4 text-primary" /> Marketplace Health
         </h2>
         {loadingMarket ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-pulse">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="card h-24 bg-softbg" />
+              <div key={i} className="card h-24 bg-surface-container" />
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard icon={ShoppingBag} label="Total Listings" value={marketplace?.totalListings?.toLocaleString()} color="text-deepblue bg-deepblue/10" />
+            <StatCard icon={ShoppingBag} label="Total Listings" value={marketplace?.totalListings?.toLocaleString()} color="text-primary bg-primary/10" />
             <StatCard icon={CheckCircle} label="Active Listings" value={marketplace?.activeListings?.toLocaleString()} color="text-emerald-600 bg-emerald-100" />
             <StatCard icon={CheckCircle} label="Verified Listings" value={marketplace?.verifiedListings?.toLocaleString()} color="text-blue-600 bg-blue-100" />
             <StatCard icon={FileCheck} label="Transfer Ready" value={marketplace?.transferReady?.toLocaleString()} color="text-purple-600 bg-purple-100" />
@@ -174,13 +174,13 @@ export default function MarketplaceAnalytics() {
 
       {/* Section 4 — Top Event Types */}
       <div className="card p-5">
-        <h2 className="text-sm font-bold text-ink mb-4 flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 text-deepblue" /> Top Event Types (Last 30d)
+        <h2 className="text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+          <BarChart3 className="h-4 w-4 text-primary" /> Top Event Types (Last 30d)
         </h2>
         {loadingMarket ? (
           <div className="space-y-2 animate-pulse">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-6 bg-softbg rounded w-3/4" />
+              <div key={i} className="h-6 bg-surface-container rounded w-3/4" />
             ))}
           </div>
         ) : topEvents.length === 0 ? (
@@ -190,10 +190,10 @@ export default function MarketplaceAnalytics() {
             {topEvents.slice(0, 10).map((e, i) => (
               <li key={e.type} className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-2">
-                  <span className="w-5 text-xs text-slatetext font-mono">{i + 1}.</span>
-                  <span className="font-medium text-ink">{e.type}</span>
+                  <span className="w-5 text-xs text-on-surface-variant font-mono">{i + 1}.</span>
+                  <span className="font-medium text-on-surface">{e.type}</span>
                 </span>
-                <span className="text-slatetext text-xs">{e.count?.toLocaleString()}</span>
+                <span className="text-on-surface-variant text-xs">{e.count?.toLocaleString()}</span>
               </li>
             ))}
           </ol>

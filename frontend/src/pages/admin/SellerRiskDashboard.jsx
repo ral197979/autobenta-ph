@@ -32,11 +32,11 @@ export default function SellerRiskDashboard() {
     <div className="max-w-5xl mx-auto p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Seller Risk Dashboard</h1>
-          <p className="text-sm text-gray-500">{total} sellers at elevated risk</p>
+          <h1 className="text-2xl font-bold text-on-surface">Seller Risk Dashboard</h1>
+          <p className="text-sm text-on-surface-variant">{total} sellers at elevated risk</p>
         </div>
         <div className="flex items-center gap-3">
-          <label className="text-sm text-gray-600">Min Risk:</label>
+          <label className="text-sm text-on-surface-variant">Min Risk:</label>
           <select
             value={minRisk}
             onChange={e => { setMinRisk(e.target.value); setPage(1); }}
@@ -51,33 +51,33 @@ export default function SellerRiskDashboard() {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12 text-gray-500">Loading...</div>
+        <div className="text-center py-12 text-on-surface-variant">Loading...</div>
       ) : (
-        <div className="bg-white rounded-xl border overflow-hidden">
+        <div className="bg-surface-container-lowest rounded-xl border overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-surface-container border-b">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Seller</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-600">Risk Level</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-600">Score</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-600">Listings</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-600">Flagged</th>
-                <th className="text-center px-4 py-3 font-medium text-gray-600">Flags</th>
-                <th className="text-center px-4 py-3 font-medium text-gray-600">Status</th>
+                <th className="text-left px-4 py-3 font-medium text-on-surface-variant">Seller</th>
+                <th className="text-left px-4 py-3 font-medium text-on-surface-variant">Risk Level</th>
+                <th className="text-right px-4 py-3 font-medium text-on-surface-variant">Score</th>
+                <th className="text-right px-4 py-3 font-medium text-on-surface-variant">Listings</th>
+                <th className="text-right px-4 py-3 font-medium text-on-surface-variant">Flagged</th>
+                <th className="text-center px-4 py-3 font-medium text-on-surface-variant">Flags</th>
+                <th className="text-center px-4 py-3 font-medium text-on-surface-variant">Status</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody className="divide-y">
               {profiles.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="text-center py-8 text-gray-400">No sellers at this risk level.</td>
+                  <td colSpan={8} className="text-center py-8 text-on-surface-variant">No sellers at this risk level.</td>
                 </tr>
               )}
               {profiles.map(profile => (
-                <tr key={profile.id} className="hover:bg-gray-50">
+                <tr key={profile.id} className="hover:bg-surface-container">
                   <td className="px-4 py-3">
-                    <div className="font-medium text-gray-900">{profile.user?.name}</div>
-                    <div className="text-xs text-gray-400">{profile.user?.email}</div>
+                    <div className="font-medium text-on-surface">{profile.user?.name}</div>
+                    <div className="text-xs text-on-surface-variant">{profile.user?.email}</div>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${RISK_COLORS[profile.riskLevel]}`}>
@@ -126,7 +126,7 @@ export default function SellerRiskDashboard() {
             <button
               key={p}
               onClick={() => setPage(p)}
-              className={`px-3 py-1 rounded border text-sm ${p === page ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300'}`}
+              className={`px-3 py-1 rounded border text-sm ${p === page ? 'bg-blue-600 text-white border-blue-600' : 'border-border-subtle'}`}
             >
               {p}
             </button>

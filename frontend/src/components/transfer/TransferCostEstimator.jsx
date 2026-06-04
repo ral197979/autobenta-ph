@@ -77,8 +77,8 @@ export default function TransferCostEstimator() {
   };
 
   const categoryColors = {
-    govt: 'text-deepblue',
-    service: 'text-slatetext',
+    govt: 'text-primary',
+    service: 'text-on-surface-variant',
     insurance: 'text-emerald-700',
   };
 
@@ -93,7 +93,7 @@ export default function TransferCostEstimator() {
       {/* Inputs */}
       <div className="space-y-4">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slatetext">
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
             Vehicle Type
           </label>
           <div className="grid grid-cols-3 gap-2">
@@ -104,8 +104,8 @@ export default function TransferCostEstimator() {
                 onClick={() => set('vehicleType', value)}
                 className={`rounded-lg border py-2.5 text-sm font-semibold transition-colors ${
                   form.vehicleType === value
-                    ? 'border-deepblue bg-deepblue text-white'
-                    : 'border-cardborder bg-white text-slatetext hover:border-deepblue/40'
+                    ? 'border-primary bg-primary text-on-primary'
+                    : 'border-border-subtle bg-surface-container-lowest text-on-surface-variant hover:border-primary/40'
                 }`}
               >
                 {label}
@@ -115,7 +115,7 @@ export default function TransferCostEstimator() {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slatetext">
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
             Region
           </label>
           <select
@@ -130,7 +130,7 @@ export default function TransferCostEstimator() {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slatetext">
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
             Sale Type
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -141,8 +141,8 @@ export default function TransferCostEstimator() {
                 onClick={() => set('saleType', value)}
                 className={`rounded-lg border py-2.5 text-sm font-semibold transition-colors ${
                   form.saleType === value
-                    ? 'border-deepblue bg-deepblue text-white'
-                    : 'border-cardborder bg-white text-slatetext hover:border-deepblue/40'
+                    ? 'border-primary bg-primary text-on-primary'
+                    : 'border-border-subtle bg-surface-container-lowest text-on-surface-variant hover:border-primary/40'
                 }`}
               >
                 {label}
@@ -152,7 +152,7 @@ export default function TransferCostEstimator() {
         </div>
 
         <div>
-          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slatetext">
+          <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-on-surface-variant">
             Vehicle Purchase Price (₱)
           </label>
           <input
@@ -162,10 +162,10 @@ export default function TransferCostEstimator() {
             onChange={(e) => set('vehiclePrice', e.target.value)}
             className="input"
           />
-          <p className="mt-1 text-[11px] text-slatetext/70">Used to estimate comprehensive insurance cost.</p>
+          <p className="mt-1 text-[11px] text-on-surface-variant/70">Used to estimate comprehensive insurance cost.</p>
         </div>
 
-        <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-cardborder bg-softbg px-4 py-3">
+        <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-border-subtle bg-surface-container px-4 py-3">
           <input
             type="checkbox"
             checked={form.needsHpg}
@@ -173,15 +173,15 @@ export default function TransferCostEstimator() {
             className="h-4 w-4 rounded accent-deepblue"
           />
           <div>
-            <p className="text-sm font-semibold text-ink">Requires HPG Clearance</p>
-            <p className="text-xs text-slatetext">400cc+ displacement or for-hire vehicles</p>
+            <p className="text-sm font-semibold text-on-surface">Requires HPG Clearance</p>
+            <p className="text-xs text-on-surface-variant">400cc+ displacement or for-hire vehicles</p>
           </div>
         </label>
 
         <button
           type="button"
           onClick={handleCompute}
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-deepblue py-3 text-sm font-bold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-ink hover:shadow-md"
+          className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-ink hover:shadow-md"
         >
           <Calculator className="h-4 w-4" />
           Estimate Transfer Cost
@@ -191,7 +191,7 @@ export default function TransferCostEstimator() {
       {/* Output */}
       <div>
         {computed ? (
-          <div className="rounded-2xl border border-cardborder bg-white overflow-hidden">
+          <div className="rounded-2xl border border-border-subtle bg-surface-container-lowest overflow-hidden">
             <div className="bg-ink px-5 py-4">
               <p className="text-xs font-semibold uppercase tracking-wider text-white/50">Estimated Breakdown</p>
               <p className="mt-1 text-2xl font-bold text-white">
@@ -206,25 +206,25 @@ export default function TransferCostEstimator() {
                     <span className={`text-[10px] font-bold uppercase tracking-wider ${categoryColors[row.category]}`}>
                       {categoryLabels[row.category]}
                     </span>
-                    <span className="text-ink">{row.label}</span>
+                    <span className="text-on-surface">{row.label}</span>
                   </div>
-                  <span className="font-semibold text-ink tabular-nums">{row.amount}</span>
+                  <span className="font-semibold text-on-surface tabular-nums">{row.amount}</span>
                 </div>
               ))}
             </div>
-            <div className="border-t border-cardborder bg-softbg px-5 py-3">
-              <div className="flex items-start gap-2 text-xs text-slatetext">
+            <div className="border-t border-border-subtle bg-surface-container px-5 py-3">
+              <div className="flex items-start gap-2 text-xs text-on-surface-variant">
                 <Info className="h-3.5 w-3.5 shrink-0 mt-0.5" />
                 Estimates only. Actual fees may vary by LTO district and vehicle classification. Verify current rates at your local LTO office.
               </div>
             </div>
           </div>
         ) : (
-          <div className="flex h-full min-h-64 items-center justify-center rounded-2xl border-2 border-dashed border-cardborder">
+          <div className="flex h-full min-h-64 items-center justify-center rounded-2xl border-2 border-dashed border-border-subtle">
             <div className="text-center">
               <Calculator className="mx-auto h-10 w-10 text-cardborder mb-3" />
-              <p className="text-sm font-semibold text-slatetext">Fill in details to estimate</p>
-              <p className="text-xs text-slatetext/70 mt-1">Your breakdown will appear here</p>
+              <p className="text-sm font-semibold text-on-surface-variant">Fill in details to estimate</p>
+              <p className="text-xs text-on-surface-variant/70 mt-1">Your breakdown will appear here</p>
             </div>
           </div>
         )}

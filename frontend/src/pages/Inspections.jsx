@@ -31,7 +31,7 @@ export default function Inspections() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2"><Wrench className="w-7 h-7 text-primary-600" /> Vehicle Inspections</h1>
-          <p className="text-sm text-gray-500 mt-1">Request and track professional vehicle inspections</p>
+          <p className="text-sm text-on-surface-variant mt-1">Request and track professional vehicle inspections</p>
         </div>
       </div>
 
@@ -41,7 +41,7 @@ export default function Inspections() {
         <p className="text-sm text-blue-700 mb-3">Our certified inspectors check 50+ points across exterior, interior, engine, transmission, suspension, and more. Get a full report with photos and an overall score.</p>
         <div className="grid grid-cols-3 gap-3 text-sm">
           {[['50+ checkpoints', 'Comprehensive'], ['24-48 hrs', 'Fast turnaround'], ['With photos', 'Visual proof']].map(([v, l]) => (
-            <div key={l} className="bg-white rounded-lg p-3 text-center border border-blue-100">
+            <div key={l} className="bg-surface-container-lowest rounded-lg p-3 text-center border border-blue-100">
               <p className="font-bold text-blue-800">{v}</p>
               <p className="text-xs text-blue-500">{l}</p>
             </div>
@@ -53,9 +53,9 @@ export default function Inspections() {
         <div className="space-y-3">{Array.from({ length: 3 }).map((_, i) => <div key={i} className="card p-4 animate-pulse h-24" />)}</div>
       ) : inspections?.length === 0 ? (
         <div className="text-center py-16">
-          <Wrench className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No inspection requests yet.</p>
-          <p className="text-sm text-gray-400 mb-4">Go to a car listing to request an inspection.</p>
+          <Wrench className="w-12 h-12 text-on-surface-variant mx-auto mb-3" />
+          <p className="text-on-surface-variant">No inspection requests yet.</p>
+          <p className="text-sm text-on-surface-variant mb-4">Go to a car listing to request an inspection.</p>
           <Link to="/cars" className="btn-primary">Browse Cars</Link>
         </div>
       ) : (
@@ -65,14 +65,14 @@ export default function Inspections() {
               <div className="p-4">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div className="flex items-center gap-3">
-                    <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                    <div className="w-16 h-12 rounded-lg overflow-hidden bg-surface-container shrink-0">
                       <img src={photoOrFallback(ins.listing?.photos?.[0]?.url, ins.listing?.make)} alt="" className="w-full h-full object-cover" />
                     </div>
                     <div>
                       <Link to={`/cars/${ins.listingId}`} className="font-semibold text-sm text-primary-600 hover:underline">
                         {ins.listing?.year} {ins.listing?.make} {ins.listing?.model}
                       </Link>
-                      <div className="flex items-center gap-3 text-xs text-gray-500 mt-0.5">
+                      <div className="flex items-center gap-3 text-xs text-on-surface-variant mt-0.5">
                         <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Requested {formatRelativeTime(ins.createdAt)}</span>
                         {ins.preferredDate && <span>Preferred: {formatDate(ins.preferredDate)}</span>}
                       </div>
@@ -90,7 +90,7 @@ export default function Inspections() {
                   </div>
                 </div>
 
-                {ins.notes && <p className="text-xs text-gray-500 mt-2 italic">Note: {ins.notes}</p>}
+                {ins.notes && <p className="text-xs text-on-surface-variant mt-2 italic">Note: {ins.notes}</p>}
               </div>
 
               {/* Expanded Report */}
@@ -111,7 +111,7 @@ export default function Inspections() {
                     {['exterior', 'interior', 'engine', 'transmission', 'suspension', 'tires', 'electrical'].map(section => {
                       const data = ins.report[section] || {};
                       return (
-                        <div key={section} className="bg-white/60 rounded-lg p-3">
+                        <div key={section} className="bg-surface-container-lowest/60 rounded-lg p-3">
                           <p className="font-semibold capitalize mb-1">{section}</p>
                           {Object.entries(data).length > 0 ? (
                             Object.entries(data).map(([k, v]) => (
@@ -127,7 +127,7 @@ export default function Inspections() {
                   </div>
 
                   {ins.report.testDriveNotes && (
-                    <div className="mt-3 bg-white/60 rounded-lg p-3">
+                    <div className="mt-3 bg-surface-container-lowest/60 rounded-lg p-3">
                       <p className="text-sm font-semibold mb-1">Test Drive Notes</p>
                       <p className="text-sm opacity-80">{ins.report.testDriveNotes}</p>
                     </div>

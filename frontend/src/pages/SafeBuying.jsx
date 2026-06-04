@@ -49,16 +49,16 @@ const PAYMENT_TIPS = [
 
 export default function SafeBuying() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface-container-lowest">
       {/* Hero */}
       <div className="relative overflow-hidden bg-ink text-white">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-deepblue/25 blur-3xl" />
+          <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-primary/25 blur-3xl" />
           <div className="absolute left-0 bottom-0 h-64 w-64 rounded-full bg-electric/10 blur-3xl" />
         </div>
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-white/70 backdrop-blur mb-5">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-surface-container-lowest/5 px-3 py-1 text-xs font-medium text-white/70 backdrop-blur mb-5">
               <ShieldCheck className="h-3.5 w-3.5 text-accent" />
               Buyer Protection Guide
             </div>
@@ -77,18 +77,18 @@ export default function SafeBuying() {
         {/* Verification checklist */}
         <section>
           <div className="mb-8">
-            <p className="text-xs font-semibold uppercase tracking-wider text-electric mb-2">Before You Buy</p>
-            <h2 className="text-2xl font-bold text-ink">Buyer verification checklist</h2>
-            <p className="text-sm text-slatetext mt-1">Complete every step before releasing any payment.</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Before You Buy</p>
+            <h2 className="text-2xl font-bold text-on-surface">Buyer verification checklist</h2>
+            <p className="text-sm text-on-surface-variant mt-1">Complete every step before releasing any payment.</p>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {VERIFICATION_STEPS.map(({ icon: Icon, label, detail }, idx) => (
-              <div key={idx} className="rounded-2xl border border-cardborder bg-softbg p-5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-deepblue/10 mb-3">
-                  <Icon className="h-5 w-5 text-deepblue" />
+              <div key={idx} className="rounded-2xl border border-border-subtle bg-surface-container p-5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 mb-3">
+                  <Icon className="h-5 w-5 text-primary" />
                 </div>
-                <p className="font-semibold text-ink text-sm mb-1.5">{label}</p>
-                <p className="text-xs text-slatetext leading-relaxed">{detail}</p>
+                <p className="font-semibold text-on-surface text-sm mb-1.5">{label}</p>
+                <p className="text-xs text-on-surface-variant leading-relaxed">{detail}</p>
               </div>
             ))}
           </div>
@@ -98,8 +98,8 @@ export default function SafeBuying() {
         <section>
           <div className="mb-8">
             <p className="text-xs font-semibold uppercase tracking-wider text-red-500 mb-2">Common Scams</p>
-            <h2 className="text-2xl font-bold text-ink">Know these fraud patterns</h2>
-            <p className="text-sm text-slatetext mt-1">These are the most frequently reported vehicle purchase scams in the Philippines.</p>
+            <h2 className="text-2xl font-bold text-on-surface">Know these fraud patterns</h2>
+            <p className="text-sm text-on-surface-variant mt-1">These are the most frequently reported vehicle purchase scams in the Philippines.</p>
           </div>
           <div className="space-y-4">
             {SCAM_PATTERNS.map((scam, idx) => (
@@ -108,9 +108,9 @@ export default function SafeBuying() {
                   <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-100">
                     <AlertTriangle className="h-4 w-4 text-red-600" />
                   </div>
-                  <h3 className="font-bold text-ink">{scam.title}</h3>
+                  <h3 className="font-bold text-on-surface">{scam.title}</h3>
                 </div>
-                <p className="text-sm text-slatetext leading-relaxed mb-3 ml-11">{scam.description}</p>
+                <p className="text-sm text-on-surface-variant leading-relaxed mb-3 ml-11">{scam.description}</p>
                 <div className="ml-11">
                   <p className="text-xs font-semibold uppercase tracking-wide text-red-600 mb-2">Warning signs</p>
                   <ul className="space-y-1">
@@ -130,14 +130,14 @@ export default function SafeBuying() {
         {/* Payment safety */}
         <section>
           <div className="mb-6">
-            <p className="text-xs font-semibold uppercase tracking-wider text-electric mb-2">Payment Safety</p>
-            <h2 className="text-2xl font-bold text-ink">Safe payment practices</h2>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Payment Safety</p>
+            <h2 className="text-2xl font-bold text-on-surface">Safe payment practices</h2>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {PAYMENT_TIPS.map((tip) => (
-              <div key={tip} className="flex items-start gap-3 rounded-xl border border-cardborder bg-white p-4">
+              <div key={tip} className="flex items-start gap-3 rounded-xl border border-border-subtle bg-surface-container-lowest p-4">
                 <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5 text-emerald-500" />
-                <p className="text-sm text-slatetext">{tip}</p>
+                <p className="text-sm text-on-surface-variant">{tip}</p>
               </div>
             ))}
           </div>
@@ -169,7 +169,7 @@ export default function SafeBuying() {
             <div className="space-y-3">
               <Link
                 to="/cars?sellerType=dealer"
-                className="flex items-center justify-between rounded-xl border border-white/15 bg-white/5 p-4 hover:bg-white/10 transition-colors group"
+                className="flex items-center justify-between rounded-xl border border-white/15 bg-surface-container-lowest/5 p-4 hover:bg-surface-container-lowest/10 transition-colors group"
               >
                 <div>
                   <p className="font-semibold text-white">Browse verified dealers</p>
@@ -179,7 +179,7 @@ export default function SafeBuying() {
               </Link>
               <Link
                 to="/ownership-transfer"
-                className="flex items-center justify-between rounded-xl border border-white/15 bg-white/5 p-4 hover:bg-white/10 transition-colors group"
+                className="flex items-center justify-between rounded-xl border border-white/15 bg-surface-container-lowest/5 p-4 hover:bg-surface-container-lowest/10 transition-colors group"
               >
                 <div>
                   <p className="font-semibold text-white">Ownership transfer guide</p>
@@ -189,7 +189,7 @@ export default function SafeBuying() {
               </Link>
               <Link
                 to="/inspections"
-                className="flex items-center justify-between rounded-xl border border-white/15 bg-white/5 p-4 hover:bg-white/10 transition-colors group"
+                className="flex items-center justify-between rounded-xl border border-white/15 bg-surface-container-lowest/5 p-4 hover:bg-surface-container-lowest/10 transition-colors group"
               >
                 <div>
                   <p className="font-semibold text-white">Book a pre-purchase inspection</p>

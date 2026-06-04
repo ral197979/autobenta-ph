@@ -31,13 +31,13 @@ export default function DealerReminders({ compact = false }) {
 
   if (compact) {
     const upcoming = reminders.filter(r => !r.isDone).slice(0, 3);
-    if (!upcoming.length) return <p className="text-xs text-slatetext">No upcoming reminders.</p>;
+    if (!upcoming.length) return <p className="text-xs text-on-surface-variant">No upcoming reminders.</p>;
     return (
       <div className="space-y-2">
         {upcoming.map(r => (
-          <div key={r.id} className={`flex items-center justify-between rounded-lg border p-2.5 ${overdue(r.dueAt) ? 'border-red-200 bg-red-50' : 'border-cardborder bg-white'}`}>
-            <p className="text-xs font-medium text-ink truncate">{r.title}</p>
-            <p className={`text-[10px] shrink-0 ml-2 ${overdue(r.dueAt) ? 'text-red-600 font-medium' : 'text-slatetext'}`}>
+          <div key={r.id} className={`flex items-center justify-between rounded-lg border p-2.5 ${overdue(r.dueAt) ? 'border-red-200 bg-red-50' : 'border-border-subtle bg-surface-container-lowest'}`}>
+            <p className="text-xs font-medium text-on-surface truncate">{r.title}</p>
+            <p className={`text-[10px] shrink-0 ml-2 ${overdue(r.dueAt) ? 'text-red-600 font-medium' : 'text-on-surface-variant'}`}>
               {new Date(r.dueAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })}
             </p>
           </div>
@@ -49,11 +49,11 @@ export default function DealerReminders({ compact = false }) {
   return (
     <div className="max-w-2xl">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-800">Reminders</h3>
+        <h3 className="font-semibold text-on-surface">Reminders</h3>
         <div className="flex gap-2">
           <button
             onClick={() => setShowDone(!showDone)}
-            className="text-xs text-gray-500 hover:underline"
+            className="text-xs text-on-surface-variant hover:underline"
           >
             {showDone ? 'Show Pending' : 'Show Done'}
           </button>
@@ -102,17 +102,17 @@ export default function DealerReminders({ compact = false }) {
 
       <div className="space-y-2">
         {reminders.length === 0 && (
-          <p className="text-sm text-gray-400 text-center py-6">No reminders.</p>
+          <p className="text-sm text-on-surface-variant text-center py-6">No reminders.</p>
         )}
         {reminders.map(r => (
-          <div key={r.id} className={`flex items-start justify-between rounded-lg border p-3 ${r.isDone ? 'opacity-60' : overdue(r.dueAt) ? 'border-red-200 bg-red-50' : 'bg-white'}`}>
+          <div key={r.id} className={`flex items-start justify-between rounded-lg border p-3 ${r.isDone ? 'opacity-60' : overdue(r.dueAt) ? 'border-red-200 bg-red-50' : 'bg-surface-container-lowest'}`}>
             <div>
-              <p className="text-sm font-medium text-gray-800">{r.title}</p>
-              <p className={`text-xs mt-0.5 ${overdue(r.dueAt) && !r.isDone ? 'text-red-600 font-medium' : 'text-gray-400'}`}>
+              <p className="text-sm font-medium text-on-surface">{r.title}</p>
+              <p className={`text-xs mt-0.5 ${overdue(r.dueAt) && !r.isDone ? 'text-red-600 font-medium' : 'text-on-surface-variant'}`}>
                 {new Date(r.dueAt).toLocaleString('en-PH')}
                 {overdue(r.dueAt) && !r.isDone ? ' — Overdue' : ''}
               </p>
-              {r.notes && <p className="text-xs text-gray-500 mt-1">{r.notes}</p>}
+              {r.notes && <p className="text-xs text-on-surface-variant mt-1">{r.notes}</p>}
             </div>
             {!r.isDone && (
               <button

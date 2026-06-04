@@ -66,15 +66,15 @@ const SPOTS_TOTAL = 5;
 function FaqItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-b border-cardborder last:border-0">
+    <div className="border-b border-border-subtle last:border-0">
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex w-full items-center justify-between py-4 text-left text-sm font-semibold text-ink hover:text-deepblue transition-colors"
+        className="flex w-full items-center justify-between py-4 text-left text-sm font-semibold text-on-surface hover:text-primary transition-colors"
       >
         {q}
-        <ChevronDown className={`h-4 w-4 shrink-0 text-slatetext transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`h-4 w-4 shrink-0 text-on-surface-variant transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
-      {open && <p className="pb-4 text-sm text-slatetext leading-relaxed">{a}</p>}
+      {open && <p className="pb-4 text-sm text-on-surface-variant leading-relaxed">{a}</p>}
     </div>
   );
 }
@@ -123,14 +123,14 @@ export default function FoundingDealer() {
   };
 
   const inputClass = (field) =>
-    `w-full rounded-lg border px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-deepblue/30 transition-colors ${errors[field] ? 'border-red-400' : 'border-cardborder'}`;
+    `w-full rounded-lg border px-3 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-deepblue/30 transition-colors ${errors[field] ? 'border-red-400' : 'border-border-subtle'}`;
 
   return (
-    <div className="bg-white">
+    <div className="bg-surface-container-lowest">
       {/* Hero */}
       <section className="bg-gradient-to-br from-ink to-deepblue text-white">
         <div className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold text-white/80 mb-6">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-surface-container-lowest/10 px-3 py-1 text-xs font-semibold text-white/80 mb-6">
             <Zap className="h-3.5 w-3.5 text-accent" />
             5 spots only — {SPOTS_REMAINING} remaining
           </div>
@@ -153,18 +153,18 @@ export default function FoundingDealer() {
       <section className="py-16">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-wider text-deepblue mb-2">Founding Benefits</p>
-            <h2 className="text-2xl font-bold text-ink sm:text-3xl">What founding dealers get</h2>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Founding Benefits</p>
+            <h2 className="text-2xl font-bold text-on-surface sm:text-3xl">What founding dealers get</h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {BENEFITS.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="rounded-2xl border border-cardborder p-6 flex gap-4">
-                <div className="h-11 w-11 rounded-xl bg-deepblue/10 flex items-center justify-center shrink-0">
-                  <Icon className="h-5 w-5 text-deepblue" />
+              <div key={title} className="rounded-2xl border border-border-subtle p-6 flex gap-4">
+                <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Icon className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-ink mb-1">{title}</p>
-                  <p className="text-xs text-slatetext leading-relaxed">{desc}</p>
+                  <p className="text-sm font-bold text-on-surface mb-1">{title}</p>
+                  <p className="text-xs text-on-surface-variant leading-relaxed">{desc}</p>
                 </div>
               </div>
             ))}
@@ -173,28 +173,28 @@ export default function FoundingDealer() {
       </section>
 
       {/* What you get */}
-      <section className="py-16 bg-softbg">
+      <section className="py-16 bg-surface-container">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-wider text-deepblue mb-2">Full Feature List</p>
-            <h2 className="text-2xl font-bold text-ink sm:text-3xl">Everything in Dealer Pro, plus founding extras</h2>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Full Feature List</p>
+            <h2 className="text-2xl font-bold text-on-surface sm:text-3xl">Everything in Dealer Pro, plus founding extras</h2>
           </div>
-          <div className="bg-white rounded-2xl border border-cardborder p-6 sm:p-8">
+          <div className="bg-surface-container-lowest rounded-2xl border border-border-subtle p-6 sm:p-8">
             <div className="grid sm:grid-cols-2 gap-3">
               {FEATURES.map(f => (
                 <div key={f} className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4 text-emerald-500 shrink-0" />
-                  <span className="text-sm text-ink">{f}</span>
+                  <span className="text-sm text-on-surface">{f}</span>
                 </div>
               ))}
             </div>
-            <div className="mt-6 pt-6 border-t border-cardborder flex items-center justify-between gap-4 flex-wrap">
+            <div className="mt-6 pt-6 border-t border-border-subtle flex items-center justify-between gap-4 flex-wrap">
               <div>
                 <span className="text-xl font-bold text-emerald-600">Free</span>
-                <span className="text-sm text-slatetext ml-1">for 3 months</span>
-                <span className="mx-2 text-slatetext">·</span>
-                <span className="text-3xl font-bold text-deepblue">₱3,599</span>
-                <span className="text-sm text-slatetext">/mo after</span>
+                <span className="text-sm text-on-surface-variant ml-1">for 3 months</span>
+                <span className="mx-2 text-on-surface-variant">·</span>
+                <span className="text-3xl font-bold text-primary">₱3,599</span>
+                <span className="text-sm text-on-surface-variant">/mo after</span>
               </div>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-700">
                 <ShieldCheck className="h-3 w-3" /> Founding price — locked forever
@@ -205,20 +205,20 @@ export default function FoundingDealer() {
       </section>
 
       {/* Spots counter */}
-      <section className="py-10 border-y border-cardborder">
+      <section className="py-10 border-y border-border-subtle">
         <div className="mx-auto max-w-lg px-4 text-center">
           <div className="flex justify-center gap-2 mb-4">
             {Array.from({ length: SPOTS_TOTAL }).map((_, i) => (
               <div
                 key={i}
-                className={`h-4 w-10 rounded-full ${i < SPOTS_TOTAL - SPOTS_REMAINING ? 'bg-deepblue' : 'bg-cardborder'}`}
+                className={`h-4 w-10 rounded-full ${i < SPOTS_TOTAL - SPOTS_REMAINING ? 'bg-primary' : 'bg-cardborder'}`}
               />
             ))}
           </div>
-          <p className="text-lg font-bold text-ink">
+          <p className="text-lg font-bold text-on-surface">
             {SPOTS_REMAINING} of {SPOTS_TOTAL} spots remaining
           </p>
-          <p className="text-sm text-slatetext mt-1">
+          <p className="text-sm text-on-surface-variant mt-1">
             Once filled, founding pricing closes permanently. No waitlist.
           </p>
         </div>
@@ -228,28 +228,28 @@ export default function FoundingDealer() {
       <section id="apply" className="py-16">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-wider text-deepblue mb-2">Apply</p>
-            <h2 className="text-2xl font-bold text-ink sm:text-3xl">Founding Dealer Application</h2>
-            <p className="text-sm text-slatetext mt-2">Takes about 2 minutes. We'll get back to you within 24 hours.</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Apply</p>
+            <h2 className="text-2xl font-bold text-on-surface sm:text-3xl">Founding Dealer Application</h2>
+            <p className="text-sm text-on-surface-variant mt-2">Takes about 2 minutes. We'll get back to you within 24 hours.</p>
           </div>
 
           {submitted ? (
             <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
               <CheckCircle className="h-12 w-12 text-emerald-500 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-ink mb-2">Application received!</h3>
-              <p className="text-sm text-slatetext">We'll contact you within 24 hours to confirm your spot and get you onboarded.</p>
+              <h3 className="text-lg font-bold text-on-surface mb-2">Application received!</h3>
+              <p className="text-sm text-on-surface-variant">We'll contact you within 24 hours to confirm your spot and get you onboarded.</p>
               <Link
                 to="/for-dealers"
-                className="inline-flex items-center gap-2 mt-6 text-sm font-semibold text-deepblue hover:underline"
+                className="inline-flex items-center gap-2 mt-6 text-sm font-semibold text-primary hover:underline"
               >
                 Back to Dealer Platform
               </Link>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} noValidate className="rounded-2xl border border-cardborder bg-white p-6 sm:p-8 space-y-5">
+            <form onSubmit={handleSubmit} noValidate className="rounded-2xl border border-border-subtle bg-surface-container-lowest p-6 sm:p-8 space-y-5">
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-ink mb-1.5">Business name *</label>
+                  <label className="block text-xs font-semibold text-on-surface mb-1.5">Business name *</label>
                   <input
                     type="text"
                     value={form.businessName}
@@ -260,7 +260,7 @@ export default function FoundingDealer() {
                   {errors.businessName && <p className="text-xs text-red-500 mt-1">{errors.businessName}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-ink mb-1.5">Contact name *</label>
+                  <label className="block text-xs font-semibold text-on-surface mb-1.5">Contact name *</label>
                   <input
                     type="text"
                     value={form.contactName}
@@ -274,7 +274,7 @@ export default function FoundingDealer() {
 
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-ink mb-1.5">Email *</label>
+                  <label className="block text-xs font-semibold text-on-surface mb-1.5">Email *</label>
                   <input
                     type="email"
                     value={form.email}
@@ -285,7 +285,7 @@ export default function FoundingDealer() {
                   {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-ink mb-1.5">Phone *</label>
+                  <label className="block text-xs font-semibold text-on-surface mb-1.5">Phone *</label>
                   <input
                     type="tel"
                     value={form.phone}
@@ -298,7 +298,7 @@ export default function FoundingDealer() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-ink mb-1.5">City *</label>
+                <label className="block text-xs font-semibold text-on-surface mb-1.5">City *</label>
                 <input
                   type="text"
                   value={form.city}
@@ -311,11 +311,11 @@ export default function FoundingDealer() {
 
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-semibold text-ink mb-1.5">Monthly inventory count *</label>
+                  <label className="block text-xs font-semibold text-on-surface mb-1.5">Monthly inventory count *</label>
                   <select
                     value={form.monthlyInventory}
                     onChange={handleChange('monthlyInventory')}
-                    className={inputClass('monthlyInventory') + ' bg-white'}
+                    className={inputClass('monthlyInventory') + ' bg-surface-container-lowest'}
                   >
                     <option value="">Select...</option>
                     <option value="<10">Less than 10</option>
@@ -326,11 +326,11 @@ export default function FoundingDealer() {
                   {errors.monthlyInventory && <p className="text-xs text-red-500 mt-1">{errors.monthlyInventory}</p>}
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-ink mb-1.5">Current DMS *</label>
+                  <label className="block text-xs font-semibold text-on-surface mb-1.5">Current DMS *</label>
                   <select
                     value={form.currentDms}
                     onChange={handleChange('currentDms')}
-                    className={inputClass('currentDms') + ' bg-white'}
+                    className={inputClass('currentDms') + ' bg-surface-container-lowest'}
                   >
                     <option value="">Select...</option>
                     <option value="none">None / Paper-based</option>
@@ -345,11 +345,11 @@ export default function FoundingDealer() {
 
               <button
                 type="submit"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-deepblue px-6 py-3 text-sm font-bold text-white hover:bg-deepblue/90 transition-colors"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:bg-primary/90 transition-colors"
               >
                 Submit Application <ArrowRight className="h-4 w-4" />
               </button>
-              <p className="text-center text-xs text-slatetext">
+              <p className="text-center text-xs text-on-surface-variant">
                 We review every application within 24 hours. Only {SPOTS_REMAINING} spots remain.
               </p>
             </form>
@@ -358,20 +358,20 @@ export default function FoundingDealer() {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 bg-softbg">
+      <section className="py-16 bg-surface-container">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-wider text-deepblue mb-2">FAQ</p>
-            <h2 className="text-2xl font-bold text-ink sm:text-3xl">Common questions</h2>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">FAQ</p>
+            <h2 className="text-2xl font-bold text-on-surface sm:text-3xl">Common questions</h2>
           </div>
-          <div className="rounded-2xl border border-cardborder bg-white px-6">
+          <div className="rounded-2xl border border-border-subtle bg-surface-container-lowest px-6">
             {FAQS.map(faq => <FaqItem key={faq.q} {...faq} />)}
           </div>
           <div className="text-center mt-8">
-            <p className="text-sm text-slatetext">Still have questions?</p>
+            <p className="text-sm text-on-surface-variant">Still have questions?</p>
             <a
               href="mailto:dealers@autobentaph.com"
-              className="text-sm font-semibold text-deepblue hover:underline"
+              className="text-sm font-semibold text-primary hover:underline"
             >
               dealers@autobentaph.com
             </a>

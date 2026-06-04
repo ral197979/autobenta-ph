@@ -1,27 +1,39 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { MapPin, Gauge, Fuel, Settings, Calendar, Users, Heart, Share2, AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, MessageCircle, Wrench, CreditCard, Bot, Shield, FileCheck } from 'lucide-react';
 import api from '../api/client';
 import { trackEvent } from '../utils/analytics';
-import { formatPrice, formatMileage, formatRelativeTime, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_COLORS, CONDITION_LABELS, carPlaceholder } from '../utils/format';
+import { formatPrice, formatMileage, formatRelativeTime, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_LABELS, carPlaceholder } from '../utils/format';
 import { useAuth } from '../context/AuthContext';
 import ReadinessScore from '../components/ReadinessScore';
 import VehicleHistoryCard from '../components/VehicleHistoryCard';
-import TrustBadges from '../components/TrustBadges';
+import MakeOfferModal from '../components/MakeOfferModal';
+
+// Material Symbols icon helper (Stitch uses these throughout).
+function Icon({ name, className = '', filled = false }) {
+  return (
+    <span className={`material-symbols-outlined ${className}`} style={filled ? { fontVariationSettings: "'FILL' 1" } : undefined}>
+      {name}
+    </span>
+  );
+}
+
+const CARD = 'bg-surface-container-low border border-border-subtle rounded-2xl';
 
 export default function CarDetail() {
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [photoIdx, setPhotoIdx] = useState(0);
+  const [showInquiry, setShowInquiry] = useState(false);
   const [inquiryMsg, setInquiryMsg] = useState('');
   const [inquirySent, setInquirySent] = useState(false);
   const [aiQuestion, setAiQuestion] = useState('');
   const [aiAnswer, setAiAnswer] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
-  const [tab, setTab] = useState('details');
   const [inspectionRequested, setInspectionRequested] = useState(false);
+  const [showOffer, setShowOffer] = useState(false);
+  const [offerSent, setOfferSent] = useState(false);
 
   const { data: listing, isLoading } = useQuery({
     queryKey: ['listing', id],
@@ -43,6 +55,12 @@ export default function CarDetail() {
       });
     }
   }, [listing?.id]);
+
+  const openInquiry = (template) => {
+    setShowInquiry(true);
+    if (template) setInquiryMsg(template);
+    setTimeout(() => document.getElementById('inquiry-box')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+  };
 
   const sendInquiry = async () => {
     if (!user) return navigate('/login');
@@ -79,273 +97,356 @@ export default function CarDetail() {
   };
 
   if (isLoading) return (
-    <div className="max-w-7xl mx-auto px-4 py-8 animate-pulse">
-      <div className="h-96 bg-gray-200 rounded-xl mb-6" />
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-3"><div className="h-8 bg-gray-200 rounded w-2/3" /><div className="h-10 bg-gray-200 rounded w-1/3" /></div>
-        <div className="h-64 bg-gray-200 rounded-xl" />
+    <div className="max-w-[1280px] mx-auto px-gutter-desktop py-3xl animate-pulse">
+      <div className="aspect-[21/9] bg-surface-container rounded-2xl mb-3xl" />
+      <div className="grid grid-cols-12 gap-3xl">
+        <div className="col-span-12 lg:col-span-8 space-y-4"><div className="h-8 bg-surface-container rounded w-2/3" /><div className="h-40 bg-surface-container rounded-2xl" /></div>
+        <div className="col-span-12 lg:col-span-4 h-80 bg-surface-container rounded-2xl" />
       </div>
     </div>
   );
 
   if (!listing) return (
-    <div className="text-center py-24"><p className="text-gray-500 text-xl">Listing not found.</p><Link to="/cars" className="btn-primary mt-4 inline-block">Browse Cars</Link></div>
+    <div className="text-center py-24"><p className="text-on-surface-variant text-body-lg">Listing not found.</p><Link to="/cars" className="mt-4 inline-block bg-primary text-on-primary rounded-xl px-lg py-sm font-label-md">Browse Cars</Link></div>
   );
 
   const photos = listing.photos || [];
-  const currentPhoto = photos[photoIdx]?.url || carPlaceholder(listing.make);
+  const mainPhoto = photos[photoIdx]?.url || carPlaceholder(listing.make);
   const fraudFlags = listing.fraudFlags || aiAnalysis?.fraudFlags || [];
-  const hasInspection = listing.inspectionRequests?.some(r => r.status === 'completed');
+  const completedInspection = listing.inspectionRequests?.find(r => r.status === 'completed');
+  const hasInspection = !!completedInspection;
+  const title = `${listing.year} ${listing.make} ${listing.model}`;
+
+  const specs = [
+    ['Year', listing.year],
+    ['Mileage', formatMileage(listing.mileage)],
+    ['Transmission', TRANSMISSION_LABELS[listing.transmission]],
+    ['Fuel Type', FUEL_LABELS[listing.fuelType]],
+    ['Body Type', listing.bodyType],
+    ['Color', listing.color],
+    ['Owners', listing.ownerCount],
+    ['Condition', CONDITION_LABELS[listing.condition]],
+  ].filter(([, v]) => v !== undefined && v !== null && v !== '');
+
+  // Simple financing estimate — 30% down, 60 months, ~7.5% p.a.
+  const down = Math.round(listing.price * 0.3);
+  const principal = listing.price - down;
+  const monthly = Math.round((principal * (1 + 0.075 * 5)) / 60);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
-      <Link to="/cars" className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
-        <ChevronLeft className="w-4 h-4" /> Back to listings
-      </Link>
-
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Left: Photos + Info */}
-        <div className="lg:col-span-2 space-y-5">
-          {/* Photo gallery */}
-          <div className="card overflow-hidden">
-            <div className="relative aspect-[16/10] bg-gray-100">
-              <img src={currentPhoto} alt="" className="w-full h-full object-cover"
-                onError={e => { e.target.onerror = null; e.target.src = carPlaceholder(listing.make); }} />
-              {photos.length > 1 && (
-                <>
-                  <button onClick={() => setPhotoIdx(p => (p - 1 + photos.length) % photos.length)} className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2"><ChevronLeft className="w-5 h-5" /></button>
-                  <button onClick={() => setPhotoIdx(p => (p + 1) % photos.length)} className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-2"><ChevronRight className="w-5 h-5" /></button>
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">{photoIdx + 1} / {photos.length}</div>
-                </>
-              )}
-              {hasInspection && <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-green-600 text-white text-sm px-3 py-1 rounded-full"><CheckCircle className="w-4 h-4" /> Verified Inspected</div>}
-            </div>
-            {photos.length > 1 && (
-              <div className="flex gap-2 p-3 overflow-x-auto">
-                {photos.map((p, i) => (
-                  <button key={i} onClick={() => setPhotoIdx(i)} className={`shrink-0 w-16 h-12 rounded overflow-hidden border-2 ${i === photoIdx ? 'border-primary-600' : 'border-transparent'}`}>
-                    <img src={p.url} alt="" className="w-full h-full object-cover" />
-                  </button>
-                ))}
+    <div className="bg-surface">
+      {/* Immersive hero gallery */}
+      <section className="relative w-full overflow-hidden bg-surface-container-lowest">
+        <div className="max-w-[1440px] mx-auto relative group">
+          <div className="aspect-[21/9] w-full overflow-hidden relative">
+            <img src={mainPhoto} alt={title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+              onError={e => { e.target.onerror = null; e.target.src = carPlaceholder(listing.make); }} />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+            <div className="absolute bottom-xl left-gutter-mobile right-gutter-mobile md:left-gutter-desktop md:right-gutter-desktop flex flex-col md:flex-row justify-between md:items-end gap-md">
+              <div className="space-y-sm">
+                <nav className="flex items-center gap-sm text-label-sm text-white/70 mb-xs">
+                  <Link className="hover:text-white transition-colors" to="/">Home</Link>
+                  <Icon name="chevron_right" className="text-[14px]" />
+                  <Link className="hover:text-white transition-colors" to="/cars">Browse</Link>
+                </nav>
+                <h1 className="text-display-lg text-white drop-shadow">{title}</h1>
+                <div className="flex gap-sm">
+                  {hasInspection && (
+                    <span className="bg-black/40 backdrop-blur-md text-trust-emerald px-3 py-1 rounded-full text-label-sm flex items-center gap-1 border border-trust-emerald/30">
+                      <Icon name="verified" className="text-[14px]" filled /> Ryderr Certified
+                    </span>
+                  )}
+                  {listing.featured && (
+                    <span className="bg-black/40 backdrop-blur-md text-alert-orange px-3 py-1 rounded-full text-label-sm border border-alert-orange/30">Featured</span>
+                  )}
+                </div>
               </div>
-            )}
+              {photos.length > 0 && (
+                <span className="bg-black/40 backdrop-blur-md px-6 py-3 rounded-xl text-label-md font-bold flex items-center gap-2 text-white">
+                  <Icon name="photo_library" className="text-[20px]" /> {photos.length} Photo{photos.length === 1 ? '' : 's'}
+                </span>
+              )}
+            </div>
           </div>
+        </div>
+      </section>
 
-          {/* Tabs */}
-          <div className="card">
-            <div className="flex border-b border-gray-100">
-              {['details', 'condition', 'ai'].map(t => (
-                <button key={t} onClick={() => setTab(t)} className={`flex-1 py-3 text-sm font-medium capitalize transition-colors ${tab === t ? 'text-primary-600 border-b-2 border-primary-600' : 'text-gray-500 hover:text-gray-700'}`}>
-                  {t === 'ai' ? '🤖 AI Assistant' : t.charAt(0).toUpperCase() + t.slice(1)}
+      {/* Main grid */}
+      <main className="max-w-[1280px] mx-auto px-gutter-mobile md:px-gutter-desktop py-3xl grid grid-cols-12 gap-xl lg:gap-3xl">
+        {/* Left column */}
+        <div className="col-span-12 lg:col-span-8 space-y-3xl">
+          {/* Thumbnails */}
+          {photos.length > 1 && (
+            <div className="flex gap-md overflow-x-auto hide-scrollbar py-sm">
+              {photos.map((p, i) => (
+                <button key={i} onClick={() => setPhotoIdx(i)}
+                  className={`flex-shrink-0 w-44 aspect-video rounded-xl overflow-hidden transition-all duration-300 ${i === photoIdx ? 'ring-2 ring-primary' : 'border border-border-subtle opacity-60 hover:opacity-100 hover:scale-105'}`}>
+                  <img src={p.url} alt={`View ${i + 1}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
+          )}
 
-            {tab === 'details' && (
-              <div className="p-5 space-y-4">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                  {[
-                    ['Make', listing.make], ['Model', listing.model], ['Year', listing.year],
-                    ['Variant', listing.variant || '—'], ['Mileage', formatMileage(listing.mileage)],
-                    ['Fuel Type', FUEL_LABELS[listing.fuelType]], ['Transmission', TRANSMISSION_LABELS[listing.transmission]],
-                    ['Color', listing.color || '—'], ['Body Type', listing.bodyType || '—'],
-                    ['Owners', listing.ownerCount], ['City', listing.city], ['Region', listing.region],
-                  ].map(([label, val]) => (
-                    <div key={label}><p className="text-gray-400 text-xs">{label}</p><p className="font-medium text-gray-900">{val}</p></div>
-                  ))}
-                </div>
-                {listing.description && (
+          {/* Inspection Report */}
+          {hasInspection ? (
+            <section className={`${CARD} p-xl`}>
+              <div className="flex flex-wrap items-center justify-between gap-xl mb-xl">
+                <div className="flex items-center gap-xl">
+                  <div className="w-20 h-20 rounded-full border-4 border-trust-emerald flex items-center justify-center relative">
+                    <Icon name="verified" className="text-trust-emerald text-3xl" filled />
+                  </div>
                   <div>
-                    <p className="text-gray-400 text-xs mb-1">Description</p>
-                    <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">{listing.description}</p>
+                    <h3 className="text-headline-sm font-bold text-on-surface">Inspection Report</h3>
+                    <p className="text-on-surface-variant">Certified by Ryderr inspection engineers</p>
                   </div>
-                )}
-              </div>
-            )}
-
-            {tab === 'condition' && (
-              <div className="p-5 space-y-3 text-sm">
-                {[
-                  ['Condition', <span className={`badge ${CONDITION_COLORS[listing.condition]}`}>{CONDITION_LABELS[listing.condition]}</span>],
-                  ['OR/CR Available', listing.hasOrCr ? <span className="text-green-600 flex items-center gap-1"><CheckCircle className="w-4 h-4" /> Yes</span> : <span className="text-red-600">No</span>],
-                  ['Service History', listing.serviceHistory ? <span className="text-green-600 flex items-center gap-1"><CheckCircle className="w-4 h-4" /> Available</span> : 'Not available'],
-                  ['Accident History', listing.hasAccident ? <span className="text-orange-600 flex items-center gap-1"><AlertTriangle className="w-4 h-4" /> {listing.accidentNotes || 'Yes'}</span> : <span className="text-green-600">None disclosed</span>],
-                  ['Flood History', listing.hasFlood ? <span className="text-red-600 flex items-center gap-1"><AlertTriangle className="w-4 h-4" /> {listing.floodNotes || 'Yes'}</span> : <span className="text-green-600">None disclosed</span>],
-                ].map(([label, val]) => (
-                  <div key={label} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
-                    <span className="text-gray-500">{label}</span>
-                    <span>{val}</span>
-                  </div>
-                ))}
-
-                {fraudFlags.length > 0 && (
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                    <p className="font-medium text-orange-800 flex items-center gap-2 mb-2"><AlertTriangle className="w-4 h-4" /> Risk Flags Detected</p>
-                    {fraudFlags.map((flag, i) => (
-                      <p key={i} className={`text-xs flex items-start gap-1.5 mb-1 ${flag.severity === 'high' ? 'text-red-700' : flag.severity === 'medium' ? 'text-orange-700' : 'text-yellow-700'}`}>
-                        <span className="shrink-0 mt-0.5">⚠️</span> {flag.message}
-                      </p>
-                    ))}
-                  </div>
-                )}
-
-                {aiAnalysis && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p className="font-medium text-blue-800 mb-2">AI Price Analysis</p>
-                    <p className="text-sm text-blue-700">Estimated fair value: <strong>{formatPrice(aiAnalysis.estimatedPrice)}</strong></p>
-                    <p className="text-xs text-blue-500 mt-1">Range: {formatPrice(aiAnalysis.priceLow)} – {formatPrice(aiAnalysis.priceHigh)}</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {tab === 'ai' && (
-              <div className="p-5 space-y-4">
-                <div className="flex items-center gap-2 text-sm text-gray-500 mb-3">
-                  <Bot className="w-4 h-4 text-primary-600" />
-                  <span>Ask the AI buyer assistant anything about this car.</span>
                 </div>
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {['Is this a good deal?', 'What should I check?', 'Check for flood damage?'].map(q => (
-                    <button key={q} onClick={() => setAiQuestion(q)} className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-full transition-colors">{q}</button>
-                  ))}
-                </div>
-                <div className="flex gap-2">
-                  <input value={aiQuestion} onChange={e => setAiQuestion(e.target.value)} onKeyDown={e => e.key === 'Enter' && askAI()} placeholder="Ask a question about this car..." className="input flex-1 text-sm" />
-                  <button onClick={askAI} disabled={aiLoading} className="btn-primary text-sm whitespace-nowrap">{aiLoading ? '...' : 'Ask AI'}</button>
-                </div>
-                {aiAnswer && (
-                  <div className="bg-primary-50 border border-primary-100 rounded-lg p-4 text-sm">
-                    <p className="text-gray-700 mb-3 whitespace-pre-wrap">{aiAnswer.answer}</p>
-                    {aiAnswer.checklist?.length > 0 && (
-                      <div>
-                        <p className="font-medium text-gray-800 mb-2">Checklist:</p>
-                        <ul className="space-y-1">
-                          {aiAnswer.checklist.map((item, i) => <li key={i} className="flex gap-2 text-gray-600"><CheckCircle className="w-4 h-4 text-green-500 shrink-0 mt-0.5" />{item}</li>)}
-                        </ul>
-                      </div>
-                    )}
-                    {aiAnswer.negotiationTips?.length > 0 && (
-                      <div className="mt-3">
-                        <p className="font-medium text-gray-800 mb-2">Negotiation Tips:</p>
-                        <ul className="space-y-1">
-                          {aiAnswer.negotiationTips.map((tip, i) => <li key={i} className="flex gap-2 text-gray-600"><span className="text-primary-600 shrink-0">💡</span>{tip}</li>)}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Right: Sidebar */}
-        <div className="space-y-4">
-          {/* Price & title */}
-          <div className="card p-5">
-            <h1 className="text-xl font-bold text-gray-900 mb-1">{listing.year} {listing.make} {listing.model}</h1>
-            {listing.variant && <p className="text-sm text-gray-500 mb-3">{listing.variant}</p>}
-            <p className="text-3xl font-bold text-primary-700 mb-1">{formatPrice(listing.price)}</p>
-            {listing.negotiable && <p className="text-xs text-green-600 mb-3">Price negotiable</p>}
-            <div className="flex flex-wrap gap-2 text-xs text-gray-500 mb-3">
-              <span className="flex items-center gap-1"><Gauge className="w-3 h-3" />{formatMileage(listing.mileage)}</span>
-              <span className="flex items-center gap-1"><Fuel className="w-3 h-3" />{FUEL_LABELS[listing.fuelType]}</span>
-              <span className="flex items-center gap-1"><Settings className="w-3 h-3" />{TRANSMISSION_LABELS[listing.transmission]}</span>
-              <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{listing.city}</span>
-              <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{formatRelativeTime(listing.createdAt)}</span>
-            </div>
-            <TrustBadges listing={listing} size="xs" maxCount={3} />
-          </div>
-
-          {/* Inquiry */}
-          <div className="card p-5">
-            <h3 className="font-semibold text-gray-900 mb-3">Contact Seller</h3>
-            {listing.seller && (
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center font-bold text-primary-700">{listing.seller.name?.charAt(0)}</div>
-                <div>
-                  <p className="font-medium text-sm">{listing.seller.name}</p>
-                  <p className="text-xs text-gray-500 capitalize">{listing.seller.role}</p>
-                </div>
-              </div>
-            )}
-            {listing.dealer?.isVerified && (
-              <div className="flex items-center gap-1.5 text-xs text-blue-600 mb-3"><Shield className="w-3 h-3" />{listing.dealer.businessName} — Verified Dealer</div>
-            )}
-            {inquirySent ? (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-700 flex items-center gap-2">
-                <CheckCircle className="w-4 h-4" /> Inquiry sent! The seller will contact you soon.
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <textarea
-                  value={inquiryMsg}
-                  onChange={e => setInquiryMsg(e.target.value)}
-                  rows={3}
-                  placeholder={`Hi, is the ${listing.year} ${listing.make} ${listing.model} still available?`}
-                  className="input text-sm resize-none"
-                />
-                <button onClick={sendInquiry} className="w-full btn-primary flex items-center justify-center gap-2 text-sm">
-                  <MessageCircle className="w-4 h-4" /> Send Inquiry
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Transfer Readiness Score */}
-          <ReadinessScore listing={listing} />
-
-          {/* Vehicle History */}
-          <VehicleHistoryCard listing={listing} />
-
-          {/* Actions */}
-          <div className="card p-4 space-y-2">
-            {inspectionRequested ? (
-              <div className="rounded-lg bg-green-50 border border-green-200 p-3 text-sm text-green-800">
-                <div className="flex items-center gap-2 font-semibold mb-1.5">
-                  <CheckCircle className="w-4 h-4 shrink-0" /> Inspection requested!
-                </div>
-                <p className="text-xs text-green-700 mb-2">Our team will contact you within 24 hours to schedule.</p>
-                <Link
-                  to={`/ownership-transfer?listingId=${id}`}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-deepblue hover:underline"
-                >
-                  <FileCheck className="w-3.5 h-3.5" /> Review transfer checklist →
+                <Link to={`/inspections/${completedInspection.id}`} className="text-primary font-bold hover:bg-surface-container px-4 py-2 rounded-lg flex items-center gap-2 transition-all border border-border-subtle">
+                  Full Report <Icon name="arrow_forward" className="text-[20px]" />
                 </Link>
               </div>
-            ) : (
-              <button onClick={requestInspection} className="w-full btn-secondary flex items-center justify-center gap-2 text-sm">
-                <Wrench className="w-4 h-4" /> Request Inspection
-              </button>
-            )}
-            <Link to={`/financing?listingId=${id}&price=${listing.price}`} className="w-full btn-secondary flex items-center justify-center gap-2 text-sm">
-              <CreditCard className="w-4 h-4" /> Get Financing Quote
-            </Link>
-            <Link to={`/compare?ids=${id}`} className="w-full btn-secondary flex items-center justify-center gap-2 text-sm text-center">
-              Compare This Car
-            </Link>
-          </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-lg">
+                {['Engine & Trans', 'Exterior Paint', 'Interior Cabin', 'Underchassis'].map((c) => (
+                  <div key={c} className="flex items-center gap-md">
+                    <Icon name="check_circle" className="text-trust-emerald" filled />
+                    <span className="text-body-md text-on-surface">{c}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : (
+            <section className={`${CARD} p-xl flex flex-wrap items-center justify-between gap-md`}>
+              <div className="flex items-center gap-lg">
+                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Icon name="build" className="text-primary text-2xl" />
+                </div>
+                <div>
+                  <h3 className="text-headline-sm font-bold text-on-surface">Not yet inspected</h3>
+                  <p className="text-on-surface-variant text-body-sm">Request a Ryderr 180-point pre-purchase inspection.</p>
+                </div>
+              </div>
+              {inspectionRequested ? (
+                <span className="text-trust-emerald font-bold flex items-center gap-1"><Icon name="check_circle" filled /> Requested</span>
+              ) : (
+                <button onClick={requestInspection} className="bg-surface-container-high border border-border-subtle text-primary px-lg py-sm rounded-xl font-label-md hover:bg-surface-container-highest transition-all">Request Inspection</button>
+              )}
+            </section>
+          )}
 
-          {/* Transfer CTA */}
-          <Link
-            to={`/ownership-transfer?listingId=${id}`}
-            className="card p-4 flex items-start gap-3 hover:border-deepblue/30 transition-colors group"
-          >
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-deepblue/10">
-              <FileCheck className="w-5 h-5 text-deepblue" />
+          {/* Technical Specifications */}
+          <section className="space-y-xl">
+            <div className="flex items-center justify-between">
+              <h2 className="text-headline-md font-bold text-primary">Technical Specifications</h2>
+              <span className="text-label-sm text-on-surface-variant">Listed {formatRelativeTime(listing.createdAt)}</span>
             </div>
-            <div>
-              <p className="font-semibold text-ink text-sm group-hover:text-deepblue transition-colors">Start ownership transfer checklist</p>
-              <p className="text-xs text-gray-500 mt-0.5">Check LTO requirements, fees, and documents →</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-lg">
+              {specs.map(([label, val]) => (
+                <div key={label} className={`p-lg ${CARD} flex flex-col gap-sm transition-all duration-300 hover:bg-surface-container hover:border-primary/30 hover:-translate-y-1`}>
+                  <span className="text-label-sm text-on-surface-variant uppercase tracking-widest font-bold">{label}</span>
+                  <span className="text-body-lg font-bold text-on-surface capitalize">{val}</span>
+                </div>
+              ))}
             </div>
-          </Link>
+          </section>
 
-          {/* Views */}
-          <div className="card p-4 text-center text-xs text-gray-400">
-            <p>{listing.viewCount} views · {listing.inquiryCount} inquiries</p>
-          </div>
+          {/* Seller's Insight */}
+          {(listing.description || true) && (
+            <section className="space-y-xl">
+              <h2 className="text-headline-md font-bold text-primary">Seller's Insight</h2>
+              <div className={`${CARD} p-xl space-y-lg`}>
+                {listing.description && (
+                  <p className="text-body-lg text-on-surface-variant leading-relaxed whitespace-pre-wrap">{listing.description}</p>
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
+                  <Insight icon="description" ok={listing.hasOrCr} label={listing.hasOrCr ? 'OR/CR available' : 'OR/CR not available'} />
+                  <Insight icon="build" ok={listing.serviceHistory} label={listing.serviceHistory ? 'Complete service history' : 'No service records'} />
+                  <Insight icon="report" ok={!listing.hasAccident} label={listing.hasAccident ? `Accident: ${listing.accidentNotes || 'disclosed'}` : 'No accident disclosed'} />
+                  <Insight icon="water_drop" ok={!listing.hasFlood} label={listing.hasFlood ? `Flood: ${listing.floodNotes || 'disclosed'}` : 'No flood history'} />
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Risk flags + AI price analysis */}
+          {(fraudFlags.length > 0 || aiAnalysis) && (
+            <section className="space-y-md">
+              {fraudFlags.length > 0 && (
+                <div className="bg-alert-orange/10 border border-alert-orange/30 rounded-2xl p-xl">
+                  <p className="font-bold text-alert-orange flex items-center gap-2 mb-2"><Icon name="warning" /> Risk Flags Detected</p>
+                  {fraudFlags.map((flag, i) => <p key={i} className="text-body-sm text-on-surface-variant mb-1">• {flag.message}</p>)}
+                </div>
+              )}
+              {aiAnalysis && (
+                <div className="bg-primary/5 border border-primary/20 rounded-2xl p-xl">
+                  <p className="font-bold text-primary mb-1 flex items-center gap-2"><Icon name="insights" /> AI Price Analysis</p>
+                  <p className="text-body-md text-on-surface">Estimated fair value: <strong>{formatPrice(aiAnalysis.estimatedPrice)}</strong></p>
+                  <p className="text-label-sm text-on-surface-variant mt-1">Range {formatPrice(aiAnalysis.priceLow)} – {formatPrice(aiAnalysis.priceHigh)}</p>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* AI Buyer Assistant */}
+          <section className="space-y-xl">
+            <h2 className="text-headline-md font-bold text-primary">Ask Ryderr AI</h2>
+            <div className={`${CARD} p-xl space-y-md`}>
+              <div className="flex flex-wrap gap-2">
+                {['Is this a good deal?', 'What should I check?', 'Check for flood damage?'].map(q => (
+                  <button key={q} onClick={() => setAiQuestion(q)} className="text-label-sm bg-surface-container hover:bg-surface-container-high text-on-surface px-3 py-1.5 rounded-full transition-colors">{q}</button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input value={aiQuestion} onChange={e => setAiQuestion(e.target.value)} onKeyDown={e => e.key === 'Enter' && askAI()} placeholder="Ask anything about this car…" className="flex-1 bg-surface-container border border-border-subtle rounded-xl px-md py-sm text-body-md text-on-surface focus:ring-2 focus:ring-primary outline-none" />
+                <button onClick={askAI} disabled={aiLoading} className="bg-primary text-on-primary rounded-xl px-lg py-sm font-label-md hover:opacity-90 disabled:opacity-50">{aiLoading ? '…' : 'Ask AI'}</button>
+              </div>
+              {aiAnswer && (
+                <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 text-body-sm">
+                  <p className="text-on-surface whitespace-pre-wrap">{aiAnswer.answer}</p>
+                  {aiAnswer.checklist?.length > 0 && (
+                    <ul className="mt-3 space-y-1">{aiAnswer.checklist.map((it, i) => <li key={i} className="flex gap-2 text-on-surface-variant"><Icon name="check_circle" className="text-trust-emerald text-[18px]" filled /> {it}</li>)}</ul>
+                  )}
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Vehicle history */}
+          <VehicleHistoryCard listing={listing} />
         </div>
+
+        {/* Right sticky sidebar */}
+        <aside className="col-span-12 lg:col-span-4 relative">
+          <div className="lg:sticky lg:top-24 space-y-lg">
+            {/* Main action card */}
+            <div className={`${CARD} p-xl shadow-2xl space-y-xl`}>
+              <div className="space-y-md border-b border-border-subtle pb-lg">
+                <div className="flex justify-between items-start gap-2">
+                  <h2 className="text-headline-sm font-bold text-on-surface">{title}</h2>
+                  <button className="p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant" aria-label="Share"><Icon name="share" /></button>
+                </div>
+                <div className="flex items-baseline gap-sm flex-wrap">
+                  <span className="text-display-lg font-bold text-primary tracking-tight">{formatPrice(listing.price)}</span>
+                  {listing.negotiable && <span className="text-label-sm text-on-surface-variant font-bold uppercase tracking-widest">Negotiable</span>}
+                </div>
+              </div>
+
+              <div className="space-y-md">
+                <button onClick={() => openInquiry('')} className="w-full bg-primary text-on-primary py-4 rounded-xl text-label-md font-bold hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/10">
+                  <Icon name="payments" className="text-[20px]" /> Inquire Now
+                </button>
+                <button onClick={() => (user ? setShowOffer(true) : navigate('/login'))} className="w-full bg-surface-container-high border border-border-subtle text-primary py-4 rounded-xl text-label-md font-bold hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
+                  <Icon name="gavel" className="text-[20px]" /> {offerSent ? 'Offer Sent ✓' : 'Make an Offer'}
+                </button>
+              </div>
+
+              {/* Seller row */}
+              {(listing.seller || listing.dealer) && (
+                <div className="pt-md flex items-center gap-md border-t border-border-subtle">
+                  <div className="w-14 h-14 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-xl border border-border-subtle">
+                    {(listing.dealer?.businessName || listing.seller?.name || 'S').charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-sm">
+                      <Link to={`/seller/${listing.sellerId}`} className="font-bold text-on-surface truncate hover:text-primary transition-colors">{listing.dealer?.businessName || listing.seller?.name}</Link>
+                      {listing.dealer?.isVerified && <span className="bg-trust-emerald/10 text-trust-emerald text-[10px] px-2 py-0.5 rounded-full font-bold uppercase border border-trust-emerald/20">Verified</span>}
+                    </div>
+                    <p className="text-label-sm text-on-surface-variant capitalize">{listing.seller?.role || 'Seller'}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Inquiry box */}
+              {showInquiry && (
+                <div id="inquiry-box" className="border-t border-border-subtle pt-md">
+                  {inquirySent ? (
+                    <div className="bg-trust-emerald/10 border border-trust-emerald/30 rounded-xl p-3 text-body-sm text-trust-emerald flex items-center gap-2">
+                      <Icon name="check_circle" filled /> Inquiry sent! The seller will contact you soon.
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <textarea value={inquiryMsg} onChange={e => setInquiryMsg(e.target.value)} rows={3}
+                        placeholder={`Hi, is the ${title} still available?`}
+                        className="w-full bg-surface-container border border-border-subtle rounded-xl px-md py-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary outline-none resize-none" />
+                      <button onClick={sendInquiry} className="w-full bg-primary text-on-primary py-sm rounded-xl font-label-md flex items-center justify-center gap-2 hover:opacity-90">
+                        <Icon name="send" className="text-[18px]" /> Send Inquiry
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Transfer readiness */}
+            <ReadinessScore listing={listing} />
+
+            {/* Financing calculator */}
+            <div className={`${CARD} p-xl space-y-lg`}>
+              <h3 className="text-label-md font-bold text-on-surface flex items-center gap-2"><Icon name="calculate" className="text-[20px] text-primary" /> Financing Calculator</h3>
+              <div className="space-y-md">
+                <div className="flex justify-between text-label-sm text-on-surface-variant">
+                  <span>Downpayment (30%)</span>
+                  <span className="text-primary font-bold">{formatPrice(down)}</span>
+                </div>
+                <div className="h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                  <div className="h-full bg-primary w-[30%]" />
+                </div>
+                <div className="p-lg bg-surface-container rounded-xl border border-border-subtle flex justify-between items-center">
+                  <div className="flex flex-col">
+                    <span className="text-label-sm text-on-surface-variant/70">Estimated Monthly</span>
+                    <span className="text-headline-sm font-bold text-primary">{formatPrice(monthly)}</span>
+                  </div>
+                  <span className="text-label-sm bg-primary text-on-primary px-3 py-1.5 rounded-lg font-bold">60 Mos</span>
+                </div>
+              </div>
+              <Link to={`/financing?listingId=${id}&price=${listing.price}`} className="block w-full text-center text-label-sm font-bold text-primary hover:underline transition-all">Get Pre-Approved Online</Link>
+            </div>
+
+            {/* Trust points */}
+            <div className={`${CARD} p-lg space-y-md`}>
+              <TrustPoint icon="security" title="Secure Transaction" body="Funds held in Ryderr Escrow until vehicle delivery." />
+              <TrustPoint icon="verified_user" title="Authenticity Guaranteed" body="VIN-checked and paper-verified by our legal team." />
+              <Link to={`/ownership-transfer?listingId=${id}`} className="flex items-start gap-md group">
+                <div className="p-2 bg-primary/10 rounded-lg"><Icon name="fact_check" className="text-primary" /></div>
+                <div>
+                  <span className="block text-label-md font-bold text-on-surface group-hover:text-primary transition-colors">Ownership Transfer</span>
+                  <span className="text-body-sm text-on-surface-variant leading-relaxed">LTO requirements, fees, and document checklist →</span>
+                </div>
+              </Link>
+            </div>
+
+            <div className={`${CARD} p-4 text-center text-label-sm text-on-surface-variant`}>
+              {listing.viewCount} views · {listing.inquiryCount} inquiries
+            </div>
+          </div>
+        </aside>
+      </main>
+
+      {showOffer && (
+        <MakeOfferModal
+          listing={listing}
+          onClose={() => setShowOffer(false)}
+          onSubmitted={() => { setShowOffer(false); setOfferSent(true); }}
+        />
+      )}
+    </div>
+  );
+}
+
+function Insight({ icon, ok, label }) {
+  return (
+    <div className="flex items-center gap-sm text-on-surface">
+      <Icon name={ok ? 'check_circle' : icon} className={ok ? 'text-trust-emerald text-[18px]' : 'text-alert-orange text-[18px]'} filled={ok} />
+      <span className="text-body-md">{label}</span>
+    </div>
+  );
+}
+
+function TrustPoint({ icon, title, body }) {
+  return (
+    <div className="flex items-start gap-md">
+      <div className="p-2 bg-trust-emerald/10 rounded-lg"><Icon name={icon} className="text-trust-emerald" /></div>
+      <div>
+        <span className="block text-label-md font-bold text-on-surface">{title}</span>
+        <span className="text-body-sm text-on-surface-variant leading-relaxed">{body}</span>
       </div>
     </div>
   );

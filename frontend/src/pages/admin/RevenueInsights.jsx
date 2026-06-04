@@ -6,16 +6,16 @@ function StatCard({ label, value, sub, loading }) {
   if (loading) {
     return (
       <div className="card p-5">
-        <div className="h-3 w-24 bg-softbg rounded animate-pulse mb-3" />
-        <div className="h-7 w-32 bg-softbg rounded animate-pulse" />
+        <div className="h-3 w-24 bg-surface-container rounded animate-pulse mb-3" />
+        <div className="h-7 w-32 bg-surface-container rounded animate-pulse" />
       </div>
     );
   }
   return (
     <div className="card p-5">
-      <span className="text-xs font-semibold text-slatetext">{label}</span>
-      <p className="text-2xl font-bold text-ink mt-1">{value}</p>
-      {sub && <p className="text-xs text-slatetext mt-1">{sub}</p>}
+      <span className="text-xs font-semibold text-on-surface-variant">{label}</span>
+      <p className="text-2xl font-bold text-on-surface mt-1">{value}</p>
+      {sub && <p className="text-xs text-on-surface-variant mt-1">{sub}</p>}
     </div>
   );
 }
@@ -32,17 +32,17 @@ function GrowthBadge({ pct }) {
 }
 
 const PLAN_COLORS = {
-  enterprise: 'bg-deepblue',
+  enterprise: 'bg-primary',
   pro:        'bg-purple-500',
   verified:   'bg-emerald-500',
   free:       'bg-gray-300',
 };
 
 const PLAN_TEXT_COLORS = {
-  enterprise: 'text-deepblue',
+  enterprise: 'text-primary',
   pro:        'text-purple-600',
   verified:   'text-emerald-600',
-  free:       'text-gray-500',
+  free:       'text-on-surface-variant',
 };
 
 export default function RevenueInsights() {
@@ -56,21 +56,21 @@ export default function RevenueInsights() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-xl font-bold text-ink">Revenue Insights</h1>
+      <h1 className="text-xl font-bold text-on-surface">Revenue Insights</h1>
 
       {/* Row 1: Key metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className={`card p-5 ${isLoading ? '' : ''}`}>
           {isLoading ? (
             <>
-              <div className="h-3 w-20 bg-softbg rounded animate-pulse mb-3" />
-              <div className="h-7 w-28 bg-softbg rounded animate-pulse mb-2" />
-              <div className="h-3 w-16 bg-softbg rounded animate-pulse" />
+              <div className="h-3 w-20 bg-surface-container rounded animate-pulse mb-3" />
+              <div className="h-7 w-28 bg-surface-container rounded animate-pulse mb-2" />
+              <div className="h-3 w-16 bg-surface-container rounded animate-pulse" />
             </>
           ) : (
             <>
-              <span className="text-xs font-semibold text-slatetext">MRR</span>
-              <p className="text-2xl font-bold text-ink mt-1">
+              <span className="text-xs font-semibold text-on-surface-variant">MRR</span>
+              <p className="text-2xl font-bold text-on-surface mt-1">
                 ₱{(revenue?.mrr || 0).toLocaleString()}
               </p>
               <div className="mt-1">
@@ -103,11 +103,11 @@ export default function RevenueInsights() {
 
       {/* Row 2: Plan breakdown */}
       <div className="card p-5">
-        <h2 className="text-base font-semibold text-ink mb-4">Plan Breakdown</h2>
+        <h2 className="text-base font-semibold text-on-surface mb-4">Plan Breakdown</h2>
         {isLoading ? (
           <div className="space-y-3">
             {[1,2,3,4].map(i => (
-              <div key={i} className="h-8 bg-softbg rounded-lg animate-pulse" />
+              <div key={i} className="h-8 bg-surface-container rounded-lg animate-pulse" />
             ))}
           </div>
         ) : (
@@ -116,20 +116,20 @@ export default function RevenueInsights() {
               const count = planBreakdown[plan] || 0;
               const widthPct = Math.round((count / maxCount) * 100);
               const barColor = PLAN_COLORS[plan] || 'bg-gray-300';
-              const textColor = PLAN_TEXT_COLORS[plan] || 'text-gray-500';
+              const textColor = PLAN_TEXT_COLORS[plan] || 'text-on-surface-variant';
 
               return (
                 <div key={plan} className="flex items-center gap-3">
                   <span className={`text-xs font-semibold capitalize w-20 shrink-0 ${textColor}`}>
                     {plan}
                   </span>
-                  <div className="flex-1 bg-softbg rounded-full h-4 overflow-hidden">
+                  <div className="flex-1 bg-surface-container rounded-full h-4 overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${barColor}`}
                       style={{ width: `${widthPct}%` }}
                     />
                   </div>
-                  <span className="text-xs font-bold text-ink w-8 text-right shrink-0">{count}</span>
+                  <span className="text-xs font-bold text-on-surface w-8 text-right shrink-0">{count}</span>
                 </div>
               );
             })}
@@ -139,34 +139,34 @@ export default function RevenueInsights() {
 
       {/* Row 3: MoM comparison */}
       <div className="card p-5">
-        <h2 className="text-base font-semibold text-ink mb-4">Month-over-Month</h2>
+        <h2 className="text-base font-semibold text-on-surface mb-4">Month-over-Month</h2>
         {isLoading ? (
           <div className="flex gap-8">
             <div>
-              <div className="h-3 w-20 bg-softbg rounded animate-pulse mb-2" />
-              <div className="h-8 w-28 bg-softbg rounded animate-pulse" />
+              <div className="h-3 w-20 bg-surface-container rounded animate-pulse mb-2" />
+              <div className="h-8 w-28 bg-surface-container rounded animate-pulse" />
             </div>
             <div>
-              <div className="h-3 w-20 bg-softbg rounded animate-pulse mb-2" />
-              <div className="h-8 w-28 bg-softbg rounded animate-pulse" />
+              <div className="h-3 w-20 bg-surface-container rounded animate-pulse mb-2" />
+              <div className="h-8 w-28 bg-surface-container rounded animate-pulse" />
             </div>
           </div>
         ) : (
           <div className="flex flex-wrap gap-8 items-end">
             <div>
-              <p className="text-xs text-slatetext font-medium mb-1">This Month</p>
-              <p className="text-3xl font-bold text-ink">₱{(revenue?.mrr || 0).toLocaleString()}</p>
-              <p className="text-xs text-slatetext mt-1">{revenue?.invoicesThisMonth ?? 0} invoices</p>
+              <p className="text-xs text-on-surface-variant font-medium mb-1">This Month</p>
+              <p className="text-3xl font-bold text-on-surface">₱{(revenue?.mrr || 0).toLocaleString()}</p>
+              <p className="text-xs text-on-surface-variant mt-1">{revenue?.invoicesThisMonth ?? 0} invoices</p>
             </div>
             <div>
-              <p className="text-xs text-slatetext font-medium mb-1">Last Month</p>
-              <p className="text-3xl font-bold text-slatetext">₱{(revenue?.lastMrr || 0).toLocaleString()}</p>
+              <p className="text-xs text-on-surface-variant font-medium mb-1">Last Month</p>
+              <p className="text-3xl font-bold text-on-surface-variant">₱{(revenue?.lastMrr || 0).toLocaleString()}</p>
             </div>
             {revenue?.mrrGrowth != null && (
               <div className="pb-1">
-                <p className="text-xs text-slatetext font-medium mb-1">Growth</p>
+                <p className="text-xs text-on-surface-variant font-medium mb-1">Growth</p>
                 <GrowthBadge pct={revenue.mrrGrowth} />
-                <p className="text-xs text-slatetext mt-0.5">
+                <p className="text-xs text-on-surface-variant mt-0.5">
                   {revenue.mrrGrowth >= 0 ? '+' : ''}
                   ₱{((revenue.mrr || 0) - (revenue.lastMrr || 0)).toLocaleString()}
                 </p>

@@ -46,24 +46,24 @@ export default function DealerLayout() {
   const plan = sub?.plan || 'free';
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] bg-softbg">
+    <div className="flex min-h-[calc(100vh-64px)] bg-surface-container">
       {/* Sidebar */}
-      <aside className="hidden lg:flex flex-col w-60 shrink-0 border-r border-cardborder bg-white">
+      <aside className="hidden lg:flex flex-col w-60 shrink-0 border-r border-border-subtle bg-surface-container-lowest">
         {/* Dealer identity */}
-        <div className="p-5 border-b border-cardborder">
+        <div className="p-5 border-b border-border-subtle">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-deepblue/10 flex items-center justify-center shrink-0">
-              <Building2 className="h-5 w-5 text-deepblue" />
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Building2 className="h-5 w-5 text-primary" />
             </div>
             <div className="min-w-0">
-              <p className="font-semibold text-ink text-sm truncate">{profile?.businessName || user?.name}</p>
+              <p className="font-semibold text-on-surface text-sm truncate">{profile?.businessName || user?.name}</p>
               <div className="flex items-center gap-1 mt-0.5">
                 {tierBadge && (
                   <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-bold ${tierBadge.color}`}>
                     {tierBadge.label}
                   </span>
                 )}
-                <span className="text-[10px] text-slatetext capitalize">{plan} plan</span>
+                <span className="text-[10px] text-on-surface-variant capitalize">{plan} plan</span>
               </div>
             </div>
           </div>
@@ -79,8 +79,8 @@ export default function DealerLayout() {
               className={({ isActive }) =>
                 `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-deepblue text-white'
-                    : 'text-slatetext hover:bg-softbg hover:text-ink'
+                    ? 'bg-primary text-on-primary'
+                    : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'
                 }`
               }
             >
@@ -92,7 +92,7 @@ export default function DealerLayout() {
 
         {/* Upgrade CTA for non-enterprise */}
         {plan !== 'enterprise' && (
-          <div className="p-4 border-t border-cardborder">
+          <div className="p-4 border-t border-border-subtle">
             <Link
               to="/dealer/subscription"
               className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs font-semibold text-amber-700 hover:bg-amber-100 transition-colors"
@@ -106,7 +106,7 @@ export default function DealerLayout() {
       </aside>
 
       {/* Mobile top nav */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 border-t border-cardborder bg-white flex">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 border-t border-border-subtle bg-surface-container-lowest flex">
         {NAV.slice(0, 5).map(({ to, end, icon: Icon, label }) => (
           <NavLink
             key={to}
@@ -114,7 +114,7 @@ export default function DealerLayout() {
             end={end}
             className={({ isActive }) =>
               `flex-1 flex flex-col items-center justify-center py-2 text-[10px] font-medium transition-colors ${
-                isActive ? 'text-deepblue' : 'text-slatetext'
+                isActive ? 'text-primary' : 'text-on-surface-variant'
               }`
             }
           >
@@ -127,14 +127,14 @@ export default function DealerLayout() {
       {/* Content */}
       <main className="flex-1 min-w-0 pb-20 lg:pb-0">
         {/* Header bar */}
-        <div className="sticky top-16 z-10 border-b border-cardborder bg-white/90 backdrop-blur px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-slatetext">
+        <div className="sticky top-16 z-10 border-b border-border-subtle bg-surface-container-lowest/90 backdrop-blur px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm text-on-surface-variant">
             <Building2 className="h-4 w-4" />
-            <span className="font-medium text-ink">{profile?.businessName || 'Dealer Portal'}</span>
+            <span className="font-medium text-on-surface">{profile?.businessName || 'Dealer Portal'}</span>
           </div>
           <Link
             to="/sell"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-deepblue px-3 py-1.5 text-xs font-bold text-white hover:bg-deepblue/90"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-bold text-white hover:bg-primary/90"
           >
             <Plus className="h-3.5 w-3.5" /> Add Listing
           </Link>

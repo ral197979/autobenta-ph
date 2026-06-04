@@ -11,20 +11,20 @@ function StepIndicator({ currentStep }) {
     <div className="flex items-center justify-center gap-2 mb-8">
       {STEPS.map((label, idx) => (
         <div key={label} className="flex items-center gap-2">
-          <div className={`flex items-center gap-2 ${idx <= currentStep ? 'text-blue-600' : 'text-gray-400'}`}>
+          <div className={`flex items-center gap-2 ${idx <= currentStep ? 'text-blue-600' : 'text-on-surface-variant'}`}>
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
               idx < currentStep ? 'bg-blue-600 border-blue-600 text-white' :
               idx === currentStep ? 'border-blue-600 text-blue-600' :
-              'border-gray-300 text-gray-400'
+              'border-border-subtle text-on-surface-variant'
             }`}>
               {idx < currentStep ? <CheckCircle className="w-4 h-4" /> : idx + 1}
             </div>
-            <span className={`text-xs font-medium hidden sm:block ${idx === currentStep ? 'text-blue-600' : 'text-gray-400'}`}>
+            <span className={`text-xs font-medium hidden sm:block ${idx === currentStep ? 'text-blue-600' : 'text-on-surface-variant'}`}>
               {label}
             </span>
           </div>
           {idx < STEPS.length - 1 && (
-            <div className={`w-8 h-0.5 mx-1 ${idx < currentStep ? 'bg-blue-600' : 'bg-gray-200'}`} />
+            <div className={`w-8 h-0.5 mx-1 ${idx < currentStep ? 'bg-blue-600' : 'bg-surface-container-high'}`} />
           )}
         </div>
       ))}
@@ -106,7 +106,7 @@ export default function AIListingWizard() {
 
   const FIELD = (label, key, type = 'text', opts) => (
     <div key={key}>
-      <label className="text-xs font-medium text-gray-600 block mb-1">{label}</label>
+      <label className="text-xs font-medium text-on-surface-variant block mb-1">{label}</label>
       {type === 'select' ? (
         <select
           value={form[key] || ''}
@@ -140,28 +140,28 @@ export default function AIListingWizard() {
       <div className="text-center mb-6">
         <div className="flex items-center justify-center gap-2 mb-2">
           <Sparkles className="w-6 h-6 text-blue-600" />
-          <h1 className="text-2xl font-bold text-gray-900">AI Listing Wizard</h1>
+          <h1 className="text-2xl font-bold text-on-surface">AI Listing Wizard</h1>
         </div>
-        <p className="text-gray-500 text-sm">Upload photos and let AI pre-fill your listing details</p>
+        <p className="text-on-surface-variant text-sm">Upload photos and let AI pre-fill your listing details</p>
       </div>
 
       <StepIndicator currentStep={step} />
 
       {/* Step 0: Upload Photos */}
       {step === 0 && (
-        <div className="bg-white rounded-2xl border p-6">
+        <div className="bg-surface-container-lowest rounded-2xl border p-6">
           <div
             className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${
-              dragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-300 hover:border-blue-300'
+              dragOver ? 'border-blue-400 bg-blue-50' : 'border-border-subtle hover:border-blue-300'
             }`}
             onDragOver={e => { e.preventDefault(); setDragOver(true); }}
             onDragLeave={() => setDragOver(false)}
             onDrop={e => { e.preventDefault(); setDragOver(false); handleFiles(e.dataTransfer.files); }}
             onClick={() => fileRef.current.click()}
           >
-            <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-            <p className="text-gray-600 font-medium">Drop photos here or click to browse</p>
-            <p className="text-xs text-gray-400 mt-1">Up to 20 photos · JPG, PNG, WebP</p>
+            <Upload className="w-10 h-10 text-on-surface-variant mx-auto mb-3" />
+            <p className="text-on-surface-variant font-medium">Drop photos here or click to browse</p>
+            <p className="text-xs text-on-surface-variant mt-1">Up to 20 photos · JPG, PNG, WebP</p>
             <input
               ref={fileRef}
               type="file"
@@ -175,7 +175,7 @@ export default function AIListingWizard() {
           {previews.length > 0 && (
             <div className="grid grid-cols-4 gap-2 mt-4">
               {previews.map((src, i) => (
-                <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+                <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-surface-container">
                   <img src={src} alt="" className="w-full h-full object-cover" />
                   {i === 0 && (
                     <span className="absolute top-1 left-1 bg-blue-600 text-white text-xs px-1.5 py-0.5 rounded">Main</span>
@@ -209,18 +209,18 @@ export default function AIListingWizard() {
 
       {/* Step 1: Analyzing */}
       {step === 1 && (
-        <div className="bg-white rounded-2xl border p-12 text-center">
+        <div className="bg-surface-container-lowest rounded-2xl border p-12 text-center">
           <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4 animate-pulse">
             <Sparkles className="w-8 h-8 text-blue-600" />
           </div>
-          <h2 className="text-lg font-semibold text-gray-800">Analyzing your photos...</h2>
-          <p className="text-sm text-gray-500 mt-1">Detecting vehicle details, condition, and mileage</p>
+          <h2 className="text-lg font-semibold text-on-surface">Analyzing your photos...</h2>
+          <p className="text-sm text-on-surface-variant mt-1">Detecting vehicle details, condition, and mileage</p>
         </div>
       )}
 
       {/* Step 2: Review & Edit draft */}
       {step === 2 && draft && (
-        <div className="bg-white rounded-2xl border p-6 space-y-4">
+        <div className="bg-surface-container-lowest rounded-2xl border p-6 space-y-4">
           {draft.partial && (
             <div className="flex gap-2 items-start bg-yellow-50 border border-yellow-200 rounded-xl p-3">
               <AlertCircle className="w-4 h-4 text-yellow-600 shrink-0 mt-0.5" />
@@ -253,7 +253,7 @@ export default function AIListingWizard() {
             {FIELD('Region', 'region')}
           </div>
           <div>
-            <label className="text-xs font-medium text-gray-600 block mb-1">Description</label>
+            <label className="text-xs font-medium text-on-surface-variant block mb-1">Description</label>
             <textarea
               value={form.description || ''}
               onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
@@ -268,7 +268,7 @@ export default function AIListingWizard() {
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button onClick={() => setStep(0)} className="flex-1 py-2.5 border border-gray-300 rounded-xl text-sm">
+            <button onClick={() => setStep(0)} className="flex-1 py-2.5 border border-border-subtle rounded-xl text-sm">
               Back
             </button>
             <button
@@ -284,15 +284,15 @@ export default function AIListingWizard() {
 
       {/* Step 3: Publish */}
       {step === 3 && (
-        <div className="bg-white rounded-2xl border p-6 space-y-4">
-          <h2 className="font-semibold text-gray-900">Review Your Listing</h2>
-          <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
-            <div className="flex justify-between"><span className="text-gray-500">Vehicle</span><span className="font-medium">{form.year} {form.make} {form.model}</span></div>
-            <div className="flex justify-between"><span className="text-gray-500">Price</span><span className="font-medium text-blue-600">₱{parseInt(form.price || 0).toLocaleString()}</span></div>
-            <div className="flex justify-between"><span className="text-gray-500">Mileage</span><span>{parseInt(form.mileage || 0).toLocaleString()} km</span></div>
-            <div className="flex justify-between"><span className="text-gray-500">Condition</span><span className="capitalize">{form.condition}</span></div>
-            <div className="flex justify-between"><span className="text-gray-500">Location</span><span>{form.city}, {form.region}</span></div>
-            <div className="flex justify-between"><span className="text-gray-500">Photos</span><span>{files.length} photo{files.length !== 1 ? 's' : ''}</span></div>
+        <div className="bg-surface-container-lowest rounded-2xl border p-6 space-y-4">
+          <h2 className="font-semibold text-on-surface">Review Your Listing</h2>
+          <div className="bg-surface-container rounded-xl p-4 space-y-2 text-sm">
+            <div className="flex justify-between"><span className="text-on-surface-variant">Vehicle</span><span className="font-medium">{form.year} {form.make} {form.model}</span></div>
+            <div className="flex justify-between"><span className="text-on-surface-variant">Price</span><span className="font-medium text-blue-600">₱{parseInt(form.price || 0).toLocaleString()}</span></div>
+            <div className="flex justify-between"><span className="text-on-surface-variant">Mileage</span><span>{parseInt(form.mileage || 0).toLocaleString()} km</span></div>
+            <div className="flex justify-between"><span className="text-on-surface-variant">Condition</span><span className="capitalize">{form.condition}</span></div>
+            <div className="flex justify-between"><span className="text-on-surface-variant">Location</span><span>{form.city}, {form.region}</span></div>
+            <div className="flex justify-between"><span className="text-on-surface-variant">Photos</span><span>{files.length} photo{files.length !== 1 ? 's' : ''}</span></div>
           </div>
 
           {publishMutation.isError && (
@@ -302,7 +302,7 @@ export default function AIListingWizard() {
           )}
 
           <div className="flex gap-3">
-            <button onClick={() => setStep(2)} className="flex-1 py-2.5 border border-gray-300 rounded-xl text-sm">
+            <button onClick={() => setStep(2)} className="flex-1 py-2.5 border border-border-subtle rounded-xl text-sm">
               Edit
             </button>
             <button

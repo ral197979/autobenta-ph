@@ -4,7 +4,7 @@ import { Building2, BadgeCheck, Users, ClipboardList, XCircle, CheckCircle, Chev
 import api from '../../api/client';
 
 const TIER_COLORS = {
-  basic: 'bg-gray-100 text-gray-600',
+  basic: 'bg-surface-container text-on-surface-variant',
   verified: 'bg-blue-100 text-blue-700',
   verified_pro: 'bg-purple-100 text-purple-700',
   enterprise: 'bg-amber-100 text-amber-700',
@@ -39,7 +39,7 @@ function RejectionInput({ onConfirm, onCancel }) {
       >
         Confirm
       </button>
-      <button className="text-xs text-slatetext hover:text-ink" onClick={onCancel}>Cancel</button>
+      <button className="text-xs text-on-surface-variant hover:text-on-surface" onClick={onCancel}>Cancel</button>
     </div>
   );
 }
@@ -125,13 +125,13 @@ export default function DealerOperations() {
     <div className="space-y-6">
       {/* Header stats */}
       <div>
-        <h1 className="text-xl font-bold text-ink">Dealer Operations</h1>
-        <p className="text-sm text-slatetext mt-1">Manage all dealer accounts, applications, and suspensions.</p>
+        <h1 className="text-xl font-bold text-on-surface">Dealer Operations</h1>
+        <p className="text-sm text-on-surface-variant mt-1">Manage all dealer accounts, applications, and suspensions.</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: 'Total Dealers', value: totalDealers, icon: Building2, color: 'text-deepblue bg-deepblue/10' },
+          { label: 'Total Dealers', value: totalDealers, icon: Building2, color: 'text-primary bg-primary/10' },
           { label: 'Verified', value: verifiedCount, icon: BadgeCheck, color: 'text-emerald-600 bg-emerald-100' },
           { label: 'Pro / Enterprise', value: proEnterpriseCount, icon: Users, color: 'text-purple-600 bg-purple-100' },
           { label: 'Pending Applications', value: pendingAppsCount, icon: ClipboardList, color: 'text-orange-600 bg-orange-100' },
@@ -141,23 +141,23 @@ export default function DealerOperations() {
               <Icon className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xl font-bold text-ink">{value}</p>
-              <p className="text-xs text-slatetext">{label}</p>
+              <p className="text-xl font-bold text-on-surface">{value}</p>
+              <p className="text-xs text-on-surface-variant">{label}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-cardborder gap-1">
+      <div className="flex border-b border-border-subtle gap-1">
         {TABS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
               activeTab === tab
-                ? 'border-deepblue text-deepblue'
-                : 'border-transparent text-slatetext hover:text-ink'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-on-surface-variant hover:text-on-surface'
             }`}
           >
             {tab}
@@ -185,13 +185,13 @@ export default function DealerOperations() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <div className="flex rounded-lg border border-cardborder overflow-hidden text-sm">
+            <div className="flex rounded-lg border border-border-subtle overflow-hidden text-sm">
               {TIERS.map((t) => (
                 <button
                   key={t}
                   onClick={() => setTierFilter(t)}
                   className={`px-3 py-2 font-medium transition-colors capitalize ${
-                    tierFilter === t ? 'bg-deepblue text-white' : 'text-slatetext hover:bg-softbg'
+                    tierFilter === t ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container'
                   }`}
                 >
                   {t === 'All Tiers' ? t : t.replace('_', ' ')}
@@ -203,11 +203,11 @@ export default function DealerOperations() {
           {dealersLoading ? (
             <div className="space-y-2">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-14 rounded-xl bg-softbg animate-pulse" />
+                <div key={i} className="h-14 rounded-xl bg-surface-container animate-pulse" />
               ))}
             </div>
           ) : !filteredDealers.length ? (
-            <div className="card p-10 text-center text-slatetext">
+            <div className="card p-10 text-center text-on-surface-variant">
               <Building2 className="h-8 w-8 opacity-30 mx-auto mb-2" />
               <p className="text-sm">No dealers found.</p>
             </div>
@@ -216,7 +216,7 @@ export default function DealerOperations() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-cardborder bg-softbg text-left text-xs font-semibold text-slatetext uppercase tracking-wide">
+                    <tr className="border-b border-border-subtle bg-surface-container text-left text-xs font-semibold text-on-surface-variant uppercase tracking-wide">
                       {['Dealer Name', 'City', 'Tier', 'Verified', 'Listings', 'Leads', 'Score', 'Joined', 'Actions'].map((h) => (
                         <th key={h} className="px-4 py-3 whitespace-nowrap">{h}</th>
                       ))}
@@ -224,15 +224,15 @@ export default function DealerOperations() {
                   </thead>
                   <tbody className="divide-y divide-cardborder">
                     {filteredDealers.map((d) => (
-                      <tr key={d.id || d._id} className="hover:bg-softbg transition-colors">
-                        <td className="px-4 py-3 font-medium text-ink whitespace-nowrap">
+                      <tr key={d.id || d._id} className="hover:bg-surface-container transition-colors">
+                        <td className="px-4 py-3 font-medium text-on-surface whitespace-nowrap">
                           {d.businessName || d.user?.name || '—'}
-                          {d.user?.email && <div className="text-xs text-slatetext">{d.user.email}</div>}
+                          {d.user?.email && <div className="text-xs text-on-surface-variant">{d.user.email}</div>}
                         </td>
-                        <td className="px-4 py-3 text-slatetext">{d.city || '—'}</td>
+                        <td className="px-4 py-3 text-on-surface-variant">{d.city || '—'}</td>
                         <td className="px-4 py-3">
                           <select
-                            className="rounded-lg border border-cardborder px-2 py-1 text-xs bg-white"
+                            className="rounded-lg border border-border-subtle px-2 py-1 text-xs bg-surface-container-lowest"
                             value={d.tier || 'basic'}
                             onChange={(e) => updateMutation.mutate({ id: d.id || d._id, tier: e.target.value })}
                           >
@@ -245,18 +245,18 @@ export default function DealerOperations() {
                         <td className="px-4 py-3">
                           {d.isVerified
                             ? <span className="text-emerald-600 font-semibold text-xs">✓ Yes</span>
-                            : <span className="text-slatetext text-xs">No</span>}
+                            : <span className="text-on-surface-variant text-xs">No</span>}
                         </td>
                         <td className="px-4 py-3 text-center">{d.listingsCount ?? '—'}</td>
                         <td className="px-4 py-3 text-center">{d.leadsCount ?? '—'}</td>
                         <td className="px-4 py-3">
                           {d.score?.rank ? (
-                            <span className={`inline-flex items-center justify-center h-6 w-6 rounded-lg text-xs font-bold ${RANK_COLORS[d.score.rank] || 'bg-gray-100 text-gray-600'}`}>
+                            <span className={`inline-flex items-center justify-center h-6 w-6 rounded-lg text-xs font-bold ${RANK_COLORS[d.score.rank] || 'bg-surface-container text-on-surface-variant'}`}>
                               {d.score.rank}
                             </span>
                           ) : '—'}
                         </td>
-                        <td className="px-4 py-3 text-slatetext whitespace-nowrap">
+                        <td className="px-4 py-3 text-on-surface-variant whitespace-nowrap">
                           {d.createdAt ? new Date(d.createdAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                         </td>
                         <td className="px-4 py-3">
@@ -265,7 +265,7 @@ export default function DealerOperations() {
                               onClick={() => verifyMutation.mutate({ id: d.id || d._id, isVerified: !d.isVerified })}
                               className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors ${
                                 d.isVerified
-                                  ? 'border border-cardborder text-slatetext hover:bg-softbg'
+                                  ? 'border border-border-subtle text-on-surface-variant hover:bg-surface-container'
                                   : 'bg-emerald-600 text-white hover:bg-emerald-700'
                               }`}
                             >
@@ -292,7 +292,7 @@ export default function DealerOperations() {
       {/* Applications tab */}
       {activeTab === 'Applications' && (
         <div className="space-y-4">
-          <div className="flex rounded-lg border border-cardborder overflow-hidden text-sm w-fit">
+          <div className="flex rounded-lg border border-border-subtle overflow-hidden text-sm w-fit">
             {[
               { value: 'submitted', label: 'Submitted' },
               { value: 'under_review', label: 'Under Review' },
@@ -302,7 +302,7 @@ export default function DealerOperations() {
                 key={value}
                 onClick={() => setAppStatusFilter(value)}
                 className={`px-3 py-2 font-medium transition-colors ${
-                  appStatusFilter === value ? 'bg-deepblue text-white' : 'text-slatetext hover:bg-softbg'
+                  appStatusFilter === value ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container'
                 }`}
               >
                 {label}
@@ -313,11 +313,11 @@ export default function DealerOperations() {
           {appsLoading ? (
             <div className="space-y-2">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-14 rounded-xl bg-softbg animate-pulse" />
+                <div key={i} className="h-14 rounded-xl bg-surface-container animate-pulse" />
               ))}
             </div>
           ) : !filteredApps.length ? (
-            <div className="card p-10 text-center text-slatetext">
+            <div className="card p-10 text-center text-on-surface-variant">
               <ClipboardList className="h-8 w-8 opacity-30 mx-auto mb-2" />
               <p className="text-sm">No applications in this queue.</p>
             </div>
@@ -326,7 +326,7 @@ export default function DealerOperations() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-cardborder bg-softbg text-left text-xs font-semibold text-slatetext uppercase tracking-wide">
+                    <tr className="border-b border-border-subtle bg-surface-container text-left text-xs font-semibold text-on-surface-variant uppercase tracking-wide">
                       {['Applicant', 'Business', 'City', 'Plan', 'Submitted', 'Actions'].map((h) => (
                         <th key={h} className="px-4 py-3 whitespace-nowrap">{h}</th>
                       ))}
@@ -336,19 +336,19 @@ export default function DealerOperations() {
                     {filteredApps.map((app) => {
                       const appId = app.id || app._id;
                       return (
-                        <tr key={appId} className="hover:bg-softbg transition-colors align-top">
-                          <td className="px-4 py-3 font-medium text-ink">
+                        <tr key={appId} className="hover:bg-surface-container transition-colors align-top">
+                          <td className="px-4 py-3 font-medium text-on-surface">
                             {app.contactName || app.user?.name || '—'}
-                            {app.user?.email && <div className="text-xs text-slatetext">{app.user.email}</div>}
+                            {app.user?.email && <div className="text-xs text-on-surface-variant">{app.user.email}</div>}
                           </td>
                           <td className="px-4 py-3">{app.businessName || '—'}</td>
-                          <td className="px-4 py-3 text-slatetext">{app.city || '—'}</td>
+                          <td className="px-4 py-3 text-on-surface-variant">{app.city || '—'}</td>
                           <td className="px-4 py-3">
-                            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${TIER_COLORS[app.selectedPlan] || 'bg-gray-100 text-gray-600'}`}>
+                            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${TIER_COLORS[app.selectedPlan] || 'bg-surface-container text-on-surface-variant'}`}>
                               {app.selectedPlan || 'free'}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-slatetext whitespace-nowrap">
+                          <td className="px-4 py-3 text-on-surface-variant whitespace-nowrap">
                             {app.createdAt ? new Date(app.createdAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                           </td>
                           <td className="px-4 py-3">
@@ -393,7 +393,7 @@ export default function DealerOperations() {
       {activeTab === 'Suspended' && (
         <div className="space-y-4">
           {!suspendedDealers.length ? (
-            <div className="card p-10 text-center text-slatetext">
+            <div className="card p-10 text-center text-on-surface-variant">
               <CheckCircle className="h-8 w-8 opacity-30 mx-auto mb-2 text-emerald-500" />
               <p className="text-sm">No suspended dealers.</p>
             </div>
@@ -402,7 +402,7 @@ export default function DealerOperations() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-cardborder bg-softbg text-left text-xs font-semibold text-slatetext uppercase tracking-wide">
+                    <tr className="border-b border-border-subtle bg-surface-container text-left text-xs font-semibold text-on-surface-variant uppercase tracking-wide">
                       {['Dealer', 'City', 'Tier', 'Suspended', 'Actions'].map((h) => (
                         <th key={h} className="px-4 py-3 whitespace-nowrap">{h}</th>
                       ))}
@@ -410,18 +410,18 @@ export default function DealerOperations() {
                   </thead>
                   <tbody className="divide-y divide-cardborder">
                     {suspendedDealers.map((d) => (
-                      <tr key={d.id || d._id} className="hover:bg-softbg transition-colors">
-                        <td className="px-4 py-3 font-medium text-ink">
+                      <tr key={d.id || d._id} className="hover:bg-surface-container transition-colors">
+                        <td className="px-4 py-3 font-medium text-on-surface">
                           {d.businessName || d.user?.name || '—'}
-                          {d.user?.email && <div className="text-xs text-slatetext">{d.user.email}</div>}
+                          {d.user?.email && <div className="text-xs text-on-surface-variant">{d.user.email}</div>}
                         </td>
-                        <td className="px-4 py-3 text-slatetext">{d.city || '—'}</td>
+                        <td className="px-4 py-3 text-on-surface-variant">{d.city || '—'}</td>
                         <td className="px-4 py-3">
-                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${TIER_COLORS[d.tier] || 'bg-gray-100 text-gray-600'}`}>
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${TIER_COLORS[d.tier] || 'bg-surface-container text-on-surface-variant'}`}>
                             {(d.tier || 'basic').replace('_', ' ')}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-slatetext whitespace-nowrap">
+                        <td className="px-4 py-3 text-on-surface-variant whitespace-nowrap">
                           {d.user?.suspendedAt
                             ? new Date(d.user.suspendedAt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
                             : '—'}

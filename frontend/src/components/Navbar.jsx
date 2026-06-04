@@ -1,36 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import {
-  Menu,
-  X,
-  Heart,
-  User,
-  LogOut,
-  ChevronDown,
-  Shield,
-  Car,
-} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-
-function Logo() {
-  return (
-    <Link to="/" className="flex items-center gap-2">
-      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-ink text-accent shadow-md">
-        <Car className="h-4 w-4" />
-      </span>
-      <span className="text-lg font-bold tracking-tight text-ink">
-        AutoBenta<span className="text-deepblue">PH</span>
-      </span>
-    </Link>
-  );
-}
+import ThemeToggle from './ThemeToggle';
 
 const NAV_LINKS = [
-  { to: '/cars', label: 'Browse cars' },
-  { to: '/ownership-transfer', label: 'Transfer guide' },
-  { to: '/financing', label: 'Financing' },
-  { to: '/inspections', label: 'Inspections' },
+  { to: '/', label: 'Home' },
+  { to: '/cars', label: 'Browse Cars' },
+  { to: '/inspection-services', label: 'Ryderr Certified' },
+  { to: '/sell', label: 'Sell My Car' },
 ];
+
+function Icon({ name, className = '' }) {
+  return <span className={`material-symbols-outlined ${className}`}>{name}</span>;
+}
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -38,212 +20,158 @@ export default function Navbar() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   const handleLogout = () => {
     logout();
+    setUserMenuOpen(false);
+    setMobileOpen(false);
     navigate('/');
   };
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) =>
+    path === '/' ? location.pathname === '/' : location.pathname.startsWith(path);
 
   return (
-    <nav
-      className={`sticky top-0 z-50 transition-all duration-200 ${
-        scrolled
-          ? 'border-b border-cardborder bg-white/85 backdrop-blur-md shadow-sm'
-          : 'border-b border-transparent bg-white'
-      }`}
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Logo />
-            <div className="hidden items-center gap-1 md:flex">
-              {NAV_LINKS.map(({ to, label }) => (
-                <Link
-                  key={to}
-                  to={to}
-                  className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                    isActive(to)
-                      ? 'text-deepblue'
-                      : 'text-slatetext hover:text-ink'
-                  }`}
-                >
-                  {label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="hidden items-center gap-3 md:flex">
-            {user ? (
-              <>
-                <Link
-                  to="/dashboard"
-                  className="flex items-center gap-1.5 rounded-md px-3 py-2 text-sm text-slatetext transition-colors hover:bg-softbg hover:text-ink"
-                >
-                  <Heart className="h-4 w-4" /> Favorites
-                </Link>
-                <div className="relative">
-                  <button
-                    onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-softbg"
-                  >
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full bg-deepblue text-white">
-                      <span className="text-xs font-bold">
-                        {user.name?.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <span className="max-w-24 truncate">{user.name}</span>
-                    <ChevronDown className="h-3 w-3" />
-                  </button>
-                  {userMenuOpen && (
-                    <div className="absolute right-0 z-50 mt-1 w-48 rounded-lg border border-cardborder bg-white py-1 shadow-lg">
-                      <Link
-                        to="/dashboard"
-                        onClick={() => setUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-ink hover:bg-softbg"
-                      >
-                        <User className="h-4 w-4" /> My Dashboard
-                      </Link>
-                      {user.role === 'dealer' && (
-                        <Link
-                          to="/dealer"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-ink hover:bg-softbg"
-                        >
-                          <Car className="h-4 w-4" /> Dealer Panel
-                        </Link>
-                      )}
-                      {user.role === 'admin' && (
-                        <Link
-                          to="/admin"
-                          onClick={() => setUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-ink hover:bg-softbg"
-                        >
-                          <Shield className="h-4 w-4" /> Admin Panel
-                        </Link>
-                      )}
-                      <div className="my-1 border-t border-cardborder" />
-                      <button
-                        onClick={() => {
-                          setUserMenuOpen(false);
-                          handleLogout();
-                        }}
-                        className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                      >
-                        <LogOut className="h-4 w-4" /> Sign Out
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="rounded-lg px-3 py-2 text-sm font-semibold text-ink transition-colors hover:bg-softbg"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  to="/register"
-                  className="rounded-lg bg-deepblue px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-ink hover:shadow-md"
-                >
-                  List your car
-                </Link>
-              </>
-            )}
-          </div>
-
-          <button
-            className="rounded-md p-2 text-ink hover:bg-softbg md:hidden"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
-          >
-            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
+    <header className="sticky top-0 z-50 w-full h-16 flex justify-between items-center px-gutter-mobile md:px-gutter-desktop bg-surface/90 backdrop-blur-md border-b border-border-subtle">
+      {/* Left: mobile menu + wordmark */}
+      <div className="flex items-center gap-4">
+        <button
+          className="md:hidden p-2 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg"
+          onClick={() => setMobileOpen((o) => !o)}
+          aria-label="Toggle menu"
+        >
+          <Icon name={mobileOpen ? 'close' : 'menu'} />
+        </button>
+        <Link
+          to="/"
+          className="text-headline-md font-bold text-primary-container dark:text-primary-fixed-dim"
+        >
+          Ryderr
+        </Link>
       </div>
 
+      {/* Center: primary nav */}
+      <nav className="hidden md:flex items-center gap-xl">
+        {NAV_LINKS.map(({ to, label }) => (
+          <Link
+            key={to}
+            to={to}
+            className={
+              isActive(to)
+                ? 'text-primary dark:text-tertiary-fixed-dim font-bold text-label-md transition-all active:opacity-80 active:scale-95'
+                : 'text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container-low transition-colors text-label-md px-2 py-1 rounded'
+            }
+          >
+            {label}
+          </Link>
+        ))}
+      </nav>
+
+      {/* Right: search + theme + account */}
+      <div className="flex items-center gap-md">
+        <button
+          onClick={() => navigate('/cars')}
+          className="hidden md:flex items-center justify-center p-2 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors"
+          aria-label="Search"
+        >
+          <Icon name="search" />
+        </button>
+        <ThemeToggle />
+        {user && (
+          <Link
+            to="/notifications"
+            className="hidden md:flex items-center justify-center p-2 rounded-full text-on-surface-variant hover:bg-surface-container-low transition-colors"
+            aria-label="Notifications"
+          >
+            <Icon name="notifications" />
+          </Link>
+        )}
+
+        {user ? (
+          <div className="relative">
+            <button
+              onClick={() => setUserMenuOpen((o) => !o)}
+              className="flex items-center gap-2"
+              aria-label="Account menu"
+            >
+              <span className="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold border border-outline-variant">
+                {user.name?.charAt(0).toUpperCase() || 'U'}
+              </span>
+            </button>
+            {userMenuOpen && (
+              <div className="absolute right-0 z-50 mt-2 w-52 rounded-xl border border-border-subtle bg-surface-container-lowest py-1 shadow-lg">
+                <Link to="/dashboard" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                  <Icon name="dashboard" className="text-base" /> My Dashboard
+                </Link>
+                <Link to="/saved" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                  <Icon name="favorite" className="text-base" /> Saved Vehicles
+                </Link>
+                <Link to="/inquiries" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                  <Icon name="forum" className="text-base" /> Inquiries
+                </Link>
+                <Link to="/offers" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                  <Icon name="local_offer" className="text-base" /> Offers
+                </Link>
+                <Link to="/account" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                  <Icon name="settings" className="text-base" /> Account Settings
+                </Link>
+                {user.role === 'dealer' && (
+                  <Link to="/dealer" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                    <Icon name="storefront" className="text-base" /> Dealer Panel
+                  </Link>
+                )}
+                {user.role === 'admin' && (
+                  <Link to="/admin" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                    <Icon name="shield" className="text-base" /> Admin Panel
+                  </Link>
+                )}
+                <div className="my-1 border-t border-border-subtle" />
+                <button onClick={handleLogout} className="flex w-full items-center gap-2 px-4 py-2 text-body-sm text-error hover:bg-error-container/40">
+                  <Icon name="logout" className="text-base" /> Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="hidden md:flex items-center gap-sm">
+            <Link to="/login" className="px-3 py-2 rounded-lg text-label-md text-on-surface hover:bg-surface-container-low transition-colors">
+              Sign in
+            </Link>
+            <Link to="/sell" className="bg-primary text-on-primary px-lg py-sm rounded-lg text-label-md hover:opacity-90 transition-all active:scale-95">
+              List your car
+            </Link>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="space-y-1 border-t border-cardborder bg-white px-4 py-3 md:hidden">
+        <div className="absolute top-16 left-0 right-0 md:hidden bg-surface border-b border-border-subtle px-gutter-mobile py-md space-y-1 shadow-lg">
           {NAV_LINKS.map(({ to, label }) => (
             <Link
               key={to}
               to={to}
               onClick={() => setMobileOpen(false)}
-              className="block rounded-md px-3 py-2 text-sm font-medium text-ink hover:bg-softbg"
+              className={`block rounded-lg px-3 py-2 text-label-md ${
+                isActive(to)
+                  ? 'text-primary dark:text-tertiary-fixed-dim font-bold'
+                  : 'text-on-surface-variant hover:bg-surface-container-low'
+              }`}
             >
               {label}
             </Link>
           ))}
-          <div className="border-t border-cardborder pt-2">
-            {user ? (
-              <>
-                <Link
-                  to="/dashboard"
-                  onClick={() => setMobileOpen(false)}
-                  className="block rounded-md px-3 py-2 text-sm text-ink hover:bg-softbg"
-                >
-                  My Dashboard
-                </Link>
-                {user.role === 'dealer' && (
-                  <Link
-                    to="/dealer"
-                    onClick={() => setMobileOpen(false)}
-                    className="block rounded-md px-3 py-2 text-sm text-ink hover:bg-softbg"
-                  >
-                    Dealer Panel
-                  </Link>
-                )}
-                {user.role === 'admin' && (
-                  <Link
-                    to="/admin"
-                    onClick={() => setMobileOpen(false)}
-                    className="block rounded-md px-3 py-2 text-sm text-ink hover:bg-softbg"
-                  >
-                    Admin Panel
-                  </Link>
-                )}
-                <button
-                  onClick={() => {
-                    setMobileOpen(false);
-                    handleLogout();
-                  }}
-                  className="block w-full rounded-md px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50"
-                >
-                  Sign Out
-                </button>
-              </>
-            ) : (
-              <div className="flex gap-2">
-                <Link
-                  to="/login"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex-1 rounded-lg border border-cardborder px-3 py-2 text-center text-sm font-semibold text-ink"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex-1 rounded-lg bg-deepblue px-3 py-2 text-center text-sm font-semibold text-white"
-                >
-                  List your car
-                </Link>
-              </div>
-            )}
-          </div>
+          {!user && (
+            <div className="flex gap-sm pt-2 border-t border-border-subtle mt-2">
+              <Link to="/login" onClick={() => setMobileOpen(false)} className="flex-1 rounded-lg border border-outline-variant px-3 py-2 text-center text-label-md text-on-surface">
+                Sign in
+              </Link>
+              <Link to="/sell" onClick={() => setMobileOpen(false)} className="flex-1 rounded-lg bg-primary text-on-primary px-3 py-2 text-center text-label-md">
+                List your car
+              </Link>
+            </div>
+          )}
         </div>
       )}
-    </nav>
+    </header>
   );
 }

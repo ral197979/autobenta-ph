@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { X, Plus, Bot } from 'lucide-react';
+import { X, Plus } from 'lucide-react';
 import api from '../api/client';
 import { formatPrice, formatMileage, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_LABELS, photoOrFallback } from '../utils/format';
 
 const MAX_COMPARE = 3;
+
+function Icon({ name, className = '', filled = false }) {
+  return <span className={`material-symbols-outlined ${className}`} style={filled ? { fontVariationSettings: "'FILL' 1" } : undefined}>{name}</span>;
+}
 
 function useListings(ids) {
   const [listings, setListings] = useState([]);
@@ -13,9 +17,18 @@ function useListings(ids) {
     if (!ids.length) { setListings([]); return; }
     Promise.all(ids.map(id => api.get(`/listings/${id}`).then(r => r.data).catch(() => null)))
       .then(results => setListings(results.filter(Boolean)));
-  }, [ids.join(',')]);
+  }, [ids.join(',')]); // eslint-disable-line react-hooks/exhaustive-deps
   return listings;
 }
+
+const SPEC_ROWS = [
+  ['speed', 'Mileage', l => formatMileage(l.mileage)],
+  ['local_gas_station', 'Fuel', l => FUEL_LABELS[l.fuelType]],
+  ['settings_input_component', 'Transmission', l => TRANSMISSION_LABELS[l.transmission]],
+  ['grade', 'Condition', l => CONDITION_LABELS[l.condition]],
+  ['location_on', 'Location', l => l.city],
+  ['person', 'Owners', l => l.ownerCount],
+];
 
 export default function Compare() {
   const [searchParams] = useSearchParams();
@@ -33,19 +46,19 @@ export default function Compare() {
     enabled: searchInput.length > 2,
   });
 
-  const addId = (id) => {
-    if (!ids.includes(id) && ids.length < MAX_COMPARE) setIds(p => [...p, id]);
-  };
+  const addId = (id) => { if (!ids.includes(id) && ids.length < MAX_COMPARE) setIds(p => [...p, id]); };
   const removeId = (id) => setIds(p => p.filter(i => i !== id));
+
+  // Cheapest listing gets the "value" pick badge.
+  const cheapestId = listings.length >= 2
+    ? listings.reduce((a, b) => (Number(a.price) <= Number(b.price) ? a : b)).id
+    : null;
 
   const askAI = async () => {
     if (listings.length < 2) return;
     setAiLoading(true);
     try {
-      const { data } = await api.post('/ai/buyer-assistant', {
-        question: 'Compare these cars for me',
-        compareIds: ids,
-      });
+      const { data } = await api.post('/ai/buyer-assistant', { question: 'Compare these cars for me', compareIds: ids });
       setAiAnswer(data);
     } catch {
       setAiAnswer({ answer: 'AI comparison failed. Try again later.' });
@@ -54,47 +67,36 @@ export default function Compare() {
     }
   };
 
-  const ROWS = [
-    ['Price', l => formatPrice(l.price)],
-    ['Year', l => l.year],
-    ['Make / Model', l => `${l.make} ${l.model}`],
-    ['Variant', l => l.variant || '—'],
-    ['Mileage', l => formatMileage(l.mileage)],
-    ['Fuel Type', l => FUEL_LABELS[l.fuelType]],
-    ['Transmission', l => TRANSMISSION_LABELS[l.transmission]],
-    ['Condition', l => CONDITION_LABELS[l.condition]],
-    ['Color', l => l.color || '—'],
-    ['Body Type', l => l.bodyType || '—'],
-    ['Location', l => l.city],
-    ['Owners', l => l.ownerCount],
-    ['OR/CR', l => l.hasOrCr ? '✅ Yes' : '❌ No'],
-    ['Service History', l => l.serviceHistory ? '✅ Available' : '—'],
-    ['Accident', l => l.hasAccident ? '⚠️ Yes' : '✅ None'],
-    ['Flood', l => l.hasFlood ? '🚨 Yes' : '✅ None'],
-    ['Negotiable', l => l.negotiable ? '✅ Yes' : 'Fixed'],
-  ];
-
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Compare Cars</h1>
+    <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-xl">
+      {/* Header */}
+      <section className="mb-xl">
+        <h1 className="font-headline-lg text-headline-lg text-on-surface mb-xs">Smart Comparison</h1>
+        <p className="text-on-surface-variant font-body-md">Precision analytics for your next high-performance investment.</p>
+      </section>
 
+      {/* Add car */}
       {ids.length < MAX_COMPARE && (
-        <div className="card p-4 mb-6">
-          <p className="text-sm text-gray-600 mb-2">Add a car to compare ({ids.length}/{MAX_COMPARE})</p>
-          <input value={searchInput} onChange={e => setSearchInput(e.target.value)} placeholder="Search by make or model..." className="input text-sm" />
+        <div className="bg-surface-container-lowest border border-border-subtle rounded-2xl p-lg mb-xl">
+          <p className="text-body-sm text-on-surface-variant mb-2">Add a car to compare ({ids.length}/{MAX_COMPARE})</p>
+          <div className="relative">
+            <Icon name="search" className="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant" />
+            <input value={searchInput} onChange={e => setSearchInput(e.target.value)} placeholder="Search by make or model…"
+              className="w-full bg-surface-container border border-border-subtle rounded-full pl-12 pr-md py-sm text-body-md text-on-surface focus:ring-2 focus:ring-primary outline-none placeholder-on-surface-variant/60" />
+          </div>
           {searchResults?.listings?.length > 0 && searchInput.length > 2 && (
-            <div className="mt-2 border border-gray-200 rounded-lg divide-y max-h-48 overflow-y-auto">
+            <div className="mt-2 border border-border-subtle rounded-xl divide-y divide-border-subtle max-h-48 overflow-y-auto">
               {searchResults.listings.filter(l => !ids.includes(l.id)).slice(0, 8).map(l => (
                 <button key={l.id} onClick={() => { addId(l.id); setSearchInput(''); }}
-                  className="w-full flex items-center gap-3 p-2.5 hover:bg-gray-50 text-left transition-colors">
-                  <div className="w-12 h-9 rounded overflow-hidden bg-gray-100 shrink-0">
-                    <img src={l.photos?.[0]?.url || ''} alt="" className="w-full h-full object-cover" />
+                  className="w-full flex items-center gap-3 p-2.5 hover:bg-surface-container text-left transition-colors">
+                  <div className="w-12 h-9 rounded overflow-hidden bg-surface-container shrink-0">
+                    <img src={photoOrFallback(l.photos?.[0]?.url, l.make)} alt="" className="w-full h-full object-cover" />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium">{l.year} {l.make} {l.model}</p>
-                    <p className="text-xs text-gray-500">{formatPrice(l.price)} · {l.city}</p>
+                  <div className="min-w-0">
+                    <p className="text-body-sm font-medium text-on-surface truncate">{l.year} {l.make} {l.model}</p>
+                    <p className="text-xs text-on-surface-variant">{formatPrice(l.price)} · {l.city}</p>
                   </div>
-                  <Plus className="w-4 h-4 text-primary-600 ml-auto" />
+                  <Plus className="w-4 h-4 text-primary ml-auto shrink-0" />
                 </button>
               ))}
             </div>
@@ -104,75 +106,117 @@ export default function Compare() {
 
       {ids.length === 0 ? (
         <div className="text-center py-20">
-          <p className="text-gray-400 mb-4">Search and add up to 3 cars to compare side by side.</p>
-          <Link to="/cars" className="btn-primary">Browse Cars</Link>
+          <Icon name="balance" className="text-6xl text-on-surface-variant/40 mb-3" />
+          <p className="text-on-surface-variant mb-4">Search and add up to 3 cars to compare side by side.</p>
+          <Link to="/cars" className="bg-primary text-on-primary rounded-xl px-lg py-sm font-label-md">Browse Cars</Link>
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[600px]">
-              <thead>
-                <tr>
-                  <th className="w-32 text-left text-xs text-gray-400 font-medium pb-3">Feature</th>
-                  {ids.map(id => {
-                    const l = listings.find(x => x?.id === id);
-                    return (
-                      <th key={id} className="px-2 pb-3">
-                        <div className="card overflow-hidden relative">
-                          <button onClick={() => removeId(id)} className="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1 z-10"><X className="w-3 h-3" /></button>
-                          <div className="aspect-[4/3] bg-gray-100">
-                            {l && <img src={photoOrFallback(l.photos?.[0]?.url, l.make)} alt="" className="w-full h-full object-cover" />}
+          {/* Comparison grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg">
+            {ids.map((id) => {
+              const l = listings.find(x => x?.id === id);
+              return (
+                <div key={id} className="flex flex-col gap-md">
+                  <div className="relative group rounded-xl border border-border-subtle overflow-hidden">
+                    <button onClick={() => removeId(id)} className="absolute top-md right-md z-20 bg-black/50 text-white rounded-full p-1.5 hover:bg-black/70 transition-colors"><X className="w-4 h-4" /></button>
+                    {l && cheapestId === id && (
+                      <div className="absolute top-md left-md z-20 flex items-center gap-xs bg-trust-emerald text-white px-md py-1 rounded-full shadow-lg">
+                        <Icon name="verified" className="text-[18px]" filled />
+                        <span className="font-label-md text-label-md">Best Value</span>
+                      </div>
+                    )}
+                    <div className="aspect-[16/9] w-full overflow-hidden bg-surface-container-highest">
+                      {l && <img src={photoOrFallback(l.photos?.[0]?.url, l.make)} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />}
+                    </div>
+                  </div>
+
+                  {l ? (
+                    <>
+                      <div className="flex flex-col gap-xs mt-sm">
+                        <span className="text-on-surface-variant font-label-md uppercase tracking-wider">{l.bodyType || 'Vehicle'} • {l.year}</span>
+                        <h3 className="font-headline-md text-headline-md text-on-surface">{l.make} {l.model}</h3>
+                        <div className="text-primary font-display-lg text-display-lg mt-xs">{formatPrice(l.price)}</div>
+                      </div>
+
+                      <div className="mt-lg flex flex-col gap-sm">
+                        {SPEC_ROWS.map(([icon, label, fn]) => (
+                          <div key={label} className="flex items-center justify-between p-md rounded-lg bg-surface-container-low border border-border-subtle hover:border-primary/30 transition-colors">
+                            <div className="flex items-center gap-sm">
+                              <Icon name={icon} className="text-on-surface-variant" />
+                              <span className="text-on-surface-variant font-body-md">{label}</span>
+                            </div>
+                            <span className="text-on-surface font-headline-sm">{fn(l)}</span>
                           </div>
-                          <div className="p-3 text-left">
-                            {l ? (
-                              <>
-                                <Link to={`/cars/${id}`} className="font-semibold text-sm text-primary-600 hover:underline line-clamp-1">{l.year} {l.make} {l.model}</Link>
-                                <p className="text-lg font-bold text-gray-900">{formatPrice(l.price)}</p>
-                              </>
-                            ) : (
-                              <div className="animate-pulse"><div className="h-4 bg-gray-200 rounded mb-1 w-3/4" /><div className="h-5 bg-gray-200 rounded w-1/2" /></div>
-                            )}
-                          </div>
-                        </div>
-                      </th>
-                    );
-                  })}
-                  {ids.length < MAX_COMPARE && <th className="px-2 pb-3 align-top"><div className="card border-2 border-dashed border-gray-300 h-full flex flex-col items-center justify-center py-8 text-gray-400"><Plus className="w-8 h-8 mb-1" /><span className="text-xs">Add Car</span></div></th>}
-                </tr>
-              </thead>
-              <tbody>
-                {ROWS.map(([label, fn]) => (
-                  <tr key={label} className="border-t border-gray-100 hover:bg-gray-50">
-                    <td className="py-2.5 pr-4 text-xs text-gray-500 font-medium w-32">{label}</td>
-                    {ids.map(id => {
-                      const l = listings.find(x => x?.id === id);
-                      return <td key={id} className="px-2 py-2.5 text-sm text-center font-medium">{l ? fn(l) : <span className="text-gray-300">—</span>}</td>;
-                    })}
-                    {ids.length < MAX_COMPARE && <td />}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        ))}
+                        <Disclosure ok={l.hasOrCr} label="OR/CR" yes="Available" no="Not available" />
+                        <Disclosure ok={!l.hasAccident} label="Accident" yes="None disclosed" no="Disclosed" />
+                        <Disclosure ok={!l.hasFlood} label="Flood" yes="None disclosed" no="Disclosed" />
+                      </div>
+
+                      <Link to={`/cars/${id}`} className="mt-lg w-full py-md bg-primary text-on-primary text-center font-headline-sm rounded-xl hover:opacity-90 active:scale-95 transition-all">
+                        View {l.make} {l.model}
+                      </Link>
+                    </>
+                  ) : (
+                    <div className="animate-pulse space-y-3 mt-sm">
+                      <div className="h-4 bg-surface-container rounded w-1/2" />
+                      <div className="h-8 bg-surface-container rounded w-2/3" />
+                      <div className="h-40 bg-surface-container rounded-xl" />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {ids.length < MAX_COMPARE && (
+              <div className="rounded-xl border-2 border-dashed border-border-subtle flex flex-col items-center justify-center py-2xl text-on-surface-variant min-h-[200px]">
+                <Plus className="w-8 h-8 mb-1" />
+                <span className="text-label-sm">Add a car (search above)</span>
+              </div>
+            )}
           </div>
 
+          {/* AI insights */}
           {listings.length >= 2 && (
-            <div className="card p-5 mt-6">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-bold flex items-center gap-2"><Bot className="w-5 h-5 text-primary-600" /> AI Comparison</h3>
-                <button onClick={askAI} disabled={aiLoading} className="btn-primary text-sm">{aiLoading ? 'Comparing...' : 'Compare with AI'}</button>
+            <section className="mt-3xl">
+              <div className="flex items-center justify-between gap-md mb-lg">
+                <div className="flex items-center gap-sm">
+                  <Icon name="auto_awesome" className="text-primary" filled />
+                  <h4 className="font-headline-sm text-headline-sm text-on-surface">Ryderr AI Insights</h4>
+                </div>
+                <button onClick={askAI} disabled={aiLoading} className="bg-primary text-on-primary rounded-xl px-lg py-sm font-label-md hover:opacity-90 disabled:opacity-50">
+                  {aiLoading ? 'Comparing…' : 'Compare with AI'}
+                </button>
               </div>
               {aiAnswer && (
-                <div className="bg-primary-50 border border-primary-100 rounded-lg p-4 text-sm">
-                  <p className="text-gray-700 whitespace-pre-wrap">{aiAnswer.answer}</p>
+                <div className="bg-primary/5 border border-primary/20 rounded-2xl p-xl text-body-md">
+                  <p className="text-on-surface whitespace-pre-wrap leading-relaxed">{aiAnswer.answer}</p>
                   {aiAnswer.checklist?.length > 0 && (
-                    <ul className="mt-3 space-y-1">{aiAnswer.checklist.map((item, i) => <li key={i} className="text-gray-600 flex gap-2">✅ {item}</li>)}</ul>
+                    <ul className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {aiAnswer.checklist.map((item, i) => (
+                        <li key={i} className="flex gap-2 text-on-surface-variant"><Icon name="check_circle" className="text-trust-emerald text-[18px]" filled /> {item}</li>
+                      ))}
+                    </ul>
                   )}
                 </div>
               )}
-            </div>
+            </section>
           )}
         </>
       )}
+    </div>
+  );
+}
+
+function Disclosure({ ok, label, yes, no }) {
+  return (
+    <div className={`flex items-center justify-between p-md rounded-lg bg-surface-container-low border transition-colors ${ok ? 'border-trust-emerald/20 hover:border-trust-emerald/40' : 'border-alert-orange/30 hover:border-alert-orange/50'}`}>
+      <div className="flex items-center gap-sm">
+        <Icon name={ok ? 'check_circle' : 'warning'} className={ok ? 'text-trust-emerald' : 'text-alert-orange'} filled />
+        <span className="text-on-surface-variant font-body-md">{label}</span>
+      </div>
+      <span className={`font-headline-sm ${ok ? 'text-on-surface' : 'text-alert-orange'}`}>{ok ? yes : no}</span>
     </div>
   );
 }

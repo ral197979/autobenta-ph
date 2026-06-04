@@ -49,7 +49,7 @@ export default function ReadinessScore({ listing, compact = false }) {
       <div className="flex items-center gap-2">
         <div className="relative h-8 w-8">
           <svg viewBox="0 0 32 32" className="h-8 w-8 -rotate-90">
-            <circle cx="16" cy="16" r="12" fill="none" stroke="#e2e8f0" strokeWidth="3" />
+            <circle cx="16" cy="16" r="12" fill="none" className="stroke-outline-variant" strokeWidth="3" />
             <circle
               cx="16" cy="16" r="12"
               fill="none"
@@ -64,7 +64,7 @@ export default function ReadinessScore({ listing, compact = false }) {
           </span>
         </div>
         <div>
-          <p className="text-xs font-bold text-ink">Transfer Readiness</p>
+          <p className="text-xs font-bold text-on-surface">Transfer Readiness</p>
           <p className={`text-[11px] font-semibold ${text}`}>{band}</p>
         </div>
       </div>
@@ -72,22 +72,22 @@ export default function ReadinessScore({ listing, compact = false }) {
   }
 
   return (
-    <div className="rounded-2xl border border-cardborder bg-white p-5">
+    <div className="rounded-2xl border border-border-subtle bg-surface-container-lowest p-5">
       <div className="flex items-center gap-3 mb-4">
-        <ShieldCheck className="h-5 w-5 text-deepblue" />
-        <h3 className="font-bold text-ink">Transfer Readiness Score</h3>
-        {apiScore && <span className="ml-auto text-[10px] text-slatetext/50">Verified by platform</span>}
+        <ShieldCheck className="h-5 w-5 text-primary" />
+        <h3 className="font-bold text-on-surface">Transfer Readiness Score</h3>
+        {apiScore && <span className="ml-auto text-[10px] text-on-surface-variant/60">Verified by platform</span>}
       </div>
 
       <div className="flex items-end gap-4 mb-4">
         <div>
           <span className={`text-4xl font-bold ${text}`}>{total}</span>
-          <span className="text-xl text-slatetext">/100</span>
+          <span className="text-xl text-on-surface-variant">/100</span>
         </div>
         <span className={`mb-1 rounded-full px-2.5 py-0.5 text-xs font-bold ${pill}`}>{band}</span>
       </div>
 
-      <div className="mb-5 h-2 w-full rounded-full bg-softbg overflow-hidden">
+      <div className="mb-5 h-2 w-full rounded-full bg-surface-container overflow-hidden">
         <div className={`h-2 rounded-full transition-all duration-700 ${bar}`} style={{ width: `${total}%` }} />
       </div>
 
@@ -95,10 +95,10 @@ export default function ReadinessScore({ listing, compact = false }) {
         {criteria.map((item) => (
           <div key={item.key} className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-2">
-              <span className={`h-2 w-2 rounded-full ${item.passed ? 'bg-emerald-400' : 'bg-cardborder'}`} />
-              <span className={item.passed ? 'text-ink' : 'text-slatetext/60'}>{item.label}</span>
+              <span className={`h-2 w-2 rounded-full ${item.passed ? 'bg-trust-emerald' : 'bg-outline-variant'}`} />
+              <span className={item.passed ? 'text-on-surface' : 'text-on-surface-variant/60'}>{item.label}</span>
             </div>
-            <span className={`text-xs font-bold ${item.passed ? 'text-emerald-600' : 'text-slatetext/40'}`}>
+            <span className={`text-xs font-bold ${item.passed ? 'text-trust-emerald' : 'text-on-surface-variant/40'}`}>
               +{item.points}
             </span>
           </div>

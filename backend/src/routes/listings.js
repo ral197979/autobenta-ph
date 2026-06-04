@@ -48,6 +48,7 @@ router.get('/', optionalAuth, async (req, res, next) => {
     // In nearby mode, skip city text filter — distance radius takes over
     if (location && !nearbyMode) where.city = { contains: location, mode: 'insensitive' };
     if (sellerType) where.sellerType = sellerType;
+    if (req.query.sellerId) where.sellerId = req.query.sellerId;
     if (condition) where.condition = condition;
     if (verified === 'true') {
       if (!where.AND) where.AND = [];

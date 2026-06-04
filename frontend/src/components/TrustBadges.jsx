@@ -92,12 +92,12 @@ export default function TrustBadges({ listing, size = 'sm', maxCount, expandable
           <button
             type="button"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setExpanded(true); }}
-            className={`inline-flex items-center rounded-full border border-deepblue/20 bg-deepblue/5 font-semibold text-deepblue hover:bg-deepblue/10 transition-colors ${padding} ${textSize}`}
+            className={`inline-flex items-center rounded-full border border-primary/20 bg-primary/5 font-semibold text-primary hover:bg-primary/10 transition-colors ${padding} ${textSize}`}
           >
             +{overflow} more
           </button>
         ) : (
-          <span className={`inline-flex items-center rounded-full border border-cardborder bg-softbg font-semibold text-slatetext ${padding} ${textSize}`}>
+          <span className={`inline-flex items-center rounded-full border border-border-subtle bg-surface-container font-semibold text-on-surface-variant ${padding} ${textSize}`}>
             +{overflow} more
           </span>
         )
