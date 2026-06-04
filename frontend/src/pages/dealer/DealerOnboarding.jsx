@@ -72,8 +72,8 @@ export default function DealerOnboarding() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-xl font-bold text-ink">Dealer Onboarding</h1>
-        <p className="text-sm text-slatetext mt-1">Follow these steps to get your dealer profile ready.</p>
+        <h1 className="text-xl font-bold text-on-surface">Dealer Onboarding</h1>
+        <p className="text-sm text-on-surface-variant mt-1">Follow these steps to get your dealer profile ready.</p>
       </div>
 
       {/* Step indicator */}
@@ -86,11 +86,11 @@ export default function DealerOnboarding() {
             <div key={s.label} className="flex items-center gap-2 flex-1 min-w-0">
               <div className="flex flex-col items-center gap-1">
                 <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                  done ? 'bg-emerald-500 text-white' : active ? 'bg-deepblue text-white' : 'bg-cardborder text-slatetext'
+                  done ? 'bg-emerald-500 text-white' : active ? 'bg-primary text-on-primary' : 'bg-cardborder text-on-surface-variant'
                 }`}>
                   {done ? '✓' : n}
                 </div>
-                <span className={`text-[10px] font-medium text-center leading-tight ${active ? 'text-deepblue' : 'text-slatetext'}`}>
+                <span className={`text-[10px] font-medium text-center leading-tight ${active ? 'text-primary' : 'text-on-surface-variant'}`}>
                   {s.label}
                 </span>
               </div>
@@ -106,7 +106,7 @@ export default function DealerOnboarding() {
       <div className="card p-6">
         {step === 1 && (
           <div className="space-y-4">
-            <h2 className="font-bold text-ink">Complete Your Profile</h2>
+            <h2 className="font-bold text-on-surface">Complete Your Profile</h2>
             {[
               { field: 'businessName', label: 'Business Name', placeholder: 'Your dealership name' },
               { field: 'city', label: 'City', placeholder: 'e.g. Makati' },
@@ -114,7 +114,7 @@ export default function DealerOnboarding() {
               { field: 'website', label: 'Website', placeholder: 'https://yourdealership.com' },
             ].map(({ field, label, placeholder }) => (
               <div key={field}>
-                <label className="block text-sm font-medium text-ink mb-1">{label}</label>
+                <label className="block text-sm font-medium text-on-surface mb-1">{label}</label>
                 <input
                   className="input"
                   value={profileForm[field]}
@@ -124,7 +124,7 @@ export default function DealerOnboarding() {
               </div>
             ))}
             <div>
-              <label className="block text-sm font-medium text-ink mb-1">Description</label>
+              <label className="block text-sm font-medium text-on-surface mb-1">Description</label>
               <textarea
                 className="input resize-none h-20"
                 value={profileForm.description}
@@ -149,8 +149,8 @@ export default function DealerOnboarding() {
 
         {step === 2 && (
           <div className="space-y-4">
-            <h2 className="font-bold text-ink">Add Your First Listing</h2>
-            <p className="text-sm text-slatetext">You need at least 1 active listing to start receiving leads.</p>
+            <h2 className="font-bold text-on-surface">Add Your First Listing</h2>
+            <p className="text-sm text-on-surface-variant">You need at least 1 active listing to start receiving leads.</p>
 
             {hasListings ? (
               <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700 font-medium">
@@ -161,19 +161,19 @@ export default function DealerOnboarding() {
               <div className="grid sm:grid-cols-2 gap-3">
                 <Link
                   to="/sell"
-                  className="flex flex-col gap-1.5 rounded-xl border-2 border-cardborder bg-white p-4 hover:border-deepblue hover:bg-deepblue/5 transition-colors"
+                  className="flex flex-col gap-1.5 rounded-xl border-2 border-border-subtle bg-surface-container-lowest p-4 hover:border-primary hover:bg-primary/5 transition-colors"
                 >
-                  <Car className="h-5 w-5 text-deepblue" />
-                  <p className="font-semibold text-sm text-ink">Add Manually</p>
-                  <p className="text-xs text-slatetext">Add listings one by one through the portal</p>
+                  <Car className="h-5 w-5 text-primary" />
+                  <p className="font-semibold text-sm text-on-surface">Add Manually</p>
+                  <p className="text-xs text-on-surface-variant">Add listings one by one through the portal</p>
                 </Link>
                 <Link
                   to="/ai-wizard"
-                  className="flex flex-col gap-1.5 rounded-xl border-2 border-cardborder bg-white p-4 hover:border-deepblue hover:bg-deepblue/5 transition-colors"
+                  className="flex flex-col gap-1.5 rounded-xl border-2 border-border-subtle bg-surface-container-lowest p-4 hover:border-primary hover:bg-primary/5 transition-colors"
                 >
                   <Rocket className="h-5 w-5 text-purple-500" />
-                  <p className="font-semibold text-sm text-ink">Use AI Wizard</p>
-                  <p className="text-xs text-slatetext">Let AI help you create your listing</p>
+                  <p className="font-semibold text-sm text-on-surface">Use AI Wizard</p>
+                  <p className="text-xs text-on-surface-variant">Let AI help you create your listing</p>
                 </Link>
               </div>
             )}
@@ -182,16 +182,16 @@ export default function DealerOnboarding() {
 
         {step === 3 && (
           <div className="space-y-4">
-            <h2 className="font-bold text-ink">Your Free Trial</h2>
-            <div className="rounded-xl bg-deepblue/10 border border-deepblue/20 p-5">
+            <h2 className="font-bold text-on-surface">Your Free Trial</h2>
+            <div className="rounded-xl bg-primary/10 border border-primary/20 p-5">
               <div className="flex items-center gap-2 mb-2">
-                <Zap className="h-5 w-5 text-deepblue" />
-                <span className="font-semibold text-ink">You're on a 90-day free trial</span>
+                <Zap className="h-5 w-5 text-primary" />
+                <span className="font-semibold text-on-surface">You're on a 90-day free trial</span>
               </div>
-              <p className="text-sm text-slatetext mb-3">
+              <p className="text-sm text-on-surface-variant mb-3">
                 Full Pro features, no credit card required. Your Founding Dealer rate of <strong>₱3,599/month</strong> is locked in — just contact us before your trial ends to activate payment.
               </p>
-              <ul className="space-y-1.5 text-sm text-slatetext">
+              <ul className="space-y-1.5 text-sm text-on-surface-variant">
                 {['Unlimited listings', 'Lead CRM', 'Analytics dashboard', 'Priority placement', 'Verified Dealer badge', 'V8Atlas sync', 'API access'].map(f => (
                   <li key={f} className="flex items-center gap-2">
                     <CheckCircle className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
@@ -211,11 +211,11 @@ export default function DealerOnboarding() {
 
         {step === 4 && (
           <div className="space-y-4">
-            <h2 className="font-bold text-ink">Go Live</h2>
+            <h2 className="font-bold text-on-surface">Go Live</h2>
             <div className="space-y-2">
               {completionChecklist.map(({ label, done }) => (
-                <div key={label} className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm ${done ? 'bg-emerald-50 text-emerald-700' : 'bg-softbg text-slatetext'}`}>
-                  <div className={`h-5 w-5 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold ${done ? 'bg-emerald-500 text-white' : 'border-2 border-cardborder'}`}>
+                <div key={label} className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm ${done ? 'bg-emerald-50 text-emerald-700' : 'bg-surface-container text-on-surface-variant'}`}>
+                  <div className={`h-5 w-5 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold ${done ? 'bg-emerald-500 text-white' : 'border-2 border-border-subtle'}`}>
                     {done ? '✓' : ''}
                   </div>
                   {label}
@@ -224,13 +224,13 @@ export default function DealerOnboarding() {
             </div>
 
             {scorecard && (
-              <div className="flex items-center gap-3 rounded-xl border border-cardborder p-4">
-                <span className={`h-10 w-10 rounded-xl flex items-center justify-center text-lg font-black ${RANK_COLORS[scorecard.rank] || 'bg-gray-100 text-gray-600'}`}>
+              <div className="flex items-center gap-3 rounded-xl border border-border-subtle p-4">
+                <span className={`h-10 w-10 rounded-xl flex items-center justify-center text-lg font-black ${RANK_COLORS[scorecard.rank] || 'bg-surface-container text-on-surface-variant'}`}>
                   {scorecard.rank || '—'}
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-ink">Your dealer score</p>
-                  <p className="text-xs text-slatetext">{scorecard.score ?? '—'} / 100</p>
+                  <p className="text-sm font-semibold text-on-surface">Your dealer score</p>
+                  <p className="text-xs text-on-surface-variant">{scorecard.score ?? '—'} / 100</p>
                 </div>
               </div>
             )}

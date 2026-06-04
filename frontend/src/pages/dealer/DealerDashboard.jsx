@@ -30,7 +30,7 @@ export default function DealerDashboard() {
   const onboardingComplete = onboardingStep >= ONBOARDING_STEPS.length;
 
   const stats = [
-    { icon: Car, label: 'Active Listings', value: analytics?.listings?.active || 0, color: 'text-deepblue bg-deepblue/10', link: '/dealer/listings' },
+    { icon: Car, label: 'Active Listings', value: analytics?.listings?.active || 0, color: 'text-primary bg-primary/10', link: '/dealer/listings' },
     { icon: Users, label: 'Total Leads', value: analytics?.leads?.total || 0, color: 'text-purple-600 bg-purple-100', link: '/dealer/leads' },
     { icon: AlertCircle, label: 'New Leads', value: analytics?.leads?.byStatus?.new || 0, color: 'text-orange-600 bg-orange-100', link: '/dealer/leads' },
     { icon: TrendingUp, label: 'Win Rate', value: `${analytics?.leads?.winRate || 0}%`, color: 'text-emerald-600 bg-emerald-100', link: '/dealer/analytics' },
@@ -53,13 +53,13 @@ export default function DealerDashboard() {
                 <Link
                   key={step.key}
                   to={done ? '#' : step.link}
-                  className={`flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm transition-colors ${done ? 'bg-emerald-50 text-emerald-700' : 'bg-white text-ink hover:bg-amber-100'}`}
+                  className={`flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm transition-colors ${done ? 'bg-emerald-50 text-emerald-700' : 'bg-surface-container-lowest text-on-surface hover:bg-amber-100'}`}
                 >
                   <span className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold ${done ? 'bg-emerald-500 text-white' : 'border-2 border-amber-300 text-amber-500'}`}>
                     {done ? '✓' : i + 1}
                   </span>
                   {step.label}
-                  {!done && <ChevronRight className="h-4 w-4 ml-auto text-slatetext" />}
+                  {!done && <ChevronRight className="h-4 w-4 ml-auto text-on-surface-variant" />}
                 </Link>
               );
             })}
@@ -75,8 +75,8 @@ export default function DealerDashboard() {
               <Icon className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-ink">{value}</p>
-              <p className="text-xs text-slatetext">{label}</p>
+              <p className="text-2xl font-bold text-on-surface">{value}</p>
+              <p className="text-xs text-on-surface-variant">{label}</p>
             </div>
           </Link>
         ))}
@@ -85,33 +85,33 @@ export default function DealerDashboard() {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* New leads */}
         <div className="lg:col-span-2 card overflow-hidden">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-cardborder">
-            <h2 className="font-bold text-ink flex items-center gap-2">
-              <Users className="h-4 w-4 text-deepblue" /> New Leads
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border-subtle">
+            <h2 className="font-bold text-on-surface flex items-center gap-2">
+              <Users className="h-4 w-4 text-primary" /> New Leads
             </h2>
-            <Link to="/dealer/leads" className="text-xs font-semibold text-deepblue hover:underline">View all →</Link>
+            <Link to="/dealer/leads" className="text-xs font-semibold text-primary hover:underline">View all →</Link>
           </div>
           <div className="divide-y divide-cardborder">
             {!recentLeads?.length && (
-              <div className="text-center py-10 text-slatetext">
+              <div className="text-center py-10 text-on-surface-variant">
                 <Users className="h-8 w-8 mx-auto mb-2 opacity-30" />
                 <p className="text-sm">No new leads yet</p>
               </div>
             )}
             {recentLeads?.slice(0, 5).map((lead) => (
               <div key={lead.id} className="flex items-center gap-3 px-5 py-3">
-                <div className="h-10 w-14 rounded-lg overflow-hidden bg-softbg shrink-0">
+                <div className="h-10 w-14 rounded-lg overflow-hidden bg-surface-container shrink-0">
                   <img src={lead.listing?.photos?.[0]?.url || ''} alt="" className="h-full w-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-ink truncate">{lead.buyerName}</p>
-                  <p className="text-xs text-slatetext truncate">
+                  <p className="text-sm font-medium text-on-surface truncate">{lead.buyerName}</p>
+                  <p className="text-xs text-on-surface-variant truncate">
                     {lead.listing?.year} {lead.listing?.make} {lead.listing?.model}
                   </p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-xs text-slatetext">{formatRelativeTime(lead.createdAt)}</p>
-                  <Link to="/dealer/leads" className="text-xs font-semibold text-deepblue hover:underline">Respond</Link>
+                  <p className="text-xs text-on-surface-variant">{formatRelativeTime(lead.createdAt)}</p>
+                  <Link to="/dealer/leads" className="text-xs font-semibold text-primary hover:underline">Respond</Link>
                 </div>
               </div>
             ))}
@@ -123,8 +123,8 @@ export default function DealerDashboard() {
           {/* Verification status */}
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-3">
-              <BadgeCheck className="h-4 w-4 text-deepblue" />
-              <h3 className="font-bold text-sm text-ink">Verification Status</h3>
+              <BadgeCheck className="h-4 w-4 text-primary" />
+              <h3 className="font-bold text-sm text-on-surface">Verification Status</h3>
             </div>
             <div className="space-y-2 text-sm">
               {[
@@ -133,13 +133,13 @@ export default function DealerDashboard() {
                 { label: 'Plan', value: plan || 'Free', ok: plan !== 'free' },
               ].map(({ label, value, ok }) => (
                 <div key={label} className="flex items-center justify-between">
-                  <span className="text-slatetext">{label}</span>
-                  <span className={`font-semibold capitalize ${ok ? 'text-emerald-600' : 'text-slatetext'}`}>{value}</span>
+                  <span className="text-on-surface-variant">{label}</span>
+                  <span className={`font-semibold capitalize ${ok ? 'text-emerald-600' : 'text-on-surface-variant'}`}>{value}</span>
                 </div>
               ))}
             </div>
             {!profile?.isVerified && (
-              <Link to="/dashboard?tab=verification" className="mt-3 flex items-center justify-center gap-1.5 rounded-lg border border-deepblue/20 bg-deepblue/5 px-3 py-2 text-xs font-semibold text-deepblue hover:bg-deepblue/10">
+              <Link to="/dashboard?tab=verification" className="mt-3 flex items-center justify-center gap-1.5 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10">
                 <FileCheck className="h-3.5 w-3.5" /> Get Verified
               </Link>
             )}
@@ -148,8 +148,8 @@ export default function DealerDashboard() {
           {/* Quick reminders preview */}
           <div className="card p-5">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-bold text-sm text-ink flex items-center gap-2">
-                <Clock className="h-4 w-4 text-slatetext" /> Upcoming
+              <h3 className="font-bold text-sm text-on-surface flex items-center gap-2">
+                <Clock className="h-4 w-4 text-on-surface-variant" /> Upcoming
               </h3>
             </div>
             <DealerReminders compact />

@@ -21,7 +21,7 @@ function StatusBadge({ connected }) {
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-slatetext">
+    <span className="inline-flex items-center gap-1 rounded-full bg-surface-container px-2 py-0.5 text-xs font-semibold text-on-surface-variant">
       <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
       Not connected
     </span>
@@ -38,22 +38,22 @@ function CSVModal({ onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="card p-6 w-full max-w-md mx-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-bold text-ink">Import Inventory from CSV</h2>
-          <button onClick={onClose} className="text-slatetext hover:text-ink transition-colors">
+          <h2 className="font-bold text-on-surface">Import Inventory from CSV</h2>
+          <button onClick={onClose} className="text-on-surface-variant hover:text-on-surface transition-colors">
             <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="border-2 border-dashed border-cardborder rounded-xl p-8 flex flex-col items-center justify-center gap-3 bg-softbg">
-          <Upload className="h-8 w-8 text-slatetext" />
-          <p className="text-sm font-medium text-ink">Drag &amp; drop your file here</p>
-          <p className="text-xs text-slatetext">Accepts .csv and .xlsx</p>
+        <div className="border-2 border-dashed border-border-subtle rounded-xl p-8 flex flex-col items-center justify-center gap-3 bg-surface-container">
+          <Upload className="h-8 w-8 text-on-surface-variant" />
+          <p className="text-sm font-medium text-on-surface">Drag &amp; drop your file here</p>
+          <p className="text-xs text-on-surface-variant">Accepts .csv and .xlsx</p>
         </div>
         <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-700 font-medium">
           Coming soon — CSV import wizard is not yet available.
         </div>
         <button
           onClick={onClose}
-          className="mt-4 w-full rounded-xl border border-cardborder px-4 py-2.5 text-sm font-semibold text-slatetext hover:bg-softbg transition-colors"
+          className="mt-4 w-full rounded-xl border border-border-subtle px-4 py-2.5 text-sm font-semibold text-on-surface-variant hover:bg-surface-container transition-colors"
         >
           Close
         </button>
@@ -112,8 +112,8 @@ export default function DealerIntegrations() {
   return (
     <div className="space-y-6 max-w-5xl">
       <div>
-        <h1 className="text-xl font-bold text-ink">Integrations</h1>
-        <p className="text-sm text-slatetext mt-0.5">Connect your inventory source.</p>
+        <h1 className="text-xl font-bold text-on-surface">Integrations</h1>
+        <p className="text-sm text-on-surface-variant mt-0.5">Connect your inventory source.</p>
       </div>
 
       {successMsg && (
@@ -132,20 +132,20 @@ export default function DealerIntegrations() {
         {/* Card 1: Manual */}
         <div className="card p-5 flex flex-col gap-4">
           <div className="flex items-start justify-between">
-            <div className="h-10 w-10 rounded-xl bg-deepblue/10 flex items-center justify-center shrink-0">
-              <PenLine className="h-5 w-5 text-deepblue" />
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <PenLine className="h-5 w-5 text-primary" />
             </div>
             <StatusBadge connected="active" />
           </div>
           <div>
-            <h2 className="font-bold text-ink">Manual</h2>
-            <p className="text-xs text-slatetext mt-1">
+            <h2 className="font-bold text-on-surface">Manual</h2>
+            <p className="text-xs text-on-surface-variant mt-1">
               Add and manage listings directly in Ryderr. No external system required.
             </p>
           </div>
-          <div className="mt-auto pt-3 border-t border-cardborder text-xs text-slatetext">
+          <div className="mt-auto pt-3 border-t border-border-subtle text-xs text-on-surface-variant">
             {isLoading ? (
-              <div className="h-3 w-24 bg-softbg rounded animate-pulse" />
+              <div className="h-3 w-24 bg-surface-container rounded animate-pulse" />
             ) : (
               <span>{manual.listingCount ?? 0} active listing{manual.listingCount !== 1 ? 's' : ''}</span>
             )}
@@ -155,26 +155,26 @@ export default function DealerIntegrations() {
         {/* Card 2: CSV / Excel */}
         <div className="card p-5 flex flex-col gap-4">
           <div className="flex items-start justify-between">
-            <div className="h-10 w-10 rounded-xl bg-deepblue/10 flex items-center justify-center shrink-0">
-              <FileSpreadsheet className="h-5 w-5 text-deepblue" />
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <FileSpreadsheet className="h-5 w-5 text-primary" />
             </div>
             <StatusBadge connected={csv.lastImport ? 'active' : false} />
           </div>
           <div>
-            <h2 className="font-bold text-ink">CSV / Excel</h2>
-            <p className="text-xs text-slatetext mt-1">
+            <h2 className="font-bold text-on-surface">CSV / Excel</h2>
+            <p className="text-xs text-on-surface-variant mt-1">
               Bulk import your inventory from a spreadsheet. Upload once or import regularly.
             </p>
           </div>
           <button
             onClick={() => setShowCSVModal(true)}
-            className="rounded-xl border border-cardborder px-4 py-2.5 text-sm font-semibold text-ink hover:bg-softbg transition-colors"
+            className="rounded-xl border border-border-subtle px-4 py-2.5 text-sm font-semibold text-on-surface hover:bg-surface-container transition-colors"
           >
             Import Inventory
           </button>
-          <div className="mt-auto pt-3 border-t border-cardborder text-xs text-slatetext">
+          <div className="mt-auto pt-3 border-t border-border-subtle text-xs text-on-surface-variant">
             {isLoading ? (
-              <div className="h-3 w-28 bg-softbg rounded animate-pulse" />
+              <div className="h-3 w-28 bg-surface-container rounded animate-pulse" />
             ) : csv.lastImport ? (
               <span>Last import: {fmtDate(csv.lastImport)}</span>
             ) : (
@@ -186,33 +186,33 @@ export default function DealerIntegrations() {
         {/* Card 3: V8Atlas DMS */}
         <div className="card p-5 flex flex-col gap-4">
           <div className="flex items-start justify-between">
-            <div className="h-10 w-10 rounded-xl bg-deepblue/10 flex items-center justify-center shrink-0">
-              <Plug className="h-5 w-5 text-deepblue" />
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Plug className="h-5 w-5 text-primary" />
             </div>
             <StatusBadge connected={v8.connected === true} />
           </div>
           <div>
-            <h2 className="font-bold text-ink">V8Atlas DMS</h2>
-            <p className="text-xs text-slatetext mt-1">
+            <h2 className="font-bold text-on-surface">V8Atlas DMS</h2>
+            <p className="text-xs text-on-surface-variant mt-1">
               Sync your V8Atlas inventory automatically. Leads route back to your V8Atlas CRM.
             </p>
           </div>
 
           {isLoading ? (
             <div className="space-y-2">
-              <div className="h-8 bg-softbg rounded animate-pulse" />
-              <div className="h-8 bg-softbg rounded animate-pulse" />
+              <div className="h-8 bg-surface-container rounded animate-pulse" />
+              <div className="h-8 bg-surface-container rounded animate-pulse" />
             </div>
           ) : v8.connected ? (
             <div className="space-y-3">
-              <div className="text-xs text-slatetext space-y-1">
+              <div className="text-xs text-on-surface-variant space-y-1">
                 {v8.connectedAt && <p>Connected: {fmtDate(v8.connectedAt)}</p>}
                 <p>Last sync: {v8.lastSync ? fmtDate(v8.lastSync) : 'Never'}</p>
               </div>
               <button
                 onClick={() => sync.mutate()}
                 disabled={sync.isPending}
-                className="w-full rounded-xl bg-deepblue px-4 py-2.5 text-sm font-bold text-white hover:bg-deepblue/90 disabled:opacity-50 transition-colors"
+                className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white hover:bg-primary/90 disabled:opacity-50 transition-colors"
               >
                 {sync.isPending ? 'Syncing…' : 'Sync Now'}
               </button>
@@ -236,7 +236,7 @@ export default function DealerIntegrations() {
                     </button>
                     <button
                       onClick={() => setConfirmDisconnect(false)}
-                      className="flex-1 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-white transition-colors"
+                      className="flex-1 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-surface-container-lowest transition-colors"
                     >
                       Cancel
                     </button>
@@ -256,7 +256,7 @@ export default function DealerIntegrations() {
               <button
                 onClick={() => connect.mutate()}
                 disabled={connect.isPending || !apiToken.trim()}
-                className="w-full rounded-xl bg-deepblue px-4 py-2.5 text-sm font-bold text-white hover:bg-deepblue/90 disabled:opacity-50 transition-colors"
+                className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white hover:bg-primary/90 disabled:opacity-50 transition-colors"
               >
                 {connect.isPending ? 'Connecting…' : 'Connect'}
               </button>
@@ -266,9 +266,9 @@ export default function DealerIntegrations() {
             </div>
           )}
 
-          <div className="mt-auto pt-3 border-t border-cardborder text-xs text-slatetext">
+          <div className="mt-auto pt-3 border-t border-border-subtle text-xs text-on-surface-variant">
             {isLoading ? (
-              <div className="h-3 w-24 bg-softbg rounded animate-pulse" />
+              <div className="h-3 w-24 bg-surface-container rounded animate-pulse" />
             ) : v8.lastSync ? (
               <span>Last sync: {fmtDate(v8.lastSync)}</span>
             ) : (

@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Car, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+
+const inputCls =
+  'w-full bg-surface-container border border-border-subtle rounded-xl px-md py-sm text-body-md text-on-surface focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-on-surface-variant/60';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -39,53 +42,50 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
+    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 bg-background">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Car className="w-8 h-8 text-primary-600" />
-            <span className="text-2xl font-bold">AutoBenta<span className="text-primary-600">PH</span></span>
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-          <p className="text-gray-500 text-sm mt-1">Sign in to your account</p>
+          <Link to="/" className="text-headline-md font-bold text-primary-container dark:text-primary-fixed-dim">Ryderr</Link>
+          <h1 className="text-headline-lg font-headline-lg text-on-surface mt-4">Welcome back</h1>
+          <p className="text-on-surface-variant text-body-sm mt-1">Sign in to your account</p>
         </div>
 
-        <div className="card p-6 space-y-4">
+        <div className="bg-surface-container-lowest rounded-2xl border border-border-subtle p-6 space-y-4">
           {/* Demo credentials */}
-          <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
-            <p className="text-xs font-semibold text-blue-700 mb-2">Demo Accounts</p>
+          <div className="bg-primary/5 border border-primary/20 rounded-xl p-3">
+            <p className="text-label-sm font-semibold text-primary mb-2">Demo Accounts</p>
             <div className="flex flex-wrap gap-1.5">
               {['admin', 'dealer', 'buyer', 'seller'].map(role => (
-                <button key={role} onClick={() => fillDemo(role)} className="text-xs bg-white border border-blue-200 text-blue-700 px-2.5 py-1 rounded-full hover:bg-blue-100 capitalize">{role}</button>
+                <button key={role} onClick={() => fillDemo(role)} className="text-xs bg-surface-container-lowest border border-primary/30 text-primary px-2.5 py-1 rounded-full hover:bg-primary/10 capitalize transition-colors">{role}</button>
               ))}
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">{error}</div>}
+            {error && <div className="bg-error-container/40 border border-error/30 rounded-xl p-3 text-body-sm text-error">{error}</div>}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="input" placeholder="your@email.com" />
+              <label className="block text-label-sm font-medium text-on-surface-variant mb-1">Email</label>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className={inputCls} placeholder="your@email.com" />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-label-sm font-medium text-on-surface-variant mb-1">Password</label>
               <div className="relative">
-                <input type={showPw ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} required className="input pr-10" placeholder="••••••••" />
-                <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <input type={showPw ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} required className={`${inputCls} pr-10`} placeholder="••••••••" />
+                <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface">
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className="w-full btn-primary py-2.5">
+            <button type="submit" disabled={loading} className="w-full bg-primary text-on-primary rounded-xl py-2.5 font-label-md hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50">
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500">
-            Don't have an account? <Link to="/register" className="text-primary-600 hover:text-primary-800 font-medium">Create one</Link>
+          <p className="text-center text-body-sm text-on-surface-variant">
+            Don't have an account? <Link to="/register" className="text-primary hover:underline font-medium">Create one</Link>
           </p>
         </div>
       </div>

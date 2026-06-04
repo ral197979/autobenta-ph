@@ -12,7 +12,7 @@ const STATUS_COLORS = {
   viewing_scheduled: 'bg-purple-100 text-purple-700',
   financing: 'bg-orange-100 text-orange-700',
   closed_won: 'bg-emerald-100 text-emerald-700',
-  closed_lost: 'bg-gray-100 text-gray-500',
+  closed_lost: 'bg-surface-container text-on-surface-variant',
 };
 const SOURCE_COLORS = {
   inquiry: 'bg-blue-50 text-blue-600',
@@ -55,8 +55,8 @@ export default function DealerLeads() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-ink">Lead Management</h1>
-        <span className="text-sm text-slatetext">{leads.length} total leads</span>
+        <h1 className="text-xl font-bold text-on-surface">Lead Management</h1>
+        <span className="text-sm text-on-surface-variant">{leads.length} total leads</span>
       </div>
 
       {/* Status funnel */}
@@ -65,17 +65,17 @@ export default function DealerLeads() {
           <button
             key={s}
             onClick={() => setStatusFilter(statusFilter === s ? '' : s)}
-            className={`rounded-xl border p-3 text-center transition-all ${statusFilter === s ? 'border-deepblue bg-deepblue/5' : 'border-cardborder bg-white hover:border-deepblue/30'}`}
+            className={`rounded-xl border p-3 text-center transition-all ${statusFilter === s ? 'border-primary bg-primary/5' : 'border-border-subtle bg-surface-container-lowest hover:border-primary/30'}`}
           >
-            <p className={`text-lg font-bold ${statusFilter === s ? 'text-deepblue' : 'text-ink'}`}>{counts[s] || 0}</p>
-            <p className="text-[10px] text-slatetext mt-0.5 capitalize leading-tight">{s.replace(/_/g, ' ')}</p>
+            <p className={`text-lg font-bold ${statusFilter === s ? 'text-primary' : 'text-on-surface'}`}>{counts[s] || 0}</p>
+            <p className="text-[10px] text-on-surface-variant mt-0.5 capitalize leading-tight">{s.replace(/_/g, ' ')}</p>
           </button>
         ))}
       </div>
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slatetext" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />
         <input
           type="text"
           placeholder="Search leads by buyer name or vehicle..."
@@ -87,9 +87,9 @@ export default function DealerLeads() {
 
       {/* Lead list */}
       {isLoading ? (
-        <div className="text-center py-16 text-slatetext">Loading leads...</div>
+        <div className="text-center py-16 text-on-surface-variant">Loading leads...</div>
       ) : !filtered.length ? (
-        <div className="card p-12 text-center text-slatetext">
+        <div className="card p-12 text-center text-on-surface-variant">
           <Users className="h-10 w-10 mx-auto mb-3 opacity-30" />
           <p className="font-medium">No leads found</p>
         </div>
@@ -98,46 +98,46 @@ export default function DealerLeads() {
           {filtered.map((lead) => (
             <div key={lead.id} className="card overflow-hidden">
               <div
-                className="flex items-center gap-4 p-4 cursor-pointer hover:bg-softbg"
+                className="flex items-center gap-4 p-4 cursor-pointer hover:bg-surface-container"
                 onClick={() => setExpandedId(expandedId === lead.id ? null : lead.id)}
               >
-                <div className="h-12 w-16 rounded-lg overflow-hidden bg-softbg shrink-0">
+                <div className="h-12 w-16 rounded-lg overflow-hidden bg-surface-container shrink-0">
                   <img src={lead.listing?.photos?.[0]?.url || ''} alt="" className="h-full w-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-semibold text-sm text-ink">{lead.buyerName}</p>
+                    <p className="font-semibold text-sm text-on-surface">{lead.buyerName}</p>
                     <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${STATUS_COLORS[lead.status]}`}>
                       {lead.status.replace(/_/g, ' ')}
                     </span>
                     {lead.source && lead.source !== 'inquiry' && (
-                      <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${SOURCE_COLORS[lead.source] || 'bg-gray-50 text-gray-500'}`}>
+                      <span className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium ${SOURCE_COLORS[lead.source] || 'bg-surface-container text-on-surface-variant'}`}>
                         {lead.source}
                       </span>
                     )}
                   </div>
-                  <Link to={`/cars/${lead.listingId}`} className="text-xs text-slatetext hover:text-deepblue" onClick={e => e.stopPropagation()}>
+                  <Link to={`/cars/${lead.listingId}`} className="text-xs text-on-surface-variant hover:text-primary" onClick={e => e.stopPropagation()}>
                     {lead.listing?.year} {lead.listing?.make} {lead.listing?.model}
-                    {lead.listing?.price && <span className="ml-1 font-semibold text-deepblue">{formatPrice(lead.listing.price)}</span>}
+                    {lead.listing?.price && <span className="ml-1 font-semibold text-primary">{formatPrice(lead.listing.price)}</span>}
                   </Link>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-xs text-slatetext">{formatRelativeTime(lead.createdAt)}</p>
-                  <ChevronDown className={`h-4 w-4 text-slatetext ml-auto mt-1 transition-transform ${expandedId === lead.id ? 'rotate-180' : ''}`} />
+                  <p className="text-xs text-on-surface-variant">{formatRelativeTime(lead.createdAt)}</p>
+                  <ChevronDown className={`h-4 w-4 text-on-surface-variant ml-auto mt-1 transition-transform ${expandedId === lead.id ? 'rotate-180' : ''}`} />
                 </div>
               </div>
 
               {expandedId === lead.id && (
-                <div className="border-t border-cardborder p-4 bg-softbg space-y-4">
+                <div className="border-t border-border-subtle p-4 bg-surface-container space-y-4">
                   {/* Contact info */}
                   <div className="flex gap-4 flex-wrap text-sm">
                     {lead.buyerPhone && (
-                      <a href={`tel:${lead.buyerPhone}`} className="inline-flex items-center gap-1.5 text-ink hover:text-deepblue">
+                      <a href={`tel:${lead.buyerPhone}`} className="inline-flex items-center gap-1.5 text-on-surface hover:text-primary">
                         <Phone className="h-3.5 w-3.5" /> {lead.buyerPhone}
                       </a>
                     )}
                     {lead.buyerEmail && (
-                      <a href={`mailto:${lead.buyerEmail}`} className="inline-flex items-center gap-1.5 text-ink hover:text-deepblue">
+                      <a href={`mailto:${lead.buyerEmail}`} className="inline-flex items-center gap-1.5 text-on-surface hover:text-primary">
                         <Mail className="h-3.5 w-3.5" /> {lead.buyerEmail}
                       </a>
                     )}
@@ -145,8 +145,8 @@ export default function DealerLeads() {
 
                   {/* Inquiry message */}
                   {lead.inquiry?.message && (
-                    <div className="rounded-lg border border-cardborder bg-white p-3 text-sm text-ink">
-                      <p className="text-xs font-semibold text-slatetext mb-1 flex items-center gap-1"><MessageSquare className="h-3 w-3" /> Buyer message</p>
+                    <div className="rounded-lg border border-border-subtle bg-surface-container-lowest p-3 text-sm text-on-surface">
+                      <p className="text-xs font-semibold text-on-surface-variant mb-1 flex items-center gap-1"><MessageSquare className="h-3 w-3" /> Buyer message</p>
                       {lead.inquiry.message}
                     </div>
                   )}
@@ -162,7 +162,7 @@ export default function DealerLeads() {
                   {/* Actions */}
                   <div className="flex gap-3 flex-wrap items-end">
                     <div className="flex-1 min-w-0">
-                      <label className="block text-xs font-medium text-slatetext mb-1">Add note</label>
+                      <label className="block text-xs font-medium text-on-surface-variant mb-1">Add note</label>
                       <input
                         type="text"
                         placeholder="e.g. Scheduled test drive for Saturday..."
@@ -178,7 +178,7 @@ export default function DealerLeads() {
                             updateLead.mutate({ leadId: lead.id, notes: noteInput[lead.id] });
                             setNoteInput(p => ({ ...p, [lead.id]: '' }));
                           }}
-                          className="rounded-lg bg-deepblue px-3 py-2 text-xs font-semibold text-white hover:bg-deepblue/90"
+                          className="rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-white hover:bg-primary/90"
                         >
                           Save Note
                         </button>

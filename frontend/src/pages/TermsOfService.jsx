@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 const Section = ({ title, children }) => (
   <section className="mb-10">
-    <h2 className="text-xl font-semibold text-gray-900 mb-4">{title}</h2>
-    <div className="space-y-3 text-gray-700 leading-relaxed">{children}</div>
+    <h2 className="text-xl font-semibold text-on-surface mb-4">{title}</h2>
+    <div className="space-y-3 text-on-surface leading-relaxed">{children}</div>
   </section>
 );
 
@@ -14,14 +14,14 @@ export default function TermsOfService() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-surface-container-lowest">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="mb-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Terms of Service</h1>
-          <p className="text-sm text-gray-500">Effective date: June 1, 2026 &nbsp;·&nbsp; Last updated: June 1, 2026</p>
+          <h1 className="text-3xl font-bold text-on-surface mb-2">Terms of Service</h1>
+          <p className="text-sm text-on-surface-variant">Effective date: June 1, 2026 &nbsp;·&nbsp; Last updated: June 1, 2026</p>
         </div>
 
-        <p className="text-gray-700 leading-relaxed mb-10">
+        <p className="text-on-surface leading-relaxed mb-10">
           These Terms of Service ("Terms") govern your access to and use of the AutoBentaPH website, mobile site,
           and dealer platform (collectively, the "Service") operated by AutoBentaPH ("we," "us," or "our").
           By creating an account or using any part of the Service, you agree to be bound by these Terms.

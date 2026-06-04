@@ -14,7 +14,7 @@ const PIPELINE_STAGES = [
   { key: 'financing',            label: 'Financing',    color: 'bg-orange-100 text-orange-700' },
   { key: 'negotiating',          label: 'Negotiating',  color: 'bg-pink-100 text-pink-700' },
   { key: 'closed_won',           label: 'Won',          color: 'bg-emerald-100 text-emerald-700' },
-  { key: 'closed_lost',          label: 'Lost',         color: 'bg-gray-100 text-gray-500' },
+  { key: 'closed_lost',          label: 'Lost',         color: 'bg-surface-container text-on-surface-variant' },
 ];
 
 const ACTIVITY_ICONS = {
@@ -48,10 +48,10 @@ function LeadCard({ lead, isSelected, onClick }) {
         isSelected ? 'border-l-deepblue bg-blue-50/40' : 'border-l-transparent'
       }`}
     >
-      <p className="text-sm font-semibold text-ink truncate">{lead.buyerName}</p>
-      {vehicle && <p className="text-xs text-slatetext truncate mt-0.5">{vehicle}</p>}
+      <p className="text-sm font-semibold text-on-surface truncate">{lead.buyerName}</p>
+      {vehicle && <p className="text-xs text-on-surface-variant truncate mt-0.5">{vehicle}</p>}
       <div className="flex items-center justify-between mt-2 gap-1">
-        <span className="text-[10px] text-slatetext">{formatRelativeTime(lead.createdAt)}</span>
+        <span className="text-[10px] text-on-surface-variant">{formatRelativeTime(lead.createdAt)}</span>
         {lead.leadScore > 0 && (
           <span className="text-[10px] font-bold bg-amber-100 text-amber-700 rounded px-1.5 py-0.5">
             {lead.leadScore}
@@ -99,25 +99,25 @@ function DetailPanel({ lead, onClose, onLeadUpdate }) {
     : null;
 
   return (
-    <div className="fixed top-16 right-0 bottom-0 w-80 bg-white border-l border-cardborder flex flex-col z-20 shadow-xl overflow-y-auto">
+    <div className="fixed top-16 right-0 bottom-0 w-80 bg-surface-container-lowest border-l border-border-subtle flex flex-col z-20 shadow-xl overflow-y-auto">
       {/* Header */}
-      <div className="p-4 border-b border-cardborder flex items-start justify-between gap-2">
+      <div className="p-4 border-b border-border-subtle flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="font-semibold text-ink text-sm truncate">{lead.buyerName}</p>
+          <p className="font-semibold text-on-surface text-sm truncate">{lead.buyerName}</p>
           {lead.buyerEmail && (
-            <a href={`mailto:${lead.buyerEmail}`} className="text-xs text-electric hover:underline block truncate">
+            <a href={`mailto:${lead.buyerEmail}`} className="text-xs text-primary hover:underline block truncate">
               {lead.buyerEmail}
             </a>
           )}
           {lead.buyerPhone && (
-            <a href={`tel:${lead.buyerPhone}`} className="text-xs text-electric hover:underline block">
+            <a href={`tel:${lead.buyerPhone}`} className="text-xs text-primary hover:underline block">
               {lead.buyerPhone}
             </a>
           )}
-          {vehicle && <p className="text-xs text-slatetext mt-1 truncate">{vehicle}</p>}
+          {vehicle && <p className="text-xs text-on-surface-variant mt-1 truncate">{vehicle}</p>}
         </div>
-        <button onClick={onClose} className="shrink-0 p-1 rounded hover:bg-softbg">
-          <X className="h-4 w-4 text-slatetext" />
+        <button onClick={onClose} className="shrink-0 p-1 rounded hover:bg-surface-container">
+          <X className="h-4 w-4 text-on-surface-variant" />
         </button>
       </div>
 
@@ -132,7 +132,7 @@ function DetailPanel({ lead, onClose, onLeadUpdate }) {
 
       {/* Move to stage */}
       <div className="px-4 pt-3 pb-2">
-        <p className="text-[10px] font-semibold text-slatetext uppercase tracking-wider mb-2">Move to stage</p>
+        <p className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Move to stage</p>
         <div className="flex flex-wrap gap-1">
           {PIPELINE_STAGES.filter(s => s.key !== lead.status).map(s => (
             <button
@@ -148,8 +148,8 @@ function DetailPanel({ lead, onClose, onLeadUpdate }) {
       </div>
 
       {/* Follow-up date */}
-      <div className="px-4 pb-3 border-b border-cardborder">
-        <p className="text-[10px] font-semibold text-slatetext uppercase tracking-wider mb-1">Follow-up date</p>
+      <div className="px-4 pb-3 border-b border-border-subtle">
+        <p className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Follow-up date</p>
         <input
           type="date"
           value={followUp}
@@ -160,13 +160,13 @@ function DetailPanel({ lead, onClose, onLeadUpdate }) {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-cardborder">
+      <div className="flex border-b border-border-subtle">
         {['activities', 'notes'].map(t => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`flex-1 py-2 text-xs font-semibold capitalize transition-colors ${
-              tab === t ? 'border-b-2 border-deepblue text-deepblue' : 'text-slatetext hover:text-ink'
+              tab === t ? 'border-b-2 border-primary text-primary' : 'text-on-surface-variant hover:text-on-surface'
             }`}
           >
             {t}
@@ -180,7 +180,7 @@ function DetailPanel({ lead, onClose, onLeadUpdate }) {
           <div className="p-4 space-y-4">
             {/* Log activity form */}
             <div className="space-y-2">
-              <p className="text-[10px] font-semibold text-slatetext uppercase tracking-wider">Log Activity</p>
+              <p className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider">Log Activity</p>
               <select
                 value={activityType}
                 onChange={e => setActivityType(e.target.value)}
@@ -208,28 +208,28 @@ function DetailPanel({ lead, onClose, onLeadUpdate }) {
 
             {/* Timeline */}
             <div>
-              <p className="text-[10px] font-semibold text-slatetext uppercase tracking-wider mb-2">History</p>
+              <p className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider mb-2">History</p>
               {activitiesLoading && (
                 <div className="space-y-2">
                   {[1,2,3].map(i => (
-                    <div key={i} className="h-10 bg-softbg rounded animate-pulse" />
+                    <div key={i} className="h-10 bg-surface-container rounded animate-pulse" />
                   ))}
                 </div>
               )}
               {!activitiesLoading && activities.length === 0 && (
-                <p className="text-xs text-slatetext text-center py-4">No activities yet.</p>
+                <p className="text-xs text-on-surface-variant text-center py-4">No activities yet.</p>
               )}
               <div className="space-y-2">
                 {activities.map(act => {
                   const Icon = ACTIVITY_ICONS[act.type] || PenLine;
                   return (
                     <div key={act.id} className="flex gap-2.5 items-start">
-                      <div className="mt-0.5 h-6 w-6 rounded-full bg-softbg flex items-center justify-center shrink-0">
-                        <Icon className="h-3 w-3 text-slatetext" />
+                      <div className="mt-0.5 h-6 w-6 rounded-full bg-surface-container flex items-center justify-center shrink-0">
+                        <Icon className="h-3 w-3 text-on-surface-variant" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs text-ink">{act.description || act.type.replace(/_/g, ' ')}</p>
-                        <p className="text-[10px] text-slatetext">{formatRelativeTime(act.createdAt)}</p>
+                        <p className="text-xs text-on-surface">{act.description || act.type.replace(/_/g, ' ')}</p>
+                        <p className="text-[10px] text-on-surface-variant">{formatRelativeTime(act.createdAt)}</p>
                       </div>
                     </div>
                   );
@@ -241,7 +241,7 @@ function DetailPanel({ lead, onClose, onLeadUpdate }) {
 
         {tab === 'notes' && (
           <div className="p-4 space-y-3">
-            <p className="text-[10px] font-semibold text-slatetext uppercase tracking-wider">Notes</p>
+            <p className="text-[10px] font-semibold text-on-surface-variant uppercase tracking-wider">Notes</p>
             <textarea
               value={notes}
               onChange={e => setNotes(e.target.value)}
@@ -285,8 +285,8 @@ export default function LeadPipeline() {
   return (
     <div className={`relative ${selectedLead ? 'pr-80' : ''} transition-all`}>
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-ink">Lead Pipeline</h1>
-        <span className="text-sm text-slatetext">{leads.length} leads</span>
+        <h1 className="text-xl font-bold text-on-surface">Lead Pipeline</h1>
+        <span className="text-sm text-on-surface-variant">{leads.length} leads</span>
       </div>
 
       {/* Kanban board */}
@@ -301,21 +301,21 @@ export default function LeadPipeline() {
                   <span className={`text-xs font-semibold px-2 py-1 rounded-full ${stage.color}`}>
                     {stage.label}
                   </span>
-                  <span className="text-xs text-slatetext font-medium bg-softbg rounded-full px-2 py-0.5">
+                  <span className="text-xs text-on-surface-variant font-medium bg-surface-container rounded-full px-2 py-0.5">
                     {stageLeads.length}
                   </span>
                 </div>
 
                 {/* Cards */}
-                <div className="flex flex-col gap-2 min-h-[100px] rounded-xl bg-softbg/60 p-2">
+                <div className="flex flex-col gap-2 min-h-[100px] rounded-xl bg-surface-container/60 p-2">
                   {isLoading && (
                     <>
-                      <div className="h-16 bg-white rounded-xl animate-pulse" />
-                      <div className="h-16 bg-white rounded-xl animate-pulse opacity-60" />
+                      <div className="h-16 bg-surface-container-lowest rounded-xl animate-pulse" />
+                      <div className="h-16 bg-surface-container-lowest rounded-xl animate-pulse opacity-60" />
                     </>
                   )}
                   {!isLoading && stageLeads.length === 0 && (
-                    <p className="text-[10px] text-slatetext text-center py-4">Empty</p>
+                    <p className="text-[10px] text-on-surface-variant text-center py-4">Empty</p>
                   )}
                   {stageLeads.map(lead => (
                     <LeadCard

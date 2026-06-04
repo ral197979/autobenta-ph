@@ -47,7 +47,7 @@ export default function TransferFAQ() {
           <div
             key={idx}
             className={`rounded-xl border transition-colors ${
-              isOpen ? 'border-deepblue/30 bg-blue-50/40' : 'border-cardborder bg-white'
+              isOpen ? 'border-primary/30 bg-blue-50/40' : 'border-border-subtle bg-surface-container-lowest'
             }`}
           >
             <button
@@ -55,20 +55,20 @@ export default function TransferFAQ() {
               onClick={() => setOpen(isOpen ? null : idx)}
               className="flex w-full items-start justify-between gap-4 px-5 py-4 text-left"
             >
-              <span className={`text-sm font-semibold leading-snug ${isOpen ? 'text-deepblue' : 'text-ink'}`}>
+              <span className={`text-sm font-semibold leading-snug ${isOpen ? 'text-primary' : 'text-on-surface'}`}>
                 {item.q}
               </span>
               <span className="mt-0.5 shrink-0">
                 {isOpen ? (
-                  <ChevronUp className="h-4 w-4 text-deepblue" />
+                  <ChevronUp className="h-4 w-4 text-primary" />
                 ) : (
-                  <ChevronDown className="h-4 w-4 text-slatetext" />
+                  <ChevronDown className="h-4 w-4 text-on-surface-variant" />
                 )}
               </span>
             </button>
             {isOpen && (
               <div className="px-5 pb-5">
-                <p className="text-sm text-slatetext leading-relaxed">{item.a}</p>
+                <p className="text-sm text-on-surface-variant leading-relaxed">{item.a}</p>
               </div>
             )}
           </div>

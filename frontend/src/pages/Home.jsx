@@ -1,25 +1,200 @@
-import HomeHero from '../components/home/HomeHero';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import FeaturedListings from '../components/home/FeaturedListings';
-import BrowseByType from '../components/home/BrowseByType';
-import HowItWorks from '../components/home/HowItWorks';
-import TrustSection from '../components/home/TrustSection';
-import TrustPlatformSection from '../components/home/TrustPlatformSection';
-import HowVerificationWorks from '../components/home/HowVerificationWorks';
-import SellerCTA from '../components/home/SellerCTA';
+
+const HERO_IMG =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuD-vrDwHtyBgVcmht_LRmmztVGmtuFzeFTWmRqjPGREVXGyL6wTRAiIX0MoAOOG_VtBrv6DtAPUkWzsYn1l8gvftLGgdceqZvLGbmXfkVSbzLLyyvO6Gr8qG9sofD3_bb3JRyB9bNn6GXR54Svg98fxKjMQ3Yt-2rmJLKE-hKkrbpttzUB6I6fZfpi9daZhGmwfOH9cKua3A1wIv4aB-jILfO7vXU6oLH-7cptZUmhUmc7W9KrB31lR8g4mqPGb-tQIWb6KQErp7Yo';
+
+const BRANDS = ['Toyota', 'Mitsubishi', 'Honda', 'Ford', 'BMW', 'Nissan', 'Hyundai', 'Isuzu'];
+
+const DEALERS = [
+  { name: 'Elite Motors', tag: 'Premium Partner' },
+  { name: 'Autohaus PH', tag: 'Verified Dealer' },
+  { name: 'Summit Auto', tag: 'Verified Dealer' },
+  { name: 'Auto Gallery', tag: 'Verified Dealer' },
+];
+
+const TRUST = [
+  { icon: 'verified_user', title: '100% Inspected', body: 'Every listing undergoes a rigorous 180-point inspection before it appears on Ryderr.' },
+  { icon: 'lock', title: 'Secure Transactions', body: 'Our escrow service ensures your funds are protected until the title transfer is complete.' },
+  { icon: 'support_agent', title: '24/7 Expert Help', body: 'Our specialists guide you through every step of the buying or selling process.' },
+];
+
+function HeroSearch() {
+  const navigate = useNavigate();
+  const [brand, setBrand] = useState('');
+  const [model, setModel] = useState('');
+  const [budget, setBudget] = useState('');
+
+  const onSearch = () => {
+    const params = new URLSearchParams();
+    if (brand) params.set('make', brand);
+    if (model) params.set('q', model);
+    if (budget) params.set('budget', budget);
+    navigate(`/cars${params.toString() ? `?${params}` : ''}`);
+  };
+
+  return (
+    <section className="relative w-full h-[600px] md:h-[720px] flex items-center justify-center px-gutter-mobile md:px-gutter-desktop">
+      <div className="absolute inset-0 z-0">
+        <img className="w-full h-full object-cover" src={HERO_IMG} alt="Premium vehicle at dusk" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+      </div>
+      <div className="relative z-10 max-w-container-max w-full text-center">
+        <h1 className="text-white font-display-lg text-display-lg mb-lg max-w-3xl mx-auto">
+          Precision Engineering. Seamless Ownership.
+        </h1>
+        <p className="text-white/90 font-body-lg text-body-lg mb-3xl max-w-2xl mx-auto">
+          Discover the Philippines' most trusted marketplace for verified, high-performance vehicles.
+        </p>
+        <div className="bg-surface-container-lowest p-sm md:p-md rounded-xl shadow-xl max-w-4xl mx-auto flex flex-col md:flex-row items-stretch gap-sm border border-border-subtle">
+          <Field label="Brand" placeholder="e.g. Toyota" value={brand} onChange={setBrand} bordered />
+          <Field label="Model" placeholder="e.g. Fortuner" value={model} onChange={setModel} bordered />
+          <Field label="Budget" placeholder="e.g. 1M - 2M" value={budget} onChange={setBudget} />
+          <button
+            onClick={onSearch}
+            className="bg-primary text-on-primary px-xl py-md rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95"
+          >
+            <span className="material-symbols-outlined">search</span>
+            Search Marketplace
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Field({ label, placeholder, value, onChange, bordered }) {
+  return (
+    <label
+      className={`flex-1 flex flex-col items-start px-md py-sm hover:bg-surface-container-low rounded-lg transition-colors cursor-text ${
+        bordered ? 'border-b md:border-b-0 md:border-r border-border-subtle' : ''
+      }`}
+    >
+      <span className="text-label-sm font-label-sm text-secondary uppercase tracking-wider mb-1">{label}</span>
+      <input
+        className="w-full border-none p-0 focus:ring-0 text-body-md font-body-md text-on-surface bg-transparent placeholder:text-outline-variant"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        type="text"
+      />
+    </label>
+  );
+}
+
+function TopBrands() {
+  return (
+    <section className="py-xl bg-surface-container-lowest border-b border-border-subtle">
+      <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop">
+        <div className="flex items-center justify-between mb-lg">
+          <h2 className="text-headline-sm font-headline-sm text-primary">Top Brands</h2>
+          <Link to="/cars" className="text-on-tertiary-container font-label-md text-label-md hover:underline">View All Brands</Link>
+        </div>
+        <div className="flex items-center gap-xl overflow-x-auto hide-scrollbar py-2">
+          {BRANDS.map((b) => (
+            <Link key={b} to={`/cars?make=${encodeURIComponent(b)}`} className="flex flex-col items-center gap-sm min-w-[100px] group cursor-pointer">
+              <div className="w-16 h-16 rounded-full bg-surface-container-low border border-border-subtle flex items-center justify-center group-hover:bg-primary transition-colors">
+                <span className="material-symbols-outlined text-primary group-hover:text-on-primary transition-colors">directions_car</span>
+              </div>
+              <span className="text-label-sm font-label-sm text-on-surface-variant">{b}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SellCTA() {
+  return (
+    <section className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-2xl">
+      <div className="bg-primary-container rounded-2xl p-xl md:p-3xl relative overflow-hidden flex flex-col md:flex-row items-center gap-2xl">
+        <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-tertiary-container rounded-full blur-3xl opacity-40" />
+        <div className="relative z-10 flex-1 text-center md:text-left">
+          <h2 className="text-on-primary font-headline-lg text-headline-lg mb-md">Sell Your Car for the Best Price.</h2>
+          <p className="text-on-primary-container font-body-lg text-body-lg mb-2xl max-w-lg">
+            Our experts handle the inspection and paperwork. Get paid in as fast as 24 hours.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-md justify-center md:justify-start">
+            <Link to="/sell" className="bg-surface-container-lowest text-primary px-3xl py-md rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-all shadow-lg active:scale-95">
+              Get Instant Quote
+            </Link>
+            <Link to="/safe-buying" className="bg-transparent border border-white/30 text-on-primary px-3xl py-md rounded-xl font-label-md text-label-md hover:bg-white/10 transition-all active:scale-95">
+              Learn How It Works
+            </Link>
+          </div>
+        </div>
+        <div className="relative z-10 w-full md:w-[400px] h-[300px] rounded-2xl overflow-hidden shadow-2xl">
+          <img
+            className="w-full h-full object-cover"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJ85zTadMOZKa2DCoV7IkaZjLdTCsPkimhR299XQ1JTtLaAkbdQln4xWOVeorRsSuupbgoNt-A5fKI1jhz676tnNz6hBVZhf4z2KG85zJ4_fVbOiKthOMR1rycNqj15T1jsSmI3KpbNipSNje6keemnJfeYro5oVi8QmgLURq-np_GsSmau4H2bZaeSGGVCaM1s7qva9AbepIzcOYdnOEWIN01yUmIvrAdKyutU8ohpITOaa-ix8Ri_UOvGamsv0mhbNJcS0X0U6o"
+            alt="Sell your car with Ryderr"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function VerifiedDealers() {
+  return (
+    <section className="py-3xl bg-surface-container-lowest">
+      <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop">
+        <div className="text-center mb-3xl">
+          <h2 className="text-headline-lg font-headline-lg text-primary mb-sm">Verified Dealers</h2>
+          <p className="text-on-surface-variant font-body-md text-body-md max-w-xl mx-auto">
+            Shop with confidence from our network of pre-vetted dealerships.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-lg">
+          {DEALERS.map((d) => (
+            <Link key={d.name} to="/cars" className="bg-surface-container-lowest p-lg rounded-xl border border-border-subtle flex flex-col items-center text-center group cursor-pointer hover:border-primary transition-all">
+              <div className="w-20 h-20 bg-surface rounded-full flex items-center justify-center mb-md border border-border-subtle">
+                <span className="material-symbols-outlined text-3xl text-primary">storefront</span>
+              </div>
+              <h4 className="font-headline-sm text-headline-sm text-primary mb-xs">{d.name}</h4>
+              <span className="text-label-sm font-label-sm text-trust-emerald flex items-center gap-1">
+                <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+                {d.tag}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TrustPillars() {
+  return (
+    <section id="how-it-works" className="py-3xl bg-background border-t border-border-subtle">
+      <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2xl">
+          {TRUST.map((t) => (
+            <div key={t.title} className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-primary-container text-on-primary rounded-2xl flex items-center justify-center mb-lg shadow-lg">
+                <span className="material-symbols-outlined text-3xl">{t.icon}</span>
+              </div>
+              <h3 className="text-headline-sm font-headline-sm text-primary mb-sm">{t.title}</h3>
+              <p className="text-on-surface-variant font-body-md text-body-md">{t.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="bg-white">
-      <HomeHero />
+    <div className="bg-background">
+      <HeroSearch />
+      <TopBrands />
       <FeaturedListings />
-      <BrowseByType />
-      <section id="how-it-works">
-        <HowItWorks />
-      </section>
-      <TrustPlatformSection />
-      <HowVerificationWorks />
-      <TrustSection />
-      <SellerCTA />
+      <SellCTA />
+      <VerifiedDealers />
+      <TrustPillars />
     </div>
   );
 }

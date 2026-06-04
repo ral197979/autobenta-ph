@@ -9,7 +9,7 @@ const PLANS = [
     icon: Zap,
     price: null,
     description: 'Get started with basic marketplace access.',
-    color: 'border-cardborder',
+    color: 'border-border-subtle',
     features: [
       { label: 'Up to 5 listings', ok: true },
       { label: 'Basic lead inbox', ok: true },
@@ -116,9 +116,9 @@ function TrialStatusCard({ trial }) {
     headerIcon = <Clock className="h-5 w-5 text-amber-500" />;
     urgencyCopy = 'Your Founding Dealer rate expires when your trial ends. Lock it in now.';
   } else {
-    cardClass = 'border-deepblue/30 bg-deepblue/5';
+    cardClass = 'border-primary/30 bg-primary/5';
     headerText = `You're on a free trial — ${trial.daysRemaining} days remaining`;
-    headerIcon = <Zap className="h-5 w-5 text-deepblue" />;
+    headerIcon = <Zap className="h-5 w-5 text-primary" />;
     urgencyCopy = null;
   }
 
@@ -126,7 +126,7 @@ function TrialStatusCard({ trial }) {
     <div className={`rounded-2xl border-2 p-6 space-y-4 ${cardClass}`}>
       <div className="flex items-center gap-2">
         {headerIcon}
-        <span className="font-bold text-ink">{headerText}</span>
+        <span className="font-bold text-on-surface">{headerText}</span>
       </div>
 
       {urgencyCopy && (
@@ -135,10 +135,10 @@ function TrialStatusCard({ trial }) {
 
       {!expired && (
         <div>
-          <p className="text-sm text-slatetext mb-2">Full Pro features included during your trial:</p>
+          <p className="text-sm text-on-surface-variant mb-2">Full Pro features included during your trial:</p>
           <ul className="grid sm:grid-cols-2 gap-1.5">
             {PRO_FEATURES.map(f => (
-              <li key={f} className="flex items-center gap-2 text-sm text-ink">
+              <li key={f} className="flex items-center gap-2 text-sm text-on-surface">
                 <CheckCircle className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                 {f}
               </li>
@@ -147,28 +147,28 @@ function TrialStatusCard({ trial }) {
         </div>
       )}
 
-      <div className="rounded-xl border border-deepblue/20 bg-white px-4 py-3">
-        <p className="text-sm text-slatetext">
-          After your trial: <span className="font-bold text-ink">₱3,599/month</span>
-          <span className="ml-2 text-xs text-slatetext">— Founding Dealer rate, locked for life</span>
+      <div className="rounded-xl border border-primary/20 bg-surface-container-lowest px-4 py-3">
+        <p className="text-sm text-on-surface-variant">
+          After your trial: <span className="font-bold text-on-surface">₱3,599/month</span>
+          <span className="ml-2 text-xs text-on-surface-variant">— Founding Dealer rate, locked for life</span>
         </p>
       </div>
 
       <button
         onClick={() => setShowContact(o => !o)}
-        className="rounded-xl bg-deepblue px-5 py-2.5 text-sm font-bold text-white hover:bg-deepblue/90 transition-colors"
+        className="rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white hover:bg-primary/90 transition-colors"
       >
         {expired ? 'Contact Us to Continue' : 'Secure My Founding Dealer Rate'}
       </button>
 
       {showContact && (
-        <div className="rounded-xl border border-cardborder bg-white px-4 py-4 text-sm text-slatetext space-y-1">
+        <div className="rounded-xl border border-border-subtle bg-surface-container-lowest px-4 py-4 text-sm text-on-surface-variant space-y-1">
           <p>Para ma-activate ang inyong subscription pagkatapos ng trial:</p>
           <p>i-message kami sa{' '}
-            <a href="mailto:dealers@autobentaph.com" className="text-deepblue font-semibold hover:underline">
+            <a href="mailto:dealers@autobentaph.com" className="text-primary font-semibold hover:underline">
               dealers@autobentaph.com
             </a>
-            {' '}or WhatsApp: <span className="font-semibold text-ink">+63 917 000 0000</span>.
+            {' '}or WhatsApp: <span className="font-semibold text-on-surface">+63 917 000 0000</span>.
           </p>
           <p>Mag-aayos kami ng GCash/Maya payment para sa inyo.</p>
         </div>
@@ -184,9 +184,9 @@ export default function DealerSubscription() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-bold text-ink">Subscription</h1>
-        <p className="text-sm text-slatetext mt-1">
-          Current plan: <span className="font-semibold text-ink capitalize">{plan || 'Free'}</span>
+        <h1 className="text-xl font-bold text-on-surface">Subscription</h1>
+        <p className="text-sm text-on-surface-variant mt-1">
+          Current plan: <span className="font-semibold text-on-surface capitalize">{plan || 'Free'}</span>
         </p>
       </div>
 
@@ -199,7 +199,7 @@ export default function DealerSubscription() {
           return (
             <div
               key={p.id}
-              className={`relative rounded-2xl border-2 bg-white p-5 flex flex-col ${p.color} ${isCurrentPlan ? 'ring-2 ring-deepblue ring-offset-2' : ''}`}
+              className={`relative rounded-2xl border-2 bg-surface-container-lowest p-5 flex flex-col ${p.color} ${isCurrentPlan ? 'ring-2 ring-deepblue ring-offset-2' : ''}`}
             >
               {p.highlight && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -210,21 +210,21 @@ export default function DealerSubscription() {
               )}
               {isCurrentPlan && (
                 <div className="absolute -top-3 right-4">
-                  <span className="inline-flex items-center rounded-full bg-deepblue px-2.5 py-0.5 text-[11px] font-bold text-white">Current</span>
+                  <span className="inline-flex items-center rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-bold text-white">Current</span>
                 </div>
               )}
 
               <div className="flex items-center gap-2 mb-3">
-                <div className="h-8 w-8 rounded-lg bg-softbg flex items-center justify-center">
-                  <Icon className="h-4 w-4 text-ink" />
+                <div className="h-8 w-8 rounded-lg bg-surface-container flex items-center justify-center">
+                  <Icon className="h-4 w-4 text-on-surface" />
                 </div>
                 <div>
-                  <p className="font-bold text-ink text-sm">{p.name}</p>
-                  <p className="text-xs text-slatetext">{p.price || 'Free forever'}</p>
+                  <p className="font-bold text-on-surface text-sm">{p.name}</p>
+                  <p className="text-xs text-on-surface-variant">{p.price || 'Free forever'}</p>
                 </div>
               </div>
 
-              <p className="text-xs text-slatetext mb-4 leading-relaxed">{p.description}</p>
+              <p className="text-xs text-on-surface-variant mb-4 leading-relaxed">{p.description}</p>
 
               <ul className="space-y-1.5 mb-5 flex-1">
                 {p.features.map(({ label, ok }) => (
@@ -233,13 +233,13 @@ export default function DealerSubscription() {
                       ? <CheckCircle className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                       : <XCircle className="h-3.5 w-3.5 text-cardborder shrink-0" />
                     }
-                    <span className={ok ? 'text-ink' : 'text-slatetext/60'}>{label}</span>
+                    <span className={ok ? 'text-on-surface' : 'text-on-surface-variant/60'}>{label}</span>
                   </li>
                 ))}
               </ul>
 
               {isCurrentPlan ? (
-                <div className="rounded-xl border border-deepblue/20 bg-deepblue/5 px-4 py-2 text-center text-xs font-semibold text-deepblue">
+                <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-2 text-center text-xs font-semibold text-primary">
                   Active Plan
                 </div>
               ) : p.id === 'enterprise' ? (
@@ -252,7 +252,7 @@ export default function DealerSubscription() {
               ) : (
                 <a
                   href="mailto:dealers@autobentaph.com"
-                  className="rounded-xl bg-deepblue px-4 py-2 text-xs font-bold text-white hover:bg-deepblue/90 transition-colors text-center"
+                  className="rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white hover:bg-primary/90 transition-colors text-center"
                 >
                   Upgrade to {p.name}
                 </a>
@@ -262,10 +262,10 @@ export default function DealerSubscription() {
         })}
       </div>
 
-      <div className="card p-5 bg-softbg">
-        <p className="text-xs text-slatetext">
+      <div className="card p-5 bg-surface-container">
+        <p className="text-xs text-on-surface-variant">
           To activate your subscription, contact{' '}
-          <a href="mailto:dealers@autobentaph.com" className="text-deepblue font-semibold hover:underline">
+          <a href="mailto:dealers@autobentaph.com" className="text-primary font-semibold hover:underline">
             dealers@autobentaph.com
           </a>
           . We'll set up GCash/Maya payment for you.

@@ -18,7 +18,7 @@ function FraudBadge({ flags }) {
         <span key={f.id} className={`text-xs px-1.5 py-0.5 rounded font-medium ${
           f.severity === 'high' || f.severity === 'critical' ? 'bg-red-100 text-red-700' :
           f.severity === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-          'bg-gray-100 text-gray-600'
+          'bg-surface-container text-on-surface-variant'
         }`}>{f.title}</span>
       ))}
     </div>
@@ -55,7 +55,7 @@ export default function ModerationQueue() {
     }
   };
 
-  if (isLoading) return <div className="p-8 text-center text-gray-500">Loading moderation queue...</div>;
+  if (isLoading) return <div className="p-8 text-center text-on-surface-variant">Loading moderation queue...</div>;
 
   const { listings = [], total = 0, pages = 1 } = data || {};
 
@@ -63,11 +63,11 @@ export default function ModerationQueue() {
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Moderation Queue</h1>
-          <p className="text-sm text-gray-500">{total} pending listings</p>
+          <h1 className="text-2xl font-bold text-on-surface">Moderation Queue</h1>
+          <p className="text-sm text-on-surface-variant">{total} pending listings</p>
         </div>
         <div className="flex items-center gap-3">
-          <label className="text-sm text-gray-600">Min Fraud Score:</label>
+          <label className="text-sm text-on-surface-variant">Min Fraud Score:</label>
           <select
             value={minFraudScore}
             onChange={e => { setMinFraudScore(+e.target.value); setPage(1); }}
@@ -82,12 +82,12 @@ export default function ModerationQueue() {
 
       <div className="space-y-4">
         {listings.length === 0 && (
-          <div className="text-center py-12 text-gray-500 bg-white rounded-lg border">
+          <div className="text-center py-12 text-on-surface-variant bg-surface-container-lowest rounded-lg border">
             No listings pending review.
           </div>
         )}
         {listings.map(listing => (
-          <div key={listing.id} className="bg-white rounded-lg border p-4 flex gap-4">
+          <div key={listing.id} className="bg-surface-container-lowest rounded-lg border p-4 flex gap-4">
             <img
               src={listing.photos?.[0]?.url || '/placeholder-car.jpg'}
               alt=""
@@ -96,11 +96,11 @@ export default function ModerationQueue() {
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-semibold text-on-surface">
                     {listing.year} {listing.make} {listing.model}
                   </h3>
                   <p className="text-blue-600 font-medium">{formatPrice(listing.price)}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-on-surface-variant">
                     Seller: {listing.seller?.name} · {listing._count?.photos || 0} photos · {formatRelativeTime(listing.createdAt)}
                   </p>
                   <FraudBadge flags={listing.fraudFlagRecords} />
@@ -110,7 +110,7 @@ export default function ModerationQueue() {
                     <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${
                       listing.fraudScore >= 50 ? 'bg-red-100 text-red-700' :
                       listing.fraudScore >= 25 ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-gray-100 text-gray-600'
+                      'bg-surface-container text-on-surface-variant'
                     }`}>
                       Fraud Score: {listing.fraudScore}
                     </span>
@@ -139,7 +139,7 @@ export default function ModerationQueue() {
             <button
               key={p}
               onClick={() => setPage(p)}
-              className={`px-3 py-1 rounded border text-sm ${p === page ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300'}`}
+              className={`px-3 py-1 rounded border text-sm ${p === page ? 'bg-blue-600 text-white border-blue-600' : 'border-border-subtle'}`}
             >
               {p}
             </button>
@@ -150,8 +150,8 @@ export default function ModerationQueue() {
       {/* Action modal */}
       {actionModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
-            <h3 className="font-semibold text-gray-900 mb-3 capitalize">{actionModal.action.replace(/_/g, ' ')} Listing</h3>
+          <div className="bg-surface-container-lowest rounded-xl p-6 w-full max-w-md">
+            <h3 className="font-semibold text-on-surface mb-3 capitalize">{actionModal.action.replace(/_/g, ' ')} Listing</h3>
             <textarea
               value={reason}
               onChange={e => setReason(e.target.value)}

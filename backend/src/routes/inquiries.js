@@ -124,4 +124,49 @@ router.patch('/:id/status', authenticate, async (req, res, next) => {
   }
 });
 
+// --- Messaging thread (the inquiry is the thread root) ---
+
+async function loadThread(id, user) {
+  const inquiry = await prisma.inquiry.findUnique({
+    where: { id },
+    include: { listing: { select: { id: true, sellerId: true, make: true, model: true, year: true } }, buyer: { select: { id: true, name: true } } },
+  });
+  if (!inquiry) return { error: 404 };
+  const isBuyer = inquiry.buyerId === user.id;
+  const isSeller = inquiry.listing.sellerId === user.id;
+  if (!isBuyer && !isSeller && user.role !== 'admin') return { error: 403 };
+  return { inquiry, isBuyer, isSeller };
+}
+
+// GET conversation
+router.get('/:id/messages', authenticate, async (req, res, next) => {
+  try {
+    const t = await loadThread(req.params.id, req.user);
+    if (t.error) return res.status(t.error).json({ error: t.error === 404 ? 'Not found' : 'Not authorized' });
+    const messages = await prisma.message.findMany({
+      where: { inquiryId: req.params.id },
+      include: { sender: { select: { id: true, name: true } } },
+      orderBy: { createdAt: 'asc' },
+    });
+    res.json({ inquiry: t.inquiry, messages });
+  } catch (err) { next(err); }
+});
+
+// POST a message to the conversation
+router.post('/:id/messages', authenticate, [body('body').trim().notEmpty()], async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  try {
+    const t = await loadThread(req.params.id, req.user);
+    if (t.error) return res.status(t.error).json({ error: t.error === 404 ? 'Not found' : 'Not authorized' });
+    const message = await prisma.message.create({
+      data: { inquiryId: req.params.id, senderId: req.user.id, body: req.body.body },
+      include: { sender: { select: { id: true, name: true } } },
+    });
+    // Mark read + bump status to "contacted" when the seller replies.
+    await prisma.inquiry.update({ where: { id: req.params.id }, data: { isRead: true, ...(t.isSeller ? { status: 'contacted' } : {}) } }).catch(() => {});
+    res.status(201).json(message);
+  } catch (err) { next(err); }
+});
+
 module.exports = router;

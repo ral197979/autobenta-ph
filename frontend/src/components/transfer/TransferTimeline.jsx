@@ -5,7 +5,7 @@ const PHASES = [
     day: 'Day 1',
     label: 'Documents',
     icon: FileText,
-    color: 'bg-deepblue',
+    color: 'bg-primary',
     tasks: [
       'Execute Deed of Sale with notarization',
       'Verify OR/CR against vehicle details',
@@ -70,14 +70,14 @@ export default function TransferTimeline() {
               {/* Content */}
               <div className="flex-1 lg:mt-3">
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slatetext">
+                  <span className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">
                     {phase.day}
                   </span>
                 </div>
-                <h3 className="text-base font-bold text-ink mb-3">{phase.label}</h3>
+                <h3 className="text-base font-bold text-on-surface mb-3">{phase.label}</h3>
                 <ul className="space-y-1.5">
                   {phase.tasks.map((task) => (
-                    <li key={task} className="flex items-start gap-2 text-sm text-slatetext">
+                    <li key={task} className="flex items-start gap-2 text-sm text-on-surface-variant">
                       <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${phase.color}`} />
                       {task}
                     </li>

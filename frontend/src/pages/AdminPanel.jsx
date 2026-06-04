@@ -67,7 +67,7 @@ export default function AdminPanel() {
   });
 
   const TabBtn = ({ id, icon: Icon, label }) => (
-    <button onClick={() => setTab(id)} className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${tab === id ? 'bg-primary-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
+    <button onClick={() => setTab(id)} className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${tab === id ? 'bg-primary-600 text-white' : 'text-on-surface-variant hover:bg-surface-container'}`}>
       <Icon className="w-4 h-4" />{label}
     </button>
   );
@@ -78,7 +78,7 @@ export default function AdminPanel() {
         <Shield className="w-7 h-7 text-primary-600" />
         <div>
           <h1 className="text-2xl font-bold">Admin Panel</h1>
-          <p className="text-sm text-gray-500">AutoBenta PH Control Center</p>
+          <p className="text-sm text-on-surface-variant">AutoBenta PH Control Center</p>
         </div>
       </div>
 
@@ -107,27 +107,27 @@ export default function AdminPanel() {
             ].map(s => (
               <div key={s.label} className="card p-5 text-center">
                 <p className="text-3xl font-bold text-primary-700">{s.value}</p>
-                <p className="text-sm text-gray-600 mt-1">{s.label}</p>
-                {s.sub && <p className="text-xs text-gray-400">{s.sub}</p>}
+                <p className="text-sm text-on-surface-variant mt-1">{s.label}</p>
+                {s.sub && <p className="text-xs text-on-surface-variant">{s.sub}</p>}
               </div>
             ))}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="card p-4 text-center">
               <p className="text-lg font-bold text-yellow-600">{stats.listings.pending}</p>
-              <p className="text-xs text-gray-500">Pending Review</p>
+              <p className="text-xs text-on-surface-variant">Pending Review</p>
             </div>
             <div className="card p-4 text-center">
               <p className="text-lg font-bold text-green-600">{stats.listings.sold}</p>
-              <p className="text-xs text-gray-500">Sold</p>
+              <p className="text-xs text-on-surface-variant">Sold</p>
             </div>
             <div className="card p-4 text-center">
               <p className="text-lg font-bold text-primary-700">{stats.inquiries.total}</p>
-              <p className="text-xs text-gray-500">Total Inquiries</p>
+              <p className="text-xs text-on-surface-variant">Total Inquiries</p>
             </div>
             <div className="card p-4 text-center">
-              <p className="text-lg font-bold text-gray-700">{stats.averagePrice ? formatPrice(stats.averagePrice) : '—'}</p>
-              <p className="text-xs text-gray-500">Avg. Listing Price</p>
+              <p className="text-lg font-bold text-on-surface">{stats.averagePrice ? formatPrice(stats.averagePrice) : '—'}</p>
+              <p className="text-xs text-on-surface-variant">Avg. Listing Price</p>
             </div>
           </div>
         </div>
@@ -138,8 +138,8 @@ export default function AdminPanel() {
       {tab === 'verifications' && (
         <div>
           <div className="flex items-center gap-2 mb-6">
-            <BadgeCheck className="w-5 h-5 text-deepblue" />
-            <h2 className="text-lg font-bold text-ink">Verification Queue</h2>
+            <BadgeCheck className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold text-on-surface">Verification Queue</h2>
           </div>
           <VerificationQueue />
         </div>
@@ -158,12 +158,12 @@ export default function AdminPanel() {
           <div className="divide-y">
             {listings?.listings?.map(l => (
               <div key={l.id} className="p-4 flex items-center gap-4">
-                <div className="w-16 h-12 rounded overflow-hidden bg-gray-100 shrink-0">
+                <div className="w-16 h-12 rounded overflow-hidden bg-surface-container shrink-0">
                   <img src={photoOrFallback(l.photos?.[0]?.url, l.make)} alt="" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm">{l.year} {l.make} {l.model}</p>
-                  <p className="text-xs text-gray-500">{l.seller.name} · {l.seller.email} · {formatRelativeTime(l.createdAt)}</p>
+                  <p className="text-xs text-on-surface-variant">{l.seller.name} · {l.seller.email} · {formatRelativeTime(l.createdAt)}</p>
                   <p className="text-sm font-bold text-primary-700">{formatPrice(l.price)}</p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -178,7 +178,7 @@ export default function AdminPanel() {
                 </div>
               </div>
             ))}
-            {listings?.listings?.length === 0 && <div className="text-center py-12 text-gray-400">No pending listings</div>}
+            {listings?.listings?.length === 0 && <div className="text-center py-12 text-on-surface-variant">No pending listings</div>}
           </div>
         </div>
       )}
@@ -186,17 +186,17 @@ export default function AdminPanel() {
       {tab === 'users' && (
         <div className="card overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs">
+            <thead className="bg-surface-container text-on-surface-variant text-xs">
               <tr>{['Name', 'Email', 'Role', 'Status', 'Joined', 'Actions'].map(h => <th key={h} className="px-4 py-3 text-left font-semibold">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y">
               {users?.users?.map(u => (
-                <tr key={u.id} className="hover:bg-gray-50">
+                <tr key={u.id} className="hover:bg-surface-container">
                   <td className="px-4 py-3 font-medium">{u.name}</td>
-                  <td className="px-4 py-3 text-gray-500">{u.email}</td>
-                  <td className="px-4 py-3"><span className="badge bg-gray-100 text-gray-700 capitalize">{u.role}</span></td>
+                  <td className="px-4 py-3 text-on-surface-variant">{u.email}</td>
+                  <td className="px-4 py-3"><span className="badge bg-surface-container text-on-surface capitalize">{u.role}</span></td>
                   <td className="px-4 py-3"><span className={`badge ${u.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{u.isActive ? 'Active' : 'Suspended'}</span></td>
-                  <td className="px-4 py-3 text-gray-400">{formatRelativeTime(u.createdAt)}</td>
+                  <td className="px-4 py-3 text-on-surface-variant">{formatRelativeTime(u.createdAt)}</td>
                   <td className="px-4 py-3">
                     <button onClick={() => updateUser.mutate({ id: u.id, data: { isActive: !u.isActive } })}
                       className={`text-xs px-2.5 py-1 rounded-lg ${u.isActive ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-green-100 text-green-700 hover:bg-green-200'}`}>
@@ -213,31 +213,31 @@ export default function AdminPanel() {
       {tab === 'dealers' && (
         <div className="card overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs">
+            <thead className="bg-surface-container text-on-surface-variant text-xs">
               <tr>{['Business', 'Owner', 'City', 'Tier', 'Plan', 'Status', 'Actions'].map(h => <th key={h} className="px-4 py-3 text-left font-semibold">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y">
               {dealers?.map(d => (
-                <tr key={d.id} className="hover:bg-gray-50">
+                <tr key={d.id} className="hover:bg-surface-container">
                   <td className="px-4 py-3 font-medium">{d.businessName}</td>
-                  <td className="px-4 py-3 text-gray-500">{d.user?.name}</td>
+                  <td className="px-4 py-3 text-on-surface-variant">{d.user?.name}</td>
                   <td className="px-4 py-3">{d.city || '—'}</td>
                   <td className="px-4 py-3">
                     <select
                       value={d.tier || 'basic'}
                       onChange={e => updateDealerTier.mutate({ id: d.id, tier: e.target.value })}
-                      className="text-xs border border-gray-200 rounded px-1.5 py-1 bg-white"
+                      className="text-xs border border-border-subtle rounded px-1.5 py-1 bg-surface-container-lowest"
                     >
                       {['basic', 'verified', 'verified_pro', 'enterprise'].map(t => (
                         <option key={t} value={t}>{t.replace('_', ' ')}</option>
                       ))}
                     </select>
                   </td>
-                  <td className="px-4 py-3 text-xs text-gray-500 capitalize">{d.subscription?.plan || 'free'}</td>
+                  <td className="px-4 py-3 text-xs text-on-surface-variant capitalize">{d.subscription?.plan || 'free'}</td>
                   <td className="px-4 py-3"><span className={`badge ${d.isVerified ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>{d.isVerified ? 'Verified' : 'Pending'}</span></td>
                   <td className="px-4 py-3">
                     <button onClick={() => verifyDealer.mutate({ id: d.id, isVerified: !d.isVerified })}
-                      className={`text-xs px-2.5 py-1 rounded-lg ${d.isVerified ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-green-100 text-green-700 hover:bg-green-200'}`}>
+                      className={`text-xs px-2.5 py-1 rounded-lg ${d.isVerified ? 'bg-surface-container text-on-surface hover:bg-surface-container-high' : 'bg-green-100 text-green-700 hover:bg-green-200'}`}>
                       {d.isVerified ? 'Unverify' : 'Verify'}
                     </button>
                   </td>
@@ -251,17 +251,17 @@ export default function AdminPanel() {
       {tab === 'financing' && (
         <div className="card overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs">
+            <thead className="bg-surface-container text-on-surface-variant text-xs">
               <tr>{['Buyer', 'Vehicle', 'Amount', 'Monthly', 'Status', 'Actions'].map(h => <th key={h} className="px-4 py-3 text-left font-semibold">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y">
               {financing?.map(f => (
-                <tr key={f.id} className="hover:bg-gray-50">
+                <tr key={f.id} className="hover:bg-surface-container">
                   <td className="px-4 py-3 font-medium">{f.buyer?.name}</td>
-                  <td className="px-4 py-3 text-gray-500 text-xs">{f.listing?.year} {f.listing?.make} {f.listing?.model}</td>
+                  <td className="px-4 py-3 text-on-surface-variant text-xs">{f.listing?.year} {f.listing?.make} {f.listing?.model}</td>
                   <td className="px-4 py-3">{formatPrice(f.loanAmount)}</td>
                   <td className="px-4 py-3 font-bold text-primary-700">{formatPrice(f.monthlyPayment)}/mo</td>
-                  <td className="px-4 py-3"><span className={`badge text-xs ${STATUS_COLORS[f.status] || 'bg-gray-100 text-gray-700'}`}>{f.status}</span></td>
+                  <td className="px-4 py-3"><span className={`badge text-xs ${STATUS_COLORS[f.status] || 'bg-surface-container text-on-surface'}`}>{f.status}</span></td>
                   <td className="px-4 py-3 flex gap-1">
                     {f.status === 'requested' && <>
                       <button onClick={() => updateFinancing.mutate({ id: f.id, status: 'prequalified' })} className="text-xs bg-green-100 text-green-700 hover:bg-green-200 px-2 py-1 rounded">Pre-approve</button>
@@ -279,16 +279,16 @@ export default function AdminPanel() {
       {tab === 'logs' && (
         <div className="card overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs">
+            <thead className="bg-surface-container text-on-surface-variant text-xs">
               <tr>{['Action', 'Admin', 'Entity', 'Time'].map(h => <th key={h} className="px-4 py-3 text-left font-semibold">{h}</th>)}</tr>
             </thead>
             <tbody className="divide-y">
               {logs?.map(l => (
-                <tr key={l.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-mono text-xs text-gray-700">{l.action}</td>
-                  <td className="px-4 py-3 text-gray-500">{l.user?.name || '—'}</td>
-                  <td className="px-4 py-3 text-gray-400 text-xs">{l.entityType} {l.entityId?.slice(0, 8)}...</td>
-                  <td className="px-4 py-3 text-gray-400 text-xs">{formatRelativeTime(l.createdAt)}</td>
+                <tr key={l.id} className="hover:bg-surface-container">
+                  <td className="px-4 py-3 font-mono text-xs text-on-surface">{l.action}</td>
+                  <td className="px-4 py-3 text-on-surface-variant">{l.user?.name || '—'}</td>
+                  <td className="px-4 py-3 text-on-surface-variant text-xs">{l.entityType} {l.entityId?.slice(0, 8)}...</td>
+                  <td className="px-4 py-3 text-on-surface-variant text-xs">{formatRelativeTime(l.createdAt)}</td>
                 </tr>
               ))}
             </tbody>

@@ -12,7 +12,7 @@ const LEAD_STATUSES = ['new', 'contacted', 'viewing_scheduled', 'financing', 'cl
 const STATUS_COLORS = {
   new: 'bg-blue-100 text-blue-700', contacted: 'bg-yellow-100 text-yellow-700',
   viewing_scheduled: 'bg-purple-100 text-purple-700', financing: 'bg-orange-100 text-orange-700',
-  closed_won: 'bg-green-100 text-green-700', closed_lost: 'bg-gray-100 text-gray-500',
+  closed_won: 'bg-green-100 text-green-700', closed_lost: 'bg-surface-container text-on-surface-variant',
 };
 
 const TABS = [
@@ -64,13 +64,13 @@ export default function DealerPanel() {
         ].map(({ icon: Icon, label, value, color }) => (
           <div key={label} className="card p-5 flex items-center gap-4">
             <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${color}`}><Icon className="w-5 h-5" /></div>
-            <div><p className="text-2xl font-bold">{value}</p><p className="text-xs text-gray-500">{label}</p></div>
+            <div><p className="text-2xl font-bold">{value}</p><p className="text-xs text-on-surface-variant">{label}</p></div>
           </div>
         ))}
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 border-b border-gray-200">
+      <div className="flex gap-1 mb-6 border-b border-border-subtle">
         {TABS.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
@@ -78,7 +78,7 @@ export default function DealerPanel() {
             className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
               activeTab === id
                 ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                : 'border-transparent text-on-surface-variant hover:text-on-surface'
             }`}
           >
             <Icon className="w-4 h-4" />
@@ -89,7 +89,7 @@ export default function DealerPanel() {
 
       {activeTab === 'analytics' && <DealerAnalytics />}
       {activeTab === 'reminders' && (
-        <div className="bg-white rounded-xl border p-6">
+        <div className="bg-surface-container-lowest rounded-xl border p-6">
           <DealerReminders />
         </div>
       )}
@@ -99,12 +99,12 @@ export default function DealerPanel() {
         {/* Lead Pipeline */}
         <div className="lg:col-span-2">
           <div className="card">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
+            <div className="flex items-center justify-between p-5 border-b border-border-subtle">
               <h2 className="font-bold text-lg">Lead Pipeline</h2>
               <div className="flex gap-1 flex-wrap">
                 {['', ...LEAD_STATUSES].map(s => (
                   <button key={s} onClick={() => setLeadsFilter(s)}
-                    className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${leadsFilter === s ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                    className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${leadsFilter === s ? 'bg-primary-600 text-white' : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'}`}>
                     {s === '' ? 'All' : s.replace('_', ' ')}
                   </button>
                 ))}
@@ -113,23 +113,23 @@ export default function DealerPanel() {
             <div className="divide-y divide-gray-50">
               {leadsLoading && Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="p-4 animate-pulse flex gap-3">
-                  <div className="w-14 h-10 bg-gray-200 rounded" />
+                  <div className="w-14 h-10 bg-surface-container-high rounded" />
                   <div className="flex-1 space-y-1.5">
-                    <div className="h-3.5 bg-gray-200 rounded w-1/2" />
-                    <div className="h-3 bg-gray-200 rounded w-1/3" />
+                    <div className="h-3.5 bg-surface-container-high rounded w-1/2" />
+                    <div className="h-3 bg-surface-container-high rounded w-1/3" />
                   </div>
                 </div>
               ))}
               {!leadsLoading && leads?.length === 0 && (
-                <div className="text-center py-12 text-gray-400">
+                <div className="text-center py-12 text-on-surface-variant">
                   <Users className="w-10 h-10 mx-auto mb-2 opacity-50" />
                   <p>No leads yet</p>
                 </div>
               )}
               {leads?.map(lead => (
-                <div key={lead.id} className="p-4 hover:bg-gray-50 transition-colors">
+                <div key={lead.id} className="p-4 hover:bg-surface-container transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="w-14 h-10 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                    <div className="w-14 h-10 rounded-lg overflow-hidden bg-surface-container shrink-0">
                       <img src={photoOrFallback(lead.listing?.photos?.[0]?.url, lead.listing?.make)} alt="" className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -137,10 +137,10 @@ export default function DealerPanel() {
                         <p className="font-medium text-sm">{lead.buyerName}</p>
                         <span className={`badge text-xs ${STATUS_COLORS[lead.status]}`}>{lead.status.replace('_', ' ')}</span>
                       </div>
-                      <Link to={`/cars/${lead.listingId}`} className="text-xs text-gray-500 hover:text-primary-600">
+                      <Link to={`/cars/${lead.listingId}`} className="text-xs text-on-surface-variant hover:text-primary-600">
                         {lead.listing?.year} {lead.listing?.make} {lead.listing?.model} — {formatPrice(lead.listing?.price)}
                       </Link>
-                      <p className="text-xs text-gray-400">{formatRelativeTime(lead.createdAt)}</p>
+                      <p className="text-xs text-on-surface-variant">{formatRelativeTime(lead.createdAt)}</p>
                     </div>
                     <select
                       value={lead.status}
@@ -151,7 +151,7 @@ export default function DealerPanel() {
                     </select>
                   </div>
                   {lead.inquiry && (
-                    <div className="mt-2 ml-[68px] bg-gray-50 rounded p-2 text-xs text-gray-600 line-clamp-2">
+                    <div className="mt-2 ml-[68px] bg-surface-container rounded p-2 text-xs text-on-surface-variant line-clamp-2">
                       "{lead.inquiry.message}"
                     </div>
                   )}
@@ -164,25 +164,25 @@ export default function DealerPanel() {
         {/* Active Listings */}
         <div>
           <div className="card">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100">
+            <div className="flex items-center justify-between p-5 border-b border-border-subtle">
               <h2 className="font-bold">Active Listings</h2>
               <Link to="/sell" className="text-xs text-primary-600 hover:underline">+ Add</Link>
             </div>
             <div className="divide-y divide-gray-50">
               {myListings?.filter(l => l.status === 'active').map(l => (
-                <Link key={l.id} to={`/cars/${l.id}`} className="flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors">
-                  <div className="w-12 h-9 rounded overflow-hidden bg-gray-100 shrink-0">
+                <Link key={l.id} to={`/cars/${l.id}`} className="flex items-center gap-3 p-3 hover:bg-surface-container transition-colors">
+                  <div className="w-12 h-9 rounded overflow-hidden bg-surface-container shrink-0">
                     <img src={photoOrFallback(l.photos?.[0]?.url, l.make)} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium truncate">{l.year} {l.make} {l.model}</p>
                     <p className="text-xs text-primary-600">{formatPrice(l.price)}</p>
                   </div>
-                  <p className="text-xs text-gray-400 shrink-0">{l._count.inquiries} inq.</p>
+                  <p className="text-xs text-on-surface-variant shrink-0">{l._count.inquiries} inq.</p>
                 </Link>
               ))}
               {myListings?.filter(l => l.status === 'active').length === 0 && (
-                <div className="text-center py-8 text-gray-400 text-sm">No active listings</div>
+                <div className="text-center py-8 text-on-surface-variant text-sm">No active listings</div>
               )}
             </div>
           </div>

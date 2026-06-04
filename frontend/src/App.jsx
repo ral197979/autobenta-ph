@@ -1,6 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import MobileBottomNav from './components/MobileBottomNav';
 import Home from './pages/Home';
 import Browse from './pages/Browse';
 import CarDetail from './pages/CarDetail';
@@ -11,6 +14,16 @@ import AdminPanel from './pages/AdminPanel';
 import Inspections from './pages/Inspections';
 import Financing from './pages/Financing';
 import Compare from './pages/Compare';
+import SavedVehicles from './pages/SavedVehicles';
+import InquiryHistory from './pages/InquiryHistory';
+import AccountSettings from './pages/AccountSettings';
+import InspectionReport from './pages/InspectionReport';
+import NotificationsCenter from './pages/NotificationsCenter';
+import ActiveOffers from './pages/ActiveOffers';
+import HelpCenter from './pages/HelpCenter';
+import SellerProfile from './pages/SellerProfile';
+import MessageThread from './pages/MessageThread';
+import PromoteListing from './pages/PromoteListing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AIListingWizard from './pages/AIListingWizard';
@@ -68,6 +81,15 @@ function AppRoutes() {
           <Route path="/sell" element={<ProtectedRoute roles={['seller', 'dealer', 'admin']}><Sell /></ProtectedRoute>} />
           <Route path="/ai-wizard" element={<ProtectedRoute roles={['seller', 'dealer', 'admin']}><AIListingWizard /></ProtectedRoute>} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/saved" element={<ProtectedRoute><SavedVehicles /></ProtectedRoute>} />
+          <Route path="/inquiries" element={<ProtectedRoute><InquiryHistory /></ProtectedRoute>} />
+          <Route path="/account" element={<ProtectedRoute><AccountSettings /></ProtectedRoute>} />
+          <Route path="/notifications" element={<ProtectedRoute><NotificationsCenter /></ProtectedRoute>} />
+          <Route path="/offers" element={<ProtectedRoute><ActiveOffers /></ProtectedRoute>} />
+          <Route path="/help" element={<HelpCenter />} />
+          <Route path="/seller/:id" element={<SellerProfile />} />
+          <Route path="/messages/:id" element={<ProtectedRoute><MessageThread /></ProtectedRoute>} />
+          <Route path="/promote/:listingId" element={<ProtectedRoute roles={['dealer', 'admin']}><PromoteListing /></ProtectedRoute>} />
           <Route path="/dealer-panel" element={<ProtectedRoute roles={['dealer', 'admin']}><DealerPanel /></ProtectedRoute>} />
           <Route path="/dealer/apply" element={<ProtectedRoute><DealerApply /></ProtectedRoute>} />
           <Route path="/dealer" element={<ProtectedRoute roles={['dealer', 'admin']}><DealerLayout /></ProtectedRoute>}>
@@ -87,6 +109,7 @@ function AppRoutes() {
           <Route path="/admin/revenue" element={<ProtectedRoute roles={['admin']}><RevenueInsights /></ProtectedRoute>} />
           <Route path="/inspection-services" element={<InspectionServices />} />
           <Route path="/inspections" element={<ProtectedRoute><Inspections /></ProtectedRoute>} />
+          <Route path="/inspections/:id" element={<ProtectedRoute><InspectionReport /></ProtectedRoute>} />
           <Route path="/financing" element={<Financing />} />
           <Route path="/ownership-transfer" element={<OwnershipTransfer />} />
           <Route path="/insurance" element={<Insurance />} />
@@ -106,75 +129,18 @@ function AppRoutes() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-      <footer className="bg-gray-900 text-gray-400 py-10 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5 mb-8">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Buy</p>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/cars" className="hover:text-white transition-colors">Browse Cars</a></li>
-                <li><a href="/safe-buying" className="hover:text-white transition-colors">Safe Buying Guide</a></li>
-                <li><a href="/inspection-services" className="hover:text-white transition-colors">Book Inspection</a></li>
-                <li><a href="/financing" className="hover:text-white transition-colors">Car Financing</a></li>
-              </ul>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Transfer</p>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/ownership-transfer" className="hover:text-white transition-colors">Ownership Transfer</a></li>
-                <li><a href="/insurance" className="hover:text-white transition-colors">Motor Insurance</a></li>
-                <li><a href="/ownership-transfer#checklist" className="hover:text-white transition-colors">Transfer Checklist</a></li>
-                <li><a href="/ownership-transfer#estimator" className="hover:text-white transition-colors">Cost Estimator</a></li>
-              </ul>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Sell</p>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/sell" className="hover:text-white transition-colors">List Your Car</a></li>
-                <li><a href="/dashboard" className="hover:text-white transition-colors">My Listings</a></li>
-              </ul>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Dealers</p>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/for-dealers" className="hover:text-white transition-colors">Dealer Platform</a></li>
-                <li><a href="/for-dealers/founding" className="hover:text-white transition-colors">Founding Dealer Program</a></li>
-                <li><a href="/dealer/apply" className="hover:text-white transition-colors">Apply as Dealer</a></li>
-                <li><a href="/book-demo" className="hover:text-white transition-colors">Book a Demo</a></li>
-                <li><a href="/admin/closing" className="hover:text-white transition-colors">Closing Center</a></li>
-                <li><a href="/admin/onboarding" className="hover:text-white transition-colors">Onboarding Center</a></li>
-                <li><a href="/admin/dealer-success" className="hover:text-white transition-colors">Dealer Success</a></li>
-              </ul>
-            </div>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-3">Company</p>
-              <ul className="space-y-2 text-sm">
-                <li><a href="/#how-it-works" className="hover:text-white transition-colors">How It Works</a></li>
-                <li><a href="/terms" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="/privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="/dealer-agreement" className="hover:text-white transition-colors">Dealer Agreement</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm">
-            <p className="font-semibold text-white">AutoBenta<span className="text-blue-400">PH</span></p>
-            <p>The Philippines&apos; trusted new &amp; used car marketplace. © {new Date().getFullYear()}</p>
-            <div className="flex gap-4 text-xs text-gray-500">
-              <a href="/terms" className="hover:text-gray-300 transition-colors">Terms</a>
-              <a href="/privacy" className="hover:text-gray-300 transition-colors">Privacy</a>
-              <a href="/dealer-agreement" className="hover:text-gray-300 transition-colors">Dealer Agreement</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
+      <MobileBottomNav />
     </div>
   );
 }
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

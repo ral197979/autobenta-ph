@@ -40,12 +40,12 @@ function renewalBadge(level) {
     Low: 'bg-orange-100 text-orange-800',
     Critical: 'bg-red-100 text-red-800',
   };
-  return map[level] || 'bg-gray-100 text-gray-700';
+  return map[level] || 'bg-surface-container text-on-surface';
 }
 
 function healthStatusColor(status) {
   const map = { Healthy: 'text-green-600', Watch: 'text-yellow-600', 'At Risk': 'text-orange-500', Critical: 'text-red-600' };
-  return map[status] || 'text-gray-600';
+  return map[status] || 'text-on-surface-variant';
 }
 
 // --- TTV Drawer ---
@@ -75,10 +75,10 @@ function TTVDrawer({ dealer, onClose }) {
   })();
 
   return (
-    <div className="fixed inset-y-0 right-0 z-40 w-full max-w-[400px] bg-white shadow-2xl flex flex-col overflow-y-auto">
-      <div className="flex items-center justify-between p-5 border-b border-gray-200 sticky top-0 bg-white z-10">
-        <h2 className="font-bold text-gray-900 text-base">Time-to-Value — {dealer.businessName}</h2>
-        <button onClick={onClose} className="ml-3 shrink-0 text-gray-500 hover:text-gray-900"><X className="h-5 w-5" /></button>
+    <div className="fixed inset-y-0 right-0 z-40 w-full max-w-[400px] bg-surface-container-lowest shadow-2xl flex flex-col overflow-y-auto">
+      <div className="flex items-center justify-between p-5 border-b border-border-subtle sticky top-0 bg-surface-container-lowest z-10">
+        <h2 className="font-bold text-on-surface text-base">Time-to-Value — {dealer.businessName}</h2>
+        <button onClick={onClose} className="ml-3 shrink-0 text-on-surface-variant hover:text-on-surface"><X className="h-5 w-5" /></button>
       </div>
       <div className="p-5 flex-1 space-y-1">
         {TTV_MILESTONES.map((m, i) => {
@@ -87,30 +87,30 @@ function TTVDrawer({ dealer, onClose }) {
           const isBottleneck = i === bottleneckIdx;
           return (
             <div key={m} className={`flex items-center gap-3 px-3 py-2 rounded-lg ${isBottleneck ? 'bg-amber-50 border border-amber-200' : ''}`}>
-              <span className={`h-2.5 w-2.5 rounded-full shrink-0 ${done ? 'bg-green-500' : i === TTV_MILESTONES.findIndex(x => !ttv[x]) ? 'bg-yellow-400' : 'bg-gray-200'}`} />
-              <span className="text-sm text-gray-700 flex-1">{m}</span>
+              <span className={`h-2.5 w-2.5 rounded-full shrink-0 ${done ? 'bg-green-500' : i === TTV_MILESTONES.findIndex(x => !ttv[x]) ? 'bg-yellow-400' : 'bg-surface-container-high'}`} />
+              <span className="text-sm text-on-surface flex-1">{m}</span>
               {editing ? (
                 <input
                   type="date"
-                  className="text-xs border border-gray-200 rounded px-1 py-0.5 w-32"
+                  className="text-xs border border-border-subtle rounded px-1 py-0.5 w-32"
                   value={form[m] ? form[m].slice(0, 10) : ''}
                   onChange={e => setForm(f => ({ ...f, [m]: e.target.value }))}
                 />
               ) : (
-                <span className="text-xs text-gray-500 w-28 text-right">{fmtDate(ttv[m])}</span>
+                <span className="text-xs text-on-surface-variant w-28 text-right">{fmtDate(ttv[m])}</span>
               )}
               {prev !== null && !editing && (
-                <span className="text-[10px] text-gray-400 w-10 text-right">{prev}d</span>
+                <span className="text-[10px] text-on-surface-variant w-10 text-right">{prev}d</span>
               )}
             </div>
           );
         })}
         {mutation.isError && <p className="text-xs text-red-600">Save failed. Try again.</p>}
       </div>
-      <div className="p-5 border-t border-gray-100 flex justify-end gap-2">
+      <div className="p-5 border-t border-border-subtle flex justify-end gap-2">
         {editing ? (
           <>
-            <button onClick={() => setEditing(false)} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-900">Cancel</button>
+            <button onClick={() => setEditing(false)} className="px-4 py-2 text-sm text-on-surface-variant hover:text-on-surface">Cancel</button>
             <button
               disabled={mutation.isPending}
               onClick={() => mutation.mutate(form)}
@@ -120,7 +120,7 @@ function TTVDrawer({ dealer, onClose }) {
             </button>
           </>
         ) : (
-          <button onClick={() => setEditing(true)} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Edit Dates</button>
+          <button onClick={() => setEditing(true)} className="px-4 py-2 text-sm border border-border-subtle rounded-lg hover:bg-surface-container">Edit Dates</button>
         )}
       </div>
     </div>
@@ -152,33 +152,33 @@ function TasksDrawer({ dealer, onClose }) {
   tasks.forEach(t => { grouped[t.status] && grouped[t.status].push(t); });
 
   return (
-    <div className="fixed inset-y-0 right-0 z-40 w-full max-w-[420px] bg-white shadow-2xl flex flex-col overflow-y-auto">
-      <div className="flex items-center justify-between p-5 border-b border-gray-200 sticky top-0 bg-white z-10">
-        <h2 className="font-bold text-gray-900 text-base">CS Tasks — {dealer.businessName}</h2>
-        <button onClick={onClose} className="ml-3 shrink-0 text-gray-500 hover:text-gray-900"><X className="h-5 w-5" /></button>
+    <div className="fixed inset-y-0 right-0 z-40 w-full max-w-[420px] bg-surface-container-lowest shadow-2xl flex flex-col overflow-y-auto">
+      <div className="flex items-center justify-between p-5 border-b border-border-subtle sticky top-0 bg-surface-container-lowest z-10">
+        <h2 className="font-bold text-on-surface text-base">CS Tasks — {dealer.businessName}</h2>
+        <button onClick={onClose} className="ml-3 shrink-0 text-on-surface-variant hover:text-on-surface"><X className="h-5 w-5" /></button>
       </div>
       <div className="p-5 flex-1">
-        {isLoading && <div className="text-sm text-gray-500">Loading tasks…</div>}
+        {isLoading && <div className="text-sm text-on-surface-variant">Loading tasks…</div>}
         {error && <p className="text-sm text-red-600">Failed to load tasks.</p>}
         {!isLoading && !error && (
           <div className="space-y-4">
             {['Pending', 'Done', 'Skipped'].map(status => (
               grouped[status].length > 0 && (
                 <div key={status}>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">{status}</p>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-2">{status}</p>
                   <div className="space-y-1">
                     {grouped[status].map(t => {
                       const overdue = t.status === 'Pending' && t.dueDate && new Date(t.dueDate) < new Date();
                       return (
-                        <div key={t.id || t._id} className={`flex items-center gap-2 px-3 py-2 rounded-lg ${overdue ? 'bg-red-50 border border-red-100' : 'bg-gray-50'}`}>
-                          <span className="text-[11px] font-bold bg-gray-200 text-gray-700 rounded px-1.5 py-0.5 shrink-0">Day {t.day}</span>
+                        <div key={t.id || t._id} className={`flex items-center gap-2 px-3 py-2 rounded-lg ${overdue ? 'bg-red-50 border border-red-100' : 'bg-surface-container'}`}>
+                          <span className="text-[11px] font-bold bg-surface-container-high text-on-surface rounded px-1.5 py-0.5 shrink-0">Day {t.day}</span>
                           <span>{TASK_ICONS[t.type] || '📋'}</span>
-                          <span className="text-sm text-gray-800 flex-1">{t.title}</span>
-                          <span className={`text-[11px] ${overdue ? 'text-red-600 font-semibold' : 'text-gray-400'}`}>{fmtDate(t.dueDate)}</span>
+                          <span className="text-sm text-on-surface flex-1">{t.title}</span>
+                          <span className={`text-[11px] ${overdue ? 'text-red-600 font-semibold' : 'text-on-surface-variant'}`}>{fmtDate(t.dueDate)}</span>
                           {t.status === 'Pending' && (
                             <div className="flex gap-1 shrink-0">
                               <button onClick={() => patchTask.mutate({ id: t.id || t._id, status: 'done' })} className="text-[11px] text-green-700 border border-green-200 rounded px-1.5 py-0.5 hover:bg-green-50">Done</button>
-                              <button onClick={() => patchTask.mutate({ id: t.id || t._id, status: 'skipped' })} className="text-[11px] text-gray-500 border border-gray-200 rounded px-1.5 py-0.5 hover:bg-gray-100">Skip</button>
+                              <button onClick={() => patchTask.mutate({ id: t.id || t._id, status: 'skipped' })} className="text-[11px] text-on-surface-variant border border-border-subtle rounded px-1.5 py-0.5 hover:bg-surface-container">Skip</button>
                             </div>
                           )}
                         </div>
@@ -188,15 +188,15 @@ function TasksDrawer({ dealer, onClose }) {
                 </div>
               )
             ))}
-            {tasks.length === 0 && <p className="text-sm text-gray-500">No tasks scheduled yet.</p>}
+            {tasks.length === 0 && <p className="text-sm text-on-surface-variant">No tasks scheduled yet.</p>}
           </div>
         )}
       </div>
-      <div className="p-5 border-t border-gray-100 flex justify-end">
+      <div className="p-5 border-t border-border-subtle flex justify-end">
         <button
           disabled={genSchedule.isPending}
           onClick={() => genSchedule.mutate()}
-          className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+          className="px-4 py-2 text-sm border border-border-subtle rounded-lg hover:bg-surface-container disabled:opacity-50"
         >
           {genSchedule.isPending ? 'Generating…' : 'Generate Schedule'}
         </button>
@@ -227,27 +227,27 @@ function ValueDrawer({ dealer, onClose }) {
   ];
 
   return (
-    <div className="fixed inset-y-0 right-0 z-40 w-full max-w-[380px] bg-white shadow-2xl flex flex-col overflow-y-auto">
-      <div className="flex items-center justify-between p-5 border-b border-gray-200 sticky top-0 bg-white z-10">
-        <h2 className="font-bold text-gray-900 text-base">Value Proof — {dealer.businessName}</h2>
-        <button onClick={onClose} className="ml-3 shrink-0 text-gray-500 hover:text-gray-900"><X className="h-5 w-5" /></button>
+    <div className="fixed inset-y-0 right-0 z-40 w-full max-w-[380px] bg-surface-container-lowest shadow-2xl flex flex-col overflow-y-auto">
+      <div className="flex items-center justify-between p-5 border-b border-border-subtle sticky top-0 bg-surface-container-lowest z-10">
+        <h2 className="font-bold text-on-surface text-base">Value Proof — {dealer.businessName}</h2>
+        <button onClick={onClose} className="ml-3 shrink-0 text-on-surface-variant hover:text-on-surface"><X className="h-5 w-5" /></button>
       </div>
       <div className="p-5 flex-1">
-        {isLoading && <div className="text-sm text-gray-500">Loading metrics…</div>}
+        {isLoading && <div className="text-sm text-on-surface-variant">Loading metrics…</div>}
         {error && <p className="text-sm text-red-600">Failed to load value data.</p>}
         {!isLoading && !error && (
           <div className="grid grid-cols-2 gap-3">
             {metrics.map(({ label, value }) => (
-              <div key={label} className="bg-gray-50 rounded-xl p-3 text-center">
-                <p className="text-xs text-gray-500 mb-1">{label}</p>
-                <p className="text-lg font-bold text-gray-900">{value}</p>
+              <div key={label} className="bg-surface-container rounded-xl p-3 text-center">
+                <p className="text-xs text-on-surface-variant mb-1">{label}</p>
+                <p className="text-lg font-bold text-on-surface">{value}</p>
               </div>
             ))}
           </div>
         )}
       </div>
-      <div className="p-5 border-t border-gray-100">
-        <p className="text-xs text-gray-400 text-center">Share this with your dealer to show value delivered.</p>
+      <div className="p-5 border-t border-border-subtle">
+        <p className="text-xs text-on-surface-variant text-center">Share this with your dealer to show value delivered.</p>
       </div>
     </div>
   );
@@ -262,15 +262,15 @@ function DealerCard({ dealer, onDrawer }) {
   const status = dealer.healthStatus || 'Watch';
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col sm:flex-row gap-4">
+    <div className="bg-surface-container-lowest rounded-xl border border-border-subtle p-4 flex flex-col sm:flex-row gap-4">
       {/* Left: Identity */}
       <div className="sm:w-44 shrink-0">
-        <p className="font-bold text-gray-900 text-base leading-tight">{dealer.businessName}</p>
+        <p className="font-bold text-on-surface text-base leading-tight">{dealer.businessName}</p>
         <span className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold bg-blue-100 text-blue-800 mt-1">
           Founding Dealer
         </span>
-        <p className="text-xs text-gray-500 mt-1">Day {daysSince(dealer.signupDate)}</p>
-        <p className="text-xs text-gray-500">MRR: ₱3,599</p>
+        <p className="text-xs text-on-surface-variant mt-1">Day {daysSince(dealer.signupDate)}</p>
+        <p className="text-xs text-on-surface-variant">MRR: ₱3,599</p>
       </div>
 
       {/* Center: Health metrics */}
@@ -281,7 +281,7 @@ function DealerCard({ dealer, onDrawer }) {
           { label: 'CRM Usage', value: metrics.crmUsage != null ? `${metrics.crmUsage} updated` : '—' },
           {
             label: 'Health Score',
-            value: <span className={`font-bold ${healthColor(metrics.healthScore)}`}>{metrics.healthScore ?? '—'}<span className="text-xs text-gray-400">/100</span></span>,
+            value: <span className={`font-bold ${healthColor(metrics.healthScore)}`}>{metrics.healthScore ?? '—'}<span className="text-xs text-on-surface-variant">/100</span></span>,
           },
           {
             label: 'Support Tickets',
@@ -292,8 +292,8 @@ function DealerCard({ dealer, onDrawer }) {
             value: <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${renewalBadge(renewal)}`}>{renewal}</span>,
           },
         ].map(({ label, value }) => (
-          <div key={label} className="bg-gray-50 rounded-lg p-2 text-center">
-            <p className="text-[10px] text-gray-500 mb-0.5">{label}</p>
+          <div key={label} className="bg-surface-container rounded-lg p-2 text-center">
+            <p className="text-[10px] text-on-surface-variant mb-0.5">{label}</p>
             <p className="text-sm">{value}</p>
           </div>
         ))}
@@ -310,9 +310,9 @@ function DealerCard({ dealer, onDrawer }) {
         </div>
         <p className={`text-sm font-semibold ${healthStatusColor(status)}`}>{status}</p>
         <div className="flex gap-1 mt-auto">
-          <button onClick={() => onDrawer('ttv', id)} className="rounded-lg border border-gray-200 px-2 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50">TTV</button>
-          <button onClick={() => onDrawer('tasks', id)} className="rounded-lg border border-gray-200 px-2 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50">Tasks</button>
-          <button onClick={() => onDrawer('value', id)} className="rounded-lg border border-gray-200 px-2 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50">Value</button>
+          <button onClick={() => onDrawer('ttv', id)} className="rounded-lg border border-border-subtle px-2 py-1 text-xs font-semibold text-on-surface hover:bg-surface-container">TTV</button>
+          <button onClick={() => onDrawer('tasks', id)} className="rounded-lg border border-border-subtle px-2 py-1 text-xs font-semibold text-on-surface hover:bg-surface-container">Tasks</button>
+          <button onClick={() => onDrawer('value', id)} className="rounded-lg border border-border-subtle px-2 py-1 text-xs font-semibold text-on-surface hover:bg-surface-container">Value</button>
         </div>
       </div>
     </div>
@@ -352,8 +352,8 @@ export default function DealerSuccess() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Dealer Success</h1>
-        <p className="text-sm text-gray-500 mt-1">Adoption · Retention · Renewal</p>
+        <h1 className="text-xl font-bold text-on-surface">Dealer Success</h1>
+        <p className="text-sm text-on-surface-variant mt-1">Adoption · Retention · Renewal</p>
       </div>
 
       {/* Alert bar */}
@@ -374,13 +374,13 @@ export default function DealerSuccess() {
       {/* Dealer cards */}
       {isLoading ? (
         <div className="space-y-2">
-          {[1, 2, 3].map(i => <div key={i} className="h-28 bg-gray-50 rounded-xl animate-pulse" />)}
+          {[1, 2, 3].map(i => <div key={i} className="h-28 bg-surface-container rounded-xl animate-pulse" />)}
         </div>
       ) : error ? (
         <p className="text-sm text-red-600">Failed to load dealer data.</p>
       ) : list.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <p className="text-gray-500 text-sm">No active dealers yet.</p>
+        <div className="bg-surface-container-lowest rounded-xl border border-border-subtle p-10 text-center">
+          <p className="text-on-surface-variant text-sm">No active dealers yet.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -392,16 +392,16 @@ export default function DealerSuccess() {
 
       {/* Overdue tasks table */}
       {overdueList.length > 0 && (
-        <div ref={tasksRef} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-100">
-            <h2 className="font-bold text-gray-900 text-base">Overdue CS Tasks</h2>
+        <div ref={tasksRef} className="bg-surface-container-lowest rounded-xl border border-border-subtle overflow-hidden">
+          <div className="px-4 py-3 border-b border-border-subtle">
+            <h2 className="font-bold text-on-surface text-base">Overdue CS Tasks</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-gray-50">
+              <thead className="bg-surface-container">
                 <tr>
                   {['Dealer', 'Day', 'Type', 'Task', 'Due Date', 'Days Overdue', 'Actions'].map(h => (
-                    <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
+                    <th key={h} className="px-4 py-2 text-left text-xs font-semibold text-on-surface-variant uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -409,17 +409,17 @@ export default function DealerSuccess() {
                 {overdueList.map(t => {
                   const daysOverdue = t.dueDate ? Math.floor((Date.now() - new Date(t.dueDate).getTime()) / 86400000) : '—';
                   return (
-                    <tr key={t.id || t._id} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 font-medium text-gray-900">{t.dealerName}</td>
-                      <td className="px-4 py-2 text-gray-600">Day {t.day}</td>
+                    <tr key={t.id || t._id} className="hover:bg-surface-container">
+                      <td className="px-4 py-2 font-medium text-on-surface">{t.dealerName}</td>
+                      <td className="px-4 py-2 text-on-surface-variant">Day {t.day}</td>
                       <td className="px-4 py-2">{TASK_ICONS[t.type] || '📋'} {t.type}</td>
-                      <td className="px-4 py-2 text-gray-800">{t.title}</td>
+                      <td className="px-4 py-2 text-on-surface">{t.title}</td>
                       <td className="px-4 py-2 text-red-600 font-medium">{fmtDate(t.dueDate)}</td>
                       <td className="px-4 py-2 text-red-600 font-bold">{daysOverdue}d</td>
                       <td className="px-4 py-2">
                         <div className="flex gap-1">
                           <button onClick={() => patchOverdue.mutate({ id: t.id || t._id, status: 'done' })} className="text-[11px] text-green-700 border border-green-200 rounded px-2 py-0.5 hover:bg-green-50">Done</button>
-                          <button onClick={() => patchOverdue.mutate({ id: t.id || t._id, status: 'skipped' })} className="text-[11px] text-gray-500 border border-gray-200 rounded px-2 py-0.5 hover:bg-gray-100">Skip</button>
+                          <button onClick={() => patchOverdue.mutate({ id: t.id || t._id, status: 'skipped' })} className="text-[11px] text-on-surface-variant border border-border-subtle rounded px-2 py-0.5 hover:bg-surface-container">Skip</button>
                         </div>
                       </td>
                     </tr>

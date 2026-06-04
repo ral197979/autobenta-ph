@@ -102,15 +102,15 @@ const FAQS = [
 function FaqItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-b border-cardborder last:border-0">
+    <div className="border-b border-border-subtle last:border-0">
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex w-full items-center justify-between py-4 text-left text-sm font-semibold text-ink hover:text-deepblue transition-colors"
+        className="flex w-full items-center justify-between py-4 text-left text-sm font-semibold text-on-surface hover:text-primary transition-colors"
       >
         {q}
-        <ChevronDown className={`h-4 w-4 shrink-0 text-slatetext transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`h-4 w-4 shrink-0 text-on-surface-variant transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
-      {open && <p className="pb-4 text-sm text-slatetext leading-relaxed">{a}</p>}
+      {open && <p className="pb-4 text-sm text-on-surface-variant leading-relaxed">{a}</p>}
     </div>
   );
 }
@@ -128,11 +128,11 @@ export default function InspectionServices() {
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-surface-container-lowest">
       {/* Hero */}
       <section className="bg-ink text-white">
         <div className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold text-white/80 mb-6">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-surface-container-lowest/10 px-3 py-1 text-xs font-semibold text-white/80 mb-6">
             <ShieldCheck className="h-3.5 w-3.5 text-accent" />
             Independent Vehicle Inspections
           </div>
@@ -146,13 +146,13 @@ export default function InspectionServices() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={handleBook}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-bold text-ink hover:bg-accent/90 transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-bold text-on-surface hover:bg-accent/90 transition-colors"
             >
               Book Inspection <ArrowRight className="h-4 w-4" />
             </button>
             <Link
               to="/cars"
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white hover:bg-white/20 transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-surface-container-lowest/10 px-6 py-3 text-sm font-semibold text-white hover:bg-surface-container-lowest/20 transition-colors"
             >
               Browse Vehicles
             </Link>
@@ -161,21 +161,21 @@ export default function InspectionServices() {
       </section>
 
       {/* How it works */}
-      <section className="py-16 bg-softbg">
+      <section className="py-16 bg-surface-container">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-wider text-deepblue mb-2">How it works</p>
-            <h2 className="text-2xl font-bold text-ink sm:text-3xl">Five steps to a confident purchase</h2>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">How it works</p>
+            <h2 className="text-2xl font-bold text-on-surface sm:text-3xl">Five steps to a confident purchase</h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {STEPS.map(({ n, icon: Icon, title, desc }) => (
-              <div key={n} className="relative bg-white rounded-2xl border border-cardborder p-5 flex flex-col items-start lg:items-center lg:text-center">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-deepblue/10 text-deepblue mb-3 shrink-0">
+              <div key={n} className="relative bg-surface-container-lowest rounded-2xl border border-border-subtle p-5 flex flex-col items-start lg:items-center lg:text-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary mb-3 shrink-0">
                   <Icon className="h-5 w-5" />
                 </div>
-                <span className="absolute top-3 right-3 text-[10px] font-bold text-slatetext/40 lg:static lg:mb-1">Step {n}</span>
-                <p className="text-sm font-bold text-ink mb-1">{title}</p>
-                <p className="text-xs text-slatetext leading-relaxed">{desc}</p>
+                <span className="absolute top-3 right-3 text-[10px] font-bold text-on-surface-variant/40 lg:static lg:mb-1">Step {n}</span>
+                <p className="text-sm font-bold text-on-surface mb-1">{title}</p>
+                <p className="text-xs text-on-surface-variant leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -186,18 +186,18 @@ export default function InspectionServices() {
       <section className="py-16">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-wider text-deepblue mb-2">What's covered</p>
-            <h2 className="text-2xl font-bold text-ink sm:text-3xl">Everything a buyer needs to know</h2>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">What's covered</p>
+            <h2 className="text-2xl font-bold text-on-surface sm:text-3xl">Everything a buyer needs to know</h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {BENEFITS.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="rounded-2xl border border-cardborder p-5 flex gap-4">
+              <div key={title} className="rounded-2xl border border-border-subtle p-5 flex gap-4">
                 <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
                   <Icon className="h-5 w-5 text-emerald-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-ink mb-1">{title}</p>
-                  <p className="text-xs text-slatetext leading-relaxed">{desc}</p>
+                  <p className="text-sm font-bold text-on-surface mb-1">{title}</p>
+                  <p className="text-xs text-on-surface-variant leading-relaxed">{desc}</p>
                 </div>
               </div>
             ))}
@@ -206,33 +206,33 @@ export default function InspectionServices() {
       </section>
 
       {/* Pricing */}
-      <section className="py-16 bg-softbg">
+      <section className="py-16 bg-surface-container">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-wider text-deepblue mb-2">Pricing</p>
-            <h2 className="text-2xl font-bold text-ink sm:text-3xl">Transparent, flat-rate pricing</h2>
-            <p className="text-sm text-slatetext mt-2">No hidden fees. Pay only when your inspection is confirmed.</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Pricing</p>
+            <h2 className="text-2xl font-bold text-on-surface sm:text-3xl">Transparent, flat-rate pricing</h2>
+            <p className="text-sm text-on-surface-variant mt-2">No hidden fees. Pay only when your inspection is confirmed.</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             {PLANS.map((plan) => (
               <div
                 key={plan.name}
-                className={`relative rounded-2xl border-2 bg-white p-6 flex flex-col ${plan.highlight ? 'border-deepblue shadow-lg shadow-deepblue/10' : 'border-cardborder'}`}
+                className={`relative rounded-2xl border-2 bg-surface-container-lowest p-6 flex flex-col ${plan.highlight ? 'border-primary shadow-lg shadow-deepblue/10' : 'border-border-subtle'}`}
               >
                 {plan.highlight && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-deepblue px-3 py-0.5 text-[11px] font-bold text-white">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-0.5 text-[11px] font-bold text-white">
                       <Star className="h-2.5 w-2.5" /> Most popular
                     </span>
                   </div>
                 )}
-                <p className="text-sm font-bold text-ink mb-1">{plan.name} Inspection</p>
-                <p className="text-2xl font-bold text-deepblue mb-1">{plan.price}</p>
-                <p className="text-xs text-slatetext mb-1">{plan.desc}</p>
-                <p className="text-[11px] font-semibold text-slatetext/60 mb-4">{plan.points}-point check</p>
+                <p className="text-sm font-bold text-on-surface mb-1">{plan.name} Inspection</p>
+                <p className="text-2xl font-bold text-primary mb-1">{plan.price}</p>
+                <p className="text-xs text-on-surface-variant mb-1">{plan.desc}</p>
+                <p className="text-[11px] font-semibold text-on-surface-variant/60 mb-4">{plan.points}-point check</p>
                 <ul className="space-y-2 mb-6 flex-1">
                   {plan.features.map(f => (
-                    <li key={f} className="flex items-center gap-2 text-xs text-ink">
+                    <li key={f} className="flex items-center gap-2 text-xs text-on-surface">
                       <CheckCircle className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
                       {f}
                     </li>
@@ -240,7 +240,7 @@ export default function InspectionServices() {
                 </ul>
                 <button
                   onClick={handleBook}
-                  className={`rounded-xl px-4 py-2.5 text-xs font-bold transition-colors ${plan.highlight ? 'bg-deepblue text-white hover:bg-deepblue/90' : 'border border-cardborder text-ink hover:bg-softbg'}`}
+                  className={`rounded-xl px-4 py-2.5 text-xs font-bold transition-colors ${plan.highlight ? 'bg-primary text-on-primary hover:bg-primary/90' : 'border border-border-subtle text-on-surface hover:bg-surface-container'}`}
                 >
                   {plan.name === 'Dealer' ? 'Contact us' : 'Book now'}
                 </button>
@@ -254,17 +254,17 @@ export default function InspectionServices() {
       <section className="py-16">
         <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
-            <p className="text-xs font-semibold uppercase tracking-wider text-deepblue mb-2">FAQ</p>
-            <h2 className="text-2xl font-bold text-ink sm:text-3xl">Common questions</h2>
+            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">FAQ</p>
+            <h2 className="text-2xl font-bold text-on-surface sm:text-3xl">Common questions</h2>
           </div>
-          <div className="rounded-2xl border border-cardborder bg-white px-6">
+          <div className="rounded-2xl border border-border-subtle bg-surface-container-lowest px-6">
             {FAQS.map(faq => <FaqItem key={faq.q} {...faq} />)}
           </div>
         </div>
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-16 bg-deepblue text-white">
+      <section className="py-16 bg-primary text-on-primary">
         <div className="mx-auto max-w-2xl px-4 text-center">
           <h2 className="text-2xl font-bold mb-3">Ready to inspect before you invest?</h2>
           <p className="text-sm text-white/70 mb-8">
@@ -273,13 +273,13 @@ export default function InspectionServices() {
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={handleBook}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-bold text-ink hover:bg-accent/90 transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-bold text-on-surface hover:bg-accent/90 transition-colors"
             >
               Book Inspection <ArrowRight className="h-4 w-4" />
             </button>
             <Link
               to="/cars"
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white hover:bg-white/20 transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-surface-container-lowest/10 px-6 py-3 text-sm font-semibold text-white hover:bg-surface-container-lowest/20 transition-colors"
             >
               Browse Vehicles
             </Link>

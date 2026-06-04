@@ -90,32 +90,32 @@ export default function BookDemo() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-softbg flex items-center justify-center px-4">
+      <div className="min-h-screen bg-surface-container flex items-center justify-center px-4">
         <div className="card p-10 max-w-md w-full text-center space-y-4">
           <div className="h-14 w-14 rounded-full bg-emerald-100 flex items-center justify-center mx-auto">
             <CheckCircle className="h-8 w-8 text-emerald-600" />
           </div>
-          <h2 className="text-xl font-bold text-ink">Demo Booked!</h2>
-          <p className="text-slatetext text-sm">
-            We'll send a confirmation to <span className="font-semibold text-ink">{form.email}</span>.
+          <h2 className="text-xl font-bold text-on-surface">Demo Booked!</h2>
+          <p className="text-on-surface-variant text-sm">
+            We'll send a confirmation to <span className="font-semibold text-on-surface">{form.email}</span>.
             {form.preferredDate && (
-              <> See you on <span className="font-semibold text-ink">{new Date(form.preferredDate + 'T12:00:00').toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' })}</span> at <span className="font-semibold text-ink">{form.preferredTime}</span>.</>
+              <> See you on <span className="font-semibold text-on-surface">{new Date(form.preferredDate + 'T12:00:00').toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' })}</span> at <span className="font-semibold text-on-surface">{form.preferredTime}</span>.</>
             )}
           </p>
-          <p className="text-xs text-slatetext">Questions? Email us at <a href="mailto:demos@autobentaph.com" className="text-deepblue hover:underline">demos@autobentaph.com</a></p>
-          <a href="/" className="inline-block mt-2 text-sm text-deepblue hover:underline">Back to AutoBentaPH</a>
+          <p className="text-xs text-on-surface-variant">Questions? Email us at <a href="mailto:demos@autobentaph.com" className="text-primary hover:underline">demos@autobentaph.com</a></p>
+          <a href="/" className="inline-block mt-2 text-sm text-primary hover:underline">Back to AutoBentaPH</a>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-softbg">
+    <div className="min-h-screen bg-surface-container">
       {/* Hero */}
       <div className="bg-gray-900 text-white py-10 px-4">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-2xl sm:text-3xl font-bold">Book a Demo</h1>
-          <p className="text-gray-400 mt-2 text-sm sm:text-base">See how AutoBentaPH helps Filipino dealers close more deals</p>
+          <p className="text-on-surface-variant mt-2 text-sm sm:text-base">See how AutoBentaPH helps Filipino dealers close more deals</p>
         </div>
       </div>
 
@@ -127,7 +127,7 @@ export default function BookDemo() {
             <form onSubmit={handleSubmit} className="card p-6 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slatetext mb-1">Full Name *</label>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Full Name *</label>
                   <input
                     className="input w-full"
                     required
@@ -137,7 +137,7 @@ export default function BookDemo() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slatetext mb-1">Dealership / Company *</label>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Dealership / Company *</label>
                   <input
                     className="input w-full"
                     required
@@ -147,7 +147,7 @@ export default function BookDemo() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slatetext mb-1">Email *</label>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Email *</label>
                   <input
                     className="input w-full"
                     type="email"
@@ -158,7 +158,7 @@ export default function BookDemo() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slatetext mb-1">Phone</label>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Phone</label>
                   <input
                     className="input w-full"
                     type="tel"
@@ -168,13 +168,13 @@ export default function BookDemo() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slatetext mb-1">Inventory Count</label>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Inventory Count</label>
                   <select className="input w-full" value={form.inventoryCount} onChange={e => set('inventoryCount', e.target.value)}>
                     {INVENTORY_OPTIONS.map(o => <option key={o}>{o}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slatetext mb-1">Current Process</label>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Current Process</label>
                   <select className="input w-full" value={form.currentProcess} onChange={e => set('currentProcess', e.target.value)}>
                     {PROCESS_OPTIONS.map(o => <option key={o}>{o}</option>)}
                   </select>
@@ -182,7 +182,7 @@ export default function BookDemo() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slatetext mb-1">Biggest Challenge</label>
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">Biggest Challenge</label>
                 <textarea
                   className="input w-full resize-none text-sm"
                   rows={3}
@@ -194,7 +194,7 @@ export default function BookDemo() {
 
               {/* Demo type selector */}
               <div>
-                <label className="block text-xs font-semibold text-slatetext mb-2">Demo Type</label>
+                <label className="block text-xs font-semibold text-on-surface-variant mb-2">Demo Type</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {DEMO_TYPES.map(({ key, icon: Icon, label, desc }) => (
                     <button
@@ -203,16 +203,16 @@ export default function BookDemo() {
                       onClick={() => set('demoType', key)}
                       className={`flex items-start gap-3 rounded-xl border p-3 text-left transition-all ${
                         form.demoType === key
-                          ? 'border-deepblue bg-deepblue/5 shadow-sm'
-                          : 'border-cardborder hover:border-deepblue/30'
+                          ? 'border-primary bg-primary/5 shadow-sm'
+                          : 'border-border-subtle hover:border-primary/30'
                       }`}
                     >
-                      <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${form.demoType === key ? 'bg-deepblue text-white' : 'bg-softbg text-slatetext'}`}>
+                      <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${form.demoType === key ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface-variant'}`}>
                         <Icon className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className={`text-xs font-semibold leading-tight ${form.demoType === key ? 'text-deepblue' : 'text-ink'}`}>{label}</p>
-                        <p className="text-[11px] text-slatetext mt-0.5 leading-snug">{desc}</p>
+                        <p className={`text-xs font-semibold leading-tight ${form.demoType === key ? 'text-primary' : 'text-on-surface'}`}>{label}</p>
+                        <p className="text-[11px] text-on-surface-variant mt-0.5 leading-snug">{desc}</p>
                       </div>
                     </button>
                   ))}
@@ -222,7 +222,7 @@ export default function BookDemo() {
               {/* Date + time */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slatetext mb-1">Available Date</label>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Available Date</label>
                   <input
                     className="input w-full"
                     type="date"
@@ -232,7 +232,7 @@ export default function BookDemo() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slatetext mb-1">Preferred Time</label>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">Preferred Time</label>
                   <select className="input w-full" value={form.preferredTime} onChange={e => set('preferredTime', e.target.value)}>
                     {TIME_SLOTS.map(t => <option key={t}>{t}</option>)}
                   </select>
@@ -259,7 +259,7 @@ export default function BookDemo() {
           <div className="lg:col-span-2 space-y-5">
             {/* What to expect */}
             <div className="card p-5">
-              <h3 className="text-sm font-bold text-ink mb-4">What to Expect</h3>
+              <h3 className="text-sm font-bold text-on-surface mb-4">What to Expect</h3>
               <ul className="space-y-3">
                 {[
                   'A personalized walkthrough of the features most relevant to your dealership',
@@ -269,7 +269,7 @@ export default function BookDemo() {
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-2.5">
                     <CheckCircle className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <span className="text-sm text-ink">{item}</span>
+                    <span className="text-sm text-on-surface">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -277,24 +277,24 @@ export default function BookDemo() {
 
             {/* Quick facts */}
             <div className="card p-5 space-y-3">
-              <div className="flex items-center gap-2.5 text-sm text-ink">
-                <Clock className="h-4 w-4 text-slatetext shrink-0" />
+              <div className="flex items-center gap-2.5 text-sm text-on-surface">
+                <Clock className="h-4 w-4 text-on-surface-variant shrink-0" />
                 <span>Demo takes 30 minutes</span>
               </div>
-              <div className="flex items-center gap-2.5 text-sm text-ink">
-                <CreditCard className="h-4 w-4 text-slatetext shrink-0" />
+              <div className="flex items-center gap-2.5 text-sm text-on-surface">
+                <CreditCard className="h-4 w-4 text-on-surface-variant shrink-0" />
                 <span>No credit card required</span>
               </div>
-              <div className="flex items-center gap-2.5 text-sm text-ink">
-                <Mail className="h-4 w-4 text-slatetext shrink-0" />
-                <a href="mailto:demos@autobentaph.com" className="text-deepblue hover:underline">demos@autobentaph.com</a>
+              <div className="flex items-center gap-2.5 text-sm text-on-surface">
+                <Mail className="h-4 w-4 text-on-surface-variant shrink-0" />
+                <a href="mailto:demos@autobentaph.com" className="text-primary hover:underline">demos@autobentaph.com</a>
               </div>
             </div>
 
             {/* Founding Dealer callout */}
             <div className="rounded-xl border border-amber-200 bg-amber-50 p-5">
               <p className="text-xs font-bold text-amber-700 uppercase tracking-wide mb-1">Founding Dealer Program</p>
-              <p className="text-sm text-ink mb-3">Lock in lifetime pricing as one of our first 5 dealers. Limited slots available.</p>
+              <p className="text-sm text-on-surface mb-3">Lock in lifetime pricing as one of our first 5 dealers. Limited slots available.</p>
               <a
                 href="/for-dealers/founding"
                 className="inline-flex items-center gap-1 text-sm font-semibold text-amber-700 hover:text-amber-800 underline"

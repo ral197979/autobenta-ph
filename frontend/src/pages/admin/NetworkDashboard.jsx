@@ -2,12 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import { Building2, Car, TrendingUp, Zap, PenLine, Plug } from 'lucide-react';
 import api from '../../api/client';
 
-function StatCard({ label, value, icon: Icon, color = 'text-deepblue bg-deepblue/10', loading }) {
+function StatCard({ label, value, icon: Icon, color = 'text-primary bg-primary/10', loading }) {
   if (loading) {
     return (
       <div className="card p-5">
-        <div className="h-3 w-24 bg-softbg rounded animate-pulse mb-3" />
-        <div className="h-7 w-16 bg-softbg rounded animate-pulse" />
+        <div className="h-3 w-24 bg-surface-container rounded animate-pulse mb-3" />
+        <div className="h-7 w-16 bg-surface-container rounded animate-pulse" />
       </div>
     );
   }
@@ -19,8 +19,8 @@ function StatCard({ label, value, icon: Icon, color = 'text-deepblue bg-deepblue
         </div>
       )}
       <div>
-        <p className="text-xs font-semibold text-slatetext">{label}</p>
-        <p className="text-2xl font-bold text-ink mt-0.5">{value ?? '—'}</p>
+        <p className="text-xs font-semibold text-on-surface-variant">{label}</p>
+        <p className="text-2xl font-bold text-on-surface mt-0.5">{value ?? '—'}</p>
       </div>
     </div>
   );
@@ -48,7 +48,7 @@ const EVENT_BADGE = {
   sync_ok:      'bg-emerald-100 text-emerald-700',
   sync_error:   'bg-red-100 text-red-600',
   connected:    'bg-blue-100 text-blue-700',
-  disconnected: 'bg-gray-100 text-slatetext',
+  disconnected: 'bg-surface-container text-on-surface-variant',
 };
 
 function fmtDate(x) {
@@ -72,12 +72,12 @@ export default function NetworkDashboard() {
   const totalListings = sources.reduce((s, r) => s + (r.listings || 0), 0);
 
   return (
-    <div className="min-h-screen bg-softbg">
+    <div className="min-h-screen bg-surface-container">
       <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-xl font-bold text-ink">Network Health</h1>
-          <p className="text-sm text-slatetext mt-0.5">Ryderr marketplace ecosystem.</p>
+          <h1 className="text-xl font-bold text-on-surface">Network Health</h1>
+          <p className="text-sm text-on-surface-variant mt-0.5">Ryderr marketplace ecosystem.</p>
         </div>
 
         {isError && (
@@ -89,7 +89,7 @@ export default function NetworkDashboard() {
         {/* Stat row */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           <StatCard label="Total Dealers" value={stats.totalDealers} icon={Building2} loading={isLoading} />
-          <StatCard label="Active Listings" value={stats.activeListings} icon={Car} color="text-electric bg-electric/10" loading={isLoading} />
+          <StatCard label="Active Listings" value={stats.activeListings} icon={Car} color="text-primary bg-electric/10" loading={isLoading} />
           <StatCard label="Active Leads" value={stats.activeLeads} icon={TrendingUp} color="text-emerald-600 bg-emerald-100" loading={isLoading} />
           <StatCard label="Leads Today" value={stats.leadsToday} icon={Zap} color="text-accent bg-accent/10" loading={isLoading} />
           <StatCard label="Manual Dealers" value={stats.manualDealers} icon={PenLine} color="text-purple-600 bg-purple-100" loading={isLoading} />
@@ -98,20 +98,20 @@ export default function NetworkDashboard() {
 
         {/* Inventory Sources */}
         <div className="card p-5">
-          <h2 className="font-bold text-ink mb-4">Inventory Sources</h2>
+          <h2 className="font-bold text-on-surface mb-4">Inventory Sources</h2>
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map(i => (
-                <div key={i} className="h-10 bg-softbg rounded animate-pulse" />
+                <div key={i} className="h-10 bg-surface-container rounded animate-pulse" />
               ))}
             </div>
           ) : sources.length === 0 ? (
-            <p className="text-sm text-slatetext">No source data available.</p>
+            <p className="text-sm text-on-surface-variant">No source data available.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-cardborder text-xs font-semibold text-slatetext">
+                  <tr className="border-b border-border-subtle text-xs font-semibold text-on-surface-variant">
                     <th className="text-left pb-3 pr-4">Source</th>
                     <th className="text-right pb-3 pr-4">Listings</th>
                     <th className="text-right pb-3 pr-4">% of Total</th>
@@ -123,21 +123,21 @@ export default function NetworkDashboard() {
                   {sources.map(row => {
                     const pct = totalListings > 0 ? Math.round((row.listings / totalListings) * 100) : 0;
                     return (
-                      <tr key={row.source} className="border-b border-cardborder last:border-0">
-                        <td className="py-3 pr-4 font-medium text-ink capitalize">{row.source}</td>
-                        <td className="py-3 pr-4 text-right text-ink">{row.listings ?? 0}</td>
+                      <tr key={row.source} className="border-b border-border-subtle last:border-0">
+                        <td className="py-3 pr-4 font-medium text-on-surface capitalize">{row.source}</td>
+                        <td className="py-3 pr-4 text-right text-on-surface">{row.listings ?? 0}</td>
                         <td className="py-3 pr-4 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            <div className="w-16 bg-softbg rounded-full h-1.5 overflow-hidden">
+                            <div className="w-16 bg-surface-container rounded-full h-1.5 overflow-hidden">
                               <div
-                                className="h-1.5 bg-deepblue rounded-full"
+                                className="h-1.5 bg-primary rounded-full"
                                 style={{ width: `${pct}%` }}
                               />
                             </div>
-                            <span className="text-slatetext w-8 text-right">{pct}%</span>
+                            <span className="text-on-surface-variant w-8 text-right">{pct}%</span>
                           </div>
                         </td>
-                        <td className="py-3 pr-4 text-right text-slatetext">
+                        <td className="py-3 pr-4 text-right text-on-surface-variant">
                           {row.avgLeadRate != null ? `${row.avgLeadRate} leads/listing` : '—'}
                         </td>
                         <td className="py-3">
@@ -154,27 +154,27 @@ export default function NetworkDashboard() {
 
         {/* Recent Sync Activity */}
         <div className="card p-5">
-          <h2 className="font-bold text-ink mb-4">Recent Sync Activity</h2>
+          <h2 className="font-bold text-on-surface mb-4">Recent Sync Activity</h2>
           {isLoading ? (
             <div className="space-y-3">
               {[1, 2, 3, 4, 5].map(i => (
-                <div key={i} className="h-8 bg-softbg rounded animate-pulse" />
+                <div key={i} className="h-8 bg-surface-container rounded animate-pulse" />
               ))}
             </div>
           ) : syncEvents.length === 0 ? (
-            <p className="text-sm text-slatetext">No recent sync activity.</p>
+            <p className="text-sm text-on-surface-variant">No recent sync activity.</p>
           ) : (
             <ul className="divide-y divide-cardborder">
               {syncEvents.slice(0, 10).map((evt, i) => (
                 <li key={i} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
                   <span
-                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold shrink-0 ${EVENT_BADGE[evt.eventType] ?? 'bg-gray-100 text-slatetext'}`}
+                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold shrink-0 ${EVENT_BADGE[evt.eventType] ?? 'bg-surface-container text-on-surface-variant'}`}
                   >
                     {evt.eventType?.replace('_', ' ') ?? 'event'}
                   </span>
-                  <span className="font-medium text-ink text-sm truncate">{evt.dealerName ?? '—'}</span>
-                  <span className="text-xs text-slatetext capitalize shrink-0">{evt.source}</span>
-                  <span className="text-xs text-slatetext ml-auto shrink-0">{fmtDate(evt.timestamp)}</span>
+                  <span className="font-medium text-on-surface text-sm truncate">{evt.dealerName ?? '—'}</span>
+                  <span className="text-xs text-on-surface-variant capitalize shrink-0">{evt.source}</span>
+                  <span className="text-xs text-on-surface-variant ml-auto shrink-0">{fmtDate(evt.timestamp)}</span>
                 </li>
               ))}
             </ul>

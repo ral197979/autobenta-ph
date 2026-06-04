@@ -52,11 +52,11 @@ function DealerOnboardingCard({ dealer, healthScore }) {
   const score = healthScore?.score;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+    <div className="bg-surface-container-lowest rounded-xl border border-border-subtle p-5 space-y-4">
       {/* Header row */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2">
-          <p className="font-semibold text-gray-900 text-sm">{dealer.businessName || dealer.name || 'Unnamed Dealer'}</p>
+          <p className="font-semibold text-on-surface text-sm">{dealer.businessName || dealer.name || 'Unnamed Dealer'}</p>
           <span className="inline-flex items-center rounded-full bg-blue-50 text-blue-700 px-2 py-0.5 text-[11px] font-semibold">
             {planLabel}
           </span>
@@ -67,7 +67,7 @@ function DealerOnboardingCard({ dealer, healthScore }) {
           )}
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-gray-500">{completedCount} / {STEPS.length} steps</span>
+          <span className="text-xs text-on-surface-variant">{completedCount} / {STEPS.length} steps</span>
           <button onClick={markAll} className="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors">
             Mark All Complete
           </button>
@@ -75,7 +75,7 @@ function DealerOnboardingCard({ dealer, healthScore }) {
       </div>
 
       {/* Progress bar */}
-      <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+      <div className="w-full bg-surface-container rounded-full h-2 overflow-hidden">
         <div
           className="h-full bg-blue-600 rounded-full transition-all"
           style={{ width: `${pct}%` }}
@@ -98,7 +98,7 @@ function DealerOnboardingCard({ dealer, healthScore }) {
                   ? 'bg-blue-600 border-blue-600 text-white'
                   : isCurrent
                     ? 'border-blue-400 text-blue-700 bg-blue-50 ring-1 ring-blue-300 animate-pulse'
-                    : 'bg-gray-50 border-gray-200 text-gray-400'
+                    : 'bg-surface-container border-border-subtle text-on-surface-variant'
                 }`}
             >
               <span className="leading-tight text-center">{step}</span>
@@ -107,7 +107,7 @@ function DealerOnboardingCard({ dealer, healthScore }) {
         })}
       </div>
 
-      <p className="text-[11px] text-gray-400 italic">
+      <p className="text-[11px] text-on-surface-variant italic">
         Note: progress stored locally. Backend persistence coming soon.
       </p>
     </div>
@@ -137,17 +137,17 @@ export default function OnboardingCenter() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-gray-900">Onboarding Center</h1>
-        <p className="text-sm text-gray-500 mt-1">First dealer to Go Live</p>
+        <h1 className="text-xl font-bold text-on-surface">Onboarding Center</h1>
+        <p className="text-sm text-on-surface-variant mt-1">First dealer to Go Live</p>
       </div>
 
       {isLoading ? (
         <div className="space-y-3">
-          {[1, 2].map(i => <div key={i} className="h-40 bg-gray-50 rounded-xl animate-pulse" />)}
+          {[1, 2].map(i => <div key={i} className="h-40 bg-surface-container rounded-xl animate-pulse" />)}
         </div>
       ) : active.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-          <p className="text-gray-500 text-sm">No active dealers yet.</p>
+        <div className="bg-surface-container-lowest rounded-xl border border-border-subtle p-10 text-center">
+          <p className="text-on-surface-variant text-sm">No active dealers yet.</p>
         </div>
       ) : (
         <div className="space-y-4">

@@ -209,6 +209,11 @@ model User {
   listings            VehicleListing[]
   favorites           Favorite[]
   inquiriesSent       Inquiry[]         @relation("BuyerInquiries")
+  offersMade          Offer[]           @relation("BuyerOffers")
+  offersReceived      Offer[]           @relation("SellerOffers")
+  reviewsReceived     Review[]          @relation("SellerReviews")
+  reviewsWritten      Review[]          @relation("ReviewsWritten")
+  messagesSent        Message[]         @relation("MessagesSent")
   inspectionRequests  InspectionRequest[]
   financingRequests   FinancingRequest[]
   auditLogs           AuditLog[]
@@ -361,6 +366,7 @@ model VehicleListing {
   photos               VehiclePhoto[]
   favorites            Favorite[]
   inquiries            Inquiry[]
+  offers               Offer[]
   inspectionRequests   InspectionRequest[]
   financingRequests    FinancingRequest[]
   aiAnalyses           AIAnalysis[]
@@ -431,8 +437,61 @@ model Inquiry {
   updatedAt   DateTime      @updatedAt
 
   lead Lead?
+  messages Message[]
 
   @@map("inquiries")
+}
+
+model Offer {
+  id            String         @id @default(uuid())
+  listingId     String
+  listing       VehicleListing @relation(fields: [listingId], references: [id])
+  buyerId       String
+  buyer         User           @relation("BuyerOffers", fields: [buyerId], references: [id])
+  sellerId      String
+  seller        User           @relation("SellerOffers", fields: [sellerId], references: [id])
+  amount        Decimal        @db.Decimal(12, 2)
+  counterAmount Decimal?       @db.Decimal(12, 2)
+  message       String?
+  status        OfferStatus    @default(pending)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@map("offers")
+}
+
+enum OfferStatus {
+  pending
+  countered
+  accepted
+  declined
+  withdrawn
+}
+
+model Review {
+  id         String         @id @default(uuid())
+  sellerId   String
+  seller     User           @relation("SellerReviews", fields: [sellerId], references: [id])
+  reviewerId String
+  reviewer   User           @relation("ReviewsWritten", fields: [reviewerId], references: [id])
+  listingId  String?
+  rating     Int
+  comment    String?
+  createdAt  DateTime       @default(now())
+
+  @@map("reviews")
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  inquiryId String
+  inquiry   Inquiry  @relation(fields: [inquiryId], references: [id])
+  senderId  String
+  sender    User     @relation("MessagesSent", fields: [senderId], references: [id])
+  body      String
+  createdAt DateTime @default(now())
+
+  @@map("messages")
 }
 
 model Lead {

@@ -4,7 +4,7 @@ import { Users, TrendingUp, DollarSign, Trophy, X, Plus, Phone, Mail, MapPin, Ch
 import api from '../../api/client';
 
 const STAGES = [
-  { key: 'prospect',       label: 'Prospect',        color: 'bg-gray-100 text-gray-700',   bar: 'bg-gray-400' },
+  { key: 'prospect',       label: 'Prospect',        color: 'bg-surface-container text-on-surface',   bar: 'bg-gray-400' },
   { key: 'contacted',      label: 'Contacted',       color: 'bg-blue-100 text-blue-700',   bar: 'bg-blue-500' },
   { key: 'demo_scheduled', label: 'Demo Scheduled',  color: 'bg-indigo-100 text-indigo-700', bar: 'bg-indigo-500' },
   { key: 'demo_completed', label: 'Demo Done',       color: 'bg-purple-100 text-purple-700', bar: 'bg-purple-500' },
@@ -16,7 +16,7 @@ const STAGES = [
 
 const ACTIVITY_TYPES = ['note', 'call', 'email', 'demo_scheduled'];
 const ACTIVITY_COLORS = {
-  note:           'bg-gray-100 text-gray-600',
+  note:           'bg-surface-container text-on-surface-variant',
   call:           'bg-blue-100 text-blue-700',
   email:          'bg-indigo-100 text-indigo-700',
   demo_scheduled: 'bg-purple-100 text-purple-700',
@@ -26,7 +26,7 @@ const TIER_CONFIG = {
   hot:         { label: '🔥 Hot',        bg: 'bg-red-100',    text: 'text-red-700',    border: 'border-red-200' },
   warm:        { label: '☀️ Warm',       bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-200' },
   cold:        { label: '❄️ Cold',       bg: 'bg-blue-100',   text: 'text-blue-700',   border: 'border-blue-200' },
-  unqualified: { label: '○ Unqualified', bg: 'bg-gray-100',   text: 'text-gray-500',   border: 'border-gray-200' },
+  unqualified: { label: '○ Unqualified', bg: 'bg-surface-container',   text: 'text-on-surface-variant',   border: 'border-border-subtle' },
 };
 
 const INVENTORY_OPTIONS = ['<10', '10-25', '25-50', '50+'];
@@ -56,7 +56,7 @@ function ProspectCard({ prospect, onClick }) {
   const lastActivity = prospect.activities?.[prospect.activities.length - 1];
   return (
     <div
-      className="bg-white rounded-xl border border-cardborder p-3 cursor-pointer hover:shadow-md hover:border-deepblue/30 transition-all"
+      className="bg-surface-container-lowest rounded-xl border border-border-subtle p-3 cursor-pointer hover:shadow-md hover:border-primary/30 transition-all"
       onClick={() => onClick(prospect)}
     >
       {prospect.qualificationTier && (() => {
@@ -68,16 +68,16 @@ function ProspectCard({ prospect, onClick }) {
           </span>
         );
       })()}
-      <p className="font-semibold text-ink text-sm leading-tight">{prospect.dealerName}</p>
+      <p className="font-semibold text-on-surface text-sm leading-tight">{prospect.dealerName}</p>
       {prospect.contactName && (
-        <p className="text-xs text-slatetext mt-0.5">{prospect.contactName}{prospect.phone && ` · ${prospect.phone}`}</p>
+        <p className="text-xs text-on-surface-variant mt-0.5">{prospect.contactName}{prospect.phone && ` · ${prospect.phone}`}</p>
       )}
       <div className="flex items-center justify-between mt-2">
-        <span className="text-xs font-bold text-deepblue">{fmt(prospect.expectedMrr)}<span className="font-normal text-slatetext">/mo</span></span>
-        <span className="text-xs text-slatetext">{prospect.closeProbability ?? 0}%</span>
+        <span className="text-xs font-bold text-primary">{fmt(prospect.expectedMrr)}<span className="font-normal text-on-surface-variant">/mo</span></span>
+        <span className="text-xs text-on-surface-variant">{prospect.closeProbability ?? 0}%</span>
       </div>
       {prospect.owner && (
-        <span className="inline-flex items-center rounded-full bg-softbg px-2 py-0.5 text-[10px] text-slatetext mt-1.5">
+        <span className="inline-flex items-center rounded-full bg-surface-container px-2 py-0.5 text-[10px] text-on-surface-variant mt-1.5">
           {prospect.owner}
         </span>
       )}
@@ -85,7 +85,7 @@ function ProspectCard({ prospect, onClick }) {
         <p className="text-[11px] text-orange-600 mt-1">Follow up: {fmtDate(prospect.nextFollowUpAt)}</p>
       )}
       {lastActivity && (
-        <p className="text-[11px] text-slatetext mt-1 truncate">{lastActivity.content}</p>
+        <p className="text-[11px] text-on-surface-variant mt-1 truncate">{lastActivity.content}</p>
       )}
     </div>
   );
@@ -112,57 +112,57 @@ function AddProspectModal({ onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6">
+      <div className="bg-surface-container-lowest rounded-2xl shadow-2xl w-full max-w-lg mx-4 p-6">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-bold text-ink">Add Prospect</h2>
-          <button onClick={onClose} className="text-slatetext hover:text-ink"><X className="h-5 w-5" /></button>
+          <h2 className="text-base font-bold text-on-surface">Add Prospect</h2>
+          <button onClick={onClose} className="text-on-surface-variant hover:text-on-surface"><X className="h-5 w-5" /></button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slatetext mb-1">Dealer Name *</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Dealer Name *</label>
               <input className="input w-full" required value={form.dealerName} onChange={e => set('dealerName', e.target.value)} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slatetext mb-1">Contact Name *</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Contact Name *</label>
               <input className="input w-full" required value={form.contactName} onChange={e => set('contactName', e.target.value)} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slatetext mb-1">Phone</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Phone</label>
               <input className="input w-full" type="tel" value={form.phone} onChange={e => set('phone', e.target.value)} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slatetext mb-1">Email</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Email</label>
               <input className="input w-full" type="email" value={form.email} onChange={e => set('email', e.target.value)} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slatetext mb-1">Location</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Location</label>
               <input className="input w-full" value={form.location} onChange={e => set('location', e.target.value)} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slatetext mb-1">Inventory Size</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Inventory Size</label>
               <select className="input w-full" value={form.inventorySize} onChange={e => set('inventorySize', e.target.value)}>
                 {INVENTORY_OPTIONS.map(o => <option key={o}>{o}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slatetext mb-1">Current System</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Current System</label>
               <select className="input w-full" value={form.currentSystem} onChange={e => set('currentSystem', e.target.value)}>
                 {CURRENT_SYSTEM_OPTIONS.map(o => <option key={o}>{o}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slatetext mb-1">Source</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Source</label>
               <select className="input w-full" value={form.source} onChange={e => set('source', e.target.value)}>
                 {SOURCE_OPTIONS.map(o => <option key={o}>{o}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slatetext mb-1">Expected MRR (₱)</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Expected MRR (₱)</label>
               <input className="input w-full" type="number" min="0" value={form.expectedMrr} onChange={e => set('expectedMrr', e.target.value)} />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slatetext mb-1">Owner</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Owner</label>
               <input className="input w-full" placeholder="e.g. Rommel" value={form.owner} onChange={e => set('owner', e.target.value)} />
             </div>
           </div>
@@ -170,7 +170,7 @@ function AddProspectModal({ onClose, onSuccess }) {
             <p className="text-xs text-red-600">Failed to add prospect. Please try again.</p>
           )}
           <div className="flex justify-end gap-3 pt-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-slatetext hover:text-ink">Cancel</button>
+            <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-on-surface-variant hover:text-on-surface">Cancel</button>
             <button type="submit" disabled={mutation.isPending} className="btn-primary px-5 py-2 text-sm disabled:opacity-50">
               {mutation.isPending ? 'Adding…' : 'Add Prospect'}
             </button>
@@ -234,14 +234,14 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
   const setEdit = (k, v) => setEditForm(f => ({ ...f, [k]: v }));
 
   return (
-    <div className="fixed inset-y-0 right-0 z-40 w-full max-w-md bg-white shadow-2xl flex flex-col overflow-y-auto">
+    <div className="fixed inset-y-0 right-0 z-40 w-full max-w-md bg-surface-container-lowest shadow-2xl flex flex-col overflow-y-auto">
       {/* Header */}
-      <div className="flex items-start justify-between p-5 border-b border-cardborder sticky top-0 bg-white z-10">
+      <div className="flex items-start justify-between p-5 border-b border-border-subtle sticky top-0 bg-surface-container-lowest z-10">
         <div className="flex-1 min-w-0">
-          <h2 className="font-bold text-ink text-base leading-tight">{prospect.dealerName}</h2>
+          <h2 className="font-bold text-on-surface text-base leading-tight">{prospect.dealerName}</h2>
           <div className="mt-2">
             <select
-              className="rounded-lg border border-cardborder bg-softbg px-3 py-1.5 text-xs font-semibold text-ink"
+              className="rounded-lg border border-border-subtle bg-surface-container px-3 py-1.5 text-xs font-semibold text-on-surface"
               value={prospect.stage}
               onChange={handleStageChange}
               disabled={stageMutation.isPending}
@@ -250,7 +250,7 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
             </select>
           </div>
         </div>
-        <button onClick={onClose} className="ml-3 shrink-0 text-slatetext hover:text-ink mt-0.5">
+        <button onClick={onClose} className="ml-3 shrink-0 text-on-surface-variant hover:text-on-surface mt-0.5">
           <X className="h-5 w-5" />
         </button>
       </div>
@@ -258,20 +258,20 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
       <div className="p-5 space-y-5 flex-1">
         {/* Contact info */}
         <div className="card p-4 space-y-1.5">
-          <p className="text-xs font-bold text-slatetext uppercase tracking-wide mb-2">Contact</p>
-          {prospect.contactName && <p className="text-sm text-ink font-medium">{prospect.contactName}</p>}
+          <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-2">Contact</p>
+          {prospect.contactName && <p className="text-sm text-on-surface font-medium">{prospect.contactName}</p>}
           {prospect.phone && (
-            <p className="text-sm text-slatetext flex items-center gap-1.5"><Phone className="h-3.5 w-3.5" />{prospect.phone}</p>
+            <p className="text-sm text-on-surface-variant flex items-center gap-1.5"><Phone className="h-3.5 w-3.5" />{prospect.phone}</p>
           )}
           {prospect.email && (
-            <p className="text-sm text-slatetext flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" />{prospect.email}</p>
+            <p className="text-sm text-on-surface-variant flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" />{prospect.email}</p>
           )}
           {prospect.location && (
-            <p className="text-sm text-slatetext flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" />{prospect.location}</p>
+            <p className="text-sm text-on-surface-variant flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" />{prospect.location}</p>
           )}
-          {prospect.source && <p className="text-xs text-slatetext">Source: {prospect.source}</p>}
-          {prospect.currentSystem && <p className="text-xs text-slatetext">Current system: {prospect.currentSystem}</p>}
-          {prospect.inventorySize && <p className="text-xs text-slatetext">Inventory: {prospect.inventorySize} units</p>}
+          {prospect.source && <p className="text-xs text-on-surface-variant">Source: {prospect.source}</p>}
+          {prospect.currentSystem && <p className="text-xs text-on-surface-variant">Current system: {prospect.currentSystem}</p>}
+          {prospect.inventorySize && <p className="text-xs text-on-surface-variant">Inventory: {prospect.inventorySize} units</p>}
         </div>
 
         {/* Metrics */}
@@ -279,23 +279,23 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
           {editMode ? (
             <>
               <div>
-                <label className="block text-xs font-semibold text-slatetext mb-1">Expected MRR (₱)</label>
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">Expected MRR (₱)</label>
                 <input className="input w-full" type="number" value={editForm.expectedMrr || ''} onChange={e => setEdit('expectedMrr', e.target.value)} />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slatetext mb-1">Close Probability (%)</label>
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">Close Probability (%)</label>
                 <input className="input w-full" type="number" min="0" max="100" value={editForm.closeProbability || ''} onChange={e => setEdit('closeProbability', e.target.value)} />
               </div>
             </>
           ) : (
             <>
               <div className="card p-3 text-center">
-                <p className="text-xs text-slatetext mb-1">Expected MRR</p>
-                <p className="text-lg font-bold text-ink">{fmt(prospect.expectedMrr)}</p>
+                <p className="text-xs text-on-surface-variant mb-1">Expected MRR</p>
+                <p className="text-lg font-bold text-on-surface">{fmt(prospect.expectedMrr)}</p>
               </div>
               <div className="card p-3 text-center">
-                <p className="text-xs text-slatetext mb-1">Close Probability</p>
-                <p className="text-lg font-bold text-ink">{prospect.closeProbability ?? 0}%</p>
+                <p className="text-xs text-on-surface-variant mb-1">Close Probability</p>
+                <p className="text-lg font-bold text-on-surface">{prospect.closeProbability ?? 0}%</p>
               </div>
             </>
           )}
@@ -304,7 +304,7 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
         {/* Edit toggle */}
         {editMode ? (
           <form onSubmit={handleEditSubmit} className="card p-4 space-y-3">
-            <p className="text-xs font-bold text-slatetext uppercase tracking-wide">Edit Details</p>
+            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Edit Details</p>
             {[
               { k: 'dealerName', label: 'Dealer Name' },
               { k: 'contactName', label: 'Contact Name' },
@@ -314,25 +314,25 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
               { k: 'owner', label: 'Owner' },
             ].map(({ k, label, type = 'text' }) => (
               <div key={k}>
-                <label className="block text-xs font-semibold text-slatetext mb-1">{label}</label>
+                <label className="block text-xs font-semibold text-on-surface-variant mb-1">{label}</label>
                 <input className="input w-full" type={type} value={editForm[k] || ''} onChange={e => setEdit(k, e.target.value)} />
               </div>
             ))}
             <div>
-              <label className="block text-xs font-semibold text-slatetext mb-1">Inventory Size</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Inventory Size</label>
               <select className="input w-full" value={editForm.inventorySize || ''} onChange={e => setEdit('inventorySize', e.target.value)}>
                 {INVENTORY_OPTIONS.map(o => <option key={o}>{o}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slatetext mb-1">Next Follow-Up</label>
+              <label className="block text-xs font-semibold text-on-surface-variant mb-1">Next Follow-Up</label>
               <input className="input w-full" type="date" value={editForm.nextFollowUpAt ? editForm.nextFollowUpAt.slice(0, 10) : ''} onChange={e => setEdit('nextFollowUpAt', e.target.value)} />
             </div>
-            <div className="border-t border-cardborder pt-4 mt-4">
-              <h4 className="text-xs font-semibold text-slatetext uppercase tracking-wide mb-3">Qualification</h4>
+            <div className="border-t border-border-subtle pt-4 mt-4">
+              <h4 className="text-xs font-semibold text-on-surface-variant uppercase tracking-wide mb-3">Qualification</h4>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs text-slatetext">Monthly Units Sold</label>
+                  <label className="text-xs text-on-surface-variant">Monthly Units Sold</label>
                   <input
                     type="number" min="0"
                     className="input mt-0.5 w-full text-sm"
@@ -341,7 +341,7 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-slatetext">Sales Team Size</label>
+                  <label className="text-xs text-on-surface-variant">Sales Team Size</label>
                   <input
                     type="number" min="1"
                     className="input mt-0.5 w-full text-sm"
@@ -350,7 +350,7 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-slatetext">Pain Level (1-5)</label>
+                  <label className="text-xs text-on-surface-variant">Pain Level (1-5)</label>
                   <select className="input mt-0.5 w-full text-sm"
                     value={editForm.painLevel ?? ''}
                     onChange={e => setEdit('painLevel', e.target.value === '' ? null : parseInt(e.target.value))}>
@@ -359,7 +359,7 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs text-slatetext">Buying Timeline</label>
+                  <label className="text-xs text-on-surface-variant">Buying Timeline</label>
                   <select className="input mt-0.5 w-full text-sm"
                     value={editForm.buyingTimeline ?? ''}
                     onChange={e => setEdit('buyingTimeline', e.target.value || null)}>
@@ -371,7 +371,7 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs text-slatetext">Budget</label>
+                  <label className="text-xs text-on-surface-variant">Budget</label>
                   <select className="input mt-0.5 w-full text-sm"
                     value={editForm.budgetRange ?? ''}
                     onChange={e => setEdit('budgetRange', e.target.value || null)}>
@@ -385,7 +385,7 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
                   <input type="checkbox" id="dmAccess" className="rounded"
                     checked={editForm.decisionMakerAccess ?? false}
                     onChange={e => setEdit('decisionMakerAccess', e.target.checked)} />
-                  <label htmlFor="dmAccess" className="text-sm text-ink">Decision maker in conversation</label>
+                  <label htmlFor="dmAccess" className="text-sm text-on-surface">Decision maker in conversation</label>
                 </div>
               </div>
               {prospect.qualificationTier && (() => {
@@ -393,40 +393,40 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
                 return (
                   <div className={`mt-3 p-3 rounded-lg border ${t.border} ${t.bg} flex items-center justify-between`}>
                     <span className={`text-sm font-semibold ${t.text}`}>{t.label}</span>
-                    <span className="text-xs text-slatetext">Score: {prospect.qualificationScore ?? '—'} / 100</span>
+                    <span className="text-xs text-on-surface-variant">Score: {prospect.qualificationScore ?? '—'} / 100</span>
                   </div>
                 );
               })()}
             </div>
             {editMutation.isError && <p className="text-xs text-red-600">Save failed. Try again.</p>}
             <div className="flex gap-2 justify-end">
-              <button type="button" onClick={() => setEditMode(false)} className="px-3 py-1.5 text-xs text-slatetext hover:text-ink">Cancel</button>
+              <button type="button" onClick={() => setEditMode(false)} className="px-3 py-1.5 text-xs text-on-surface-variant hover:text-on-surface">Cancel</button>
               <button type="submit" disabled={editMutation.isPending} className="btn-primary px-4 py-1.5 text-xs disabled:opacity-50">
                 {editMutation.isPending ? 'Saving…' : 'Save'}
               </button>
             </div>
           </form>
         ) : (
-          <button onClick={() => setEditMode(true)} className="w-full rounded-xl border border-cardborder py-2 text-xs font-semibold text-slatetext hover:bg-softbg hover:text-ink transition-colors">
+          <button onClick={() => setEditMode(true)} className="w-full rounded-xl border border-border-subtle py-2 text-xs font-semibold text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
             Edit Details
           </button>
         )}
 
         {/* Activity log */}
         <div>
-          <p className="text-xs font-bold text-slatetext uppercase tracking-wide mb-3">Activity Log</p>
+          <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-3">Activity Log</p>
           {(!prospect.activities || prospect.activities.length === 0) ? (
-            <p className="text-xs text-slatetext">No activities yet.</p>
+            <p className="text-xs text-on-surface-variant">No activities yet.</p>
           ) : (
             <div className="space-y-2">
               {[...prospect.activities].reverse().map((act, i) => (
                 <div key={i} className="flex gap-2 items-start">
-                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0 mt-0.5 ${ACTIVITY_COLORS[act.type] || 'bg-gray-100 text-gray-600'}`}>
+                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold shrink-0 mt-0.5 ${ACTIVITY_COLORS[act.type] || 'bg-surface-container text-on-surface-variant'}`}>
                     {act.type}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-ink leading-snug">{act.content}</p>
-                    {act.createdAt && <p className="text-[11px] text-slatetext mt-0.5">{fmtDate(act.createdAt)}</p>}
+                    <p className="text-sm text-on-surface leading-snug">{act.content}</p>
+                    {act.createdAt && <p className="text-[11px] text-on-surface-variant mt-0.5">{fmtDate(act.createdAt)}</p>}
                   </div>
                 </div>
               ))}
@@ -436,7 +436,7 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
 
         {/* Log activity form */}
         <form onSubmit={handleLogActivity} className="card p-4 space-y-3">
-          <p className="text-xs font-bold text-slatetext uppercase tracking-wide">Log Activity</p>
+          <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wide">Log Activity</p>
           <div className="flex gap-2">
             {ACTIVITY_TYPES.map(t => (
               <button
@@ -444,7 +444,7 @@ function DetailPanel({ prospect, onClose, onUpdate }) {
                 type="button"
                 onClick={() => setLogType(t)}
                 className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors capitalize ${
-                  logType === t ? 'bg-deepblue text-white' : 'bg-softbg text-slatetext hover:text-ink'
+                  logType === t ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface-variant hover:text-on-surface'
                 }`}
               >
                 {t.replace('_', ' ')}
@@ -504,8 +504,8 @@ export default function FoundingDealersCRM() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-xl font-bold text-ink">Founding Dealer Pipeline</h1>
-          <p className="text-sm text-slatetext mt-1">Track every prospect from first contact to closed deal.</p>
+          <h1 className="text-xl font-bold text-on-surface">Founding Dealer Pipeline</h1>
+          <p className="text-sm text-on-surface-variant mt-1">Track every prospect from first contact to closed deal.</p>
         </div>
         <button
           onClick={() => setShowAdd(true)}
@@ -519,7 +519,7 @@ export default function FoundingDealersCRM() {
       {/* Summary stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: 'Total Prospects', value: totalProspects, icon: Users, color: 'text-deepblue bg-deepblue/10' },
+          { label: 'Total Prospects', value: totalProspects, icon: Users, color: 'text-primary bg-primary/10' },
           { label: 'Pipeline Value', value: fmt(pipelineValue) + '/mo', icon: DollarSign, color: 'text-emerald-600 bg-emerald-100' },
           { label: 'Weighted MRR', value: fmt(Math.round(weightedMrr)) + '/mo', icon: TrendingUp, color: 'text-purple-600 bg-purple-100', sub: 'probability adjusted' },
           { label: 'Won Dealers', value: wonDealers, icon: Trophy, color: 'text-amber-600 bg-amber-100' },
@@ -529,9 +529,9 @@ export default function FoundingDealersCRM() {
               <Icon className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xl font-bold text-ink">{isLoading ? <span className="inline-block h-6 w-16 bg-softbg rounded animate-pulse" /> : value}</p>
-              <p className="text-xs text-slatetext">{label}</p>
-              {sub && <p className="text-[11px] text-slatetext">{sub}</p>}
+              <p className="text-xl font-bold text-on-surface">{isLoading ? <span className="inline-block h-6 w-16 bg-surface-container rounded animate-pulse" /> : value}</p>
+              <p className="text-xs text-on-surface-variant">{label}</p>
+              {sub && <p className="text-[11px] text-on-surface-variant">{sub}</p>}
             </div>
           </div>
         ))}
@@ -542,9 +542,9 @@ export default function FoundingDealersCRM() {
         <div className="flex gap-3 overflow-x-auto pb-2">
           {STAGES.map(s => (
             <div key={s.key} className="min-w-[200px] space-y-2">
-              <div className="h-8 bg-softbg rounded-lg animate-pulse" />
-              <div className="h-24 bg-softbg rounded-xl animate-pulse" />
-              <div className="h-20 bg-softbg rounded-xl animate-pulse" />
+              <div className="h-8 bg-surface-container rounded-lg animate-pulse" />
+              <div className="h-24 bg-surface-container rounded-xl animate-pulse" />
+              <div className="h-20 bg-surface-container rounded-xl animate-pulse" />
             </div>
           ))}
         </div>
@@ -560,18 +560,18 @@ export default function FoundingDealersCRM() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                       <div className={`h-2 w-2 rounded-full ${stage.bar}`} />
-                      <span className="text-xs font-bold text-ink">{stage.label}</span>
+                      <span className="text-xs font-bold text-on-surface">{stage.label}</span>
                     </div>
-                    <span className="text-[11px] bg-softbg rounded-full px-1.5 py-0.5 text-slatetext font-medium">{cards.length}</span>
+                    <span className="text-[11px] bg-surface-container rounded-full px-1.5 py-0.5 text-on-surface-variant font-medium">{cards.length}</span>
                   </div>
                   {stageMrr > 0 && (
-                    <p className="text-[11px] text-slatetext -mt-1">{fmt(stageMrr)}/mo</p>
+                    <p className="text-[11px] text-on-surface-variant -mt-1">{fmt(stageMrr)}/mo</p>
                   )}
                   {/* Cards */}
                   <div className="space-y-2">
                     {cards.length === 0 ? (
-                      <div className="rounded-xl border border-dashed border-cardborder p-4 text-center">
-                        <p className="text-xs text-slatetext/50">Empty</p>
+                      <div className="rounded-xl border border-dashed border-border-subtle p-4 text-center">
+                        <p className="text-xs text-on-surface-variant/50">Empty</p>
                       </div>
                     ) : (
                       cards.map(p => (

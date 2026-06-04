@@ -4,7 +4,7 @@ import api from '../../api/client';
 import { formatPrice, formatRelativeTime } from '../../utils/format';
 
 const SEVERITY_COLORS = {
-  low: 'bg-gray-100 text-gray-600',
+  low: 'bg-surface-container text-on-surface-variant',
   medium: 'bg-yellow-100 text-yellow-700',
   high: 'bg-red-100 text-red-700',
   critical: 'bg-red-200 text-red-900',
@@ -15,14 +15,14 @@ function FraudFlag({ flag, onResolve }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className="border rounded-lg p-3 bg-white">
+    <div className="border rounded-lg p-3 bg-surface-container-lowest">
       <div className="flex items-start justify-between gap-2">
         <div>
           <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${SEVERITY_COLORS[flag.severity]}`}>
             {flag.severity}
           </span>
-          <span className="ml-2 text-sm font-medium text-gray-800">{flag.title}</span>
-          <p className="text-xs text-gray-500 mt-0.5">{flag.description}</p>
+          <span className="ml-2 text-sm font-medium text-on-surface">{flag.title}</span>
+          <p className="text-xs text-on-surface-variant mt-0.5">{flag.description}</p>
         </div>
         {!flag.isResolved && (
           <button
@@ -87,11 +87,11 @@ export default function FraudReview() {
     <div className="max-w-6xl mx-auto p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Fraud Review</h1>
-          <p className="text-sm text-gray-500">{total} flagged listings</p>
+          <h1 className="text-2xl font-bold text-on-surface">Fraud Review</h1>
+          <p className="text-sm text-on-surface-variant">{total} flagged listings</p>
         </div>
         <div className="flex items-center gap-3">
-          <label className="text-sm text-gray-600">Min Score:</label>
+          <label className="text-sm text-on-surface-variant">Min Score:</label>
           <select
             value={minScore}
             onChange={e => { setMinScore(+e.target.value); setPage(1); }}
@@ -106,16 +106,16 @@ export default function FraudReview() {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12 text-gray-500">Loading...</div>
+        <div className="text-center py-12 text-on-surface-variant">Loading...</div>
       ) : (
         <div className="grid gap-4">
           {listings.length === 0 && (
-            <div className="text-center py-12 text-gray-400 bg-white rounded-lg border">
+            <div className="text-center py-12 text-on-surface-variant bg-surface-container-lowest rounded-lg border">
               No flagged listings.
             </div>
           )}
           {listings.map(listing => (
-            <div key={listing.id} className="bg-white rounded-lg border p-4">
+            <div key={listing.id} className="bg-surface-container-lowest rounded-lg border p-4">
               <div className="flex gap-4">
                 <img
                   src={listing.photos?.[0]?.url || '/placeholder-car.jpg'}
@@ -125,10 +125,10 @@ export default function FraudReview() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="font-semibold text-gray-900">
+                      <h3 className="font-semibold text-on-surface">
                         {listing.year} {listing.make} {listing.model}
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-on-surface-variant">
                         {formatPrice(listing.price)} · {listing.seller?.name} · {listing.status}
                       </p>
                     </div>
@@ -149,14 +149,14 @@ export default function FraudReview() {
                       </button>
                       <button
                         onClick={() => setSelectedListing(selectedListing === listing.id ? null : listing.id)}
-                        className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded hover:bg-gray-200"
+                        className="text-xs bg-surface-container text-on-surface px-2 py-1 rounded hover:bg-surface-container-high"
                       >
                         {selectedListing === listing.id ? 'Hide Flags' : 'View Flags'}
                       </button>
                     </div>
                   </div>
                   {listing.sellerRiskProfile && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-on-surface-variant mt-1">
                       Seller Risk: <span className={`font-medium ${
                         listing.sellerRiskProfile.riskLevel === 'critical' ? 'text-red-700' :
                         listing.sellerRiskProfile.riskLevel === 'high' ? 'text-orange-600' :
@@ -189,7 +189,7 @@ export default function FraudReview() {
             <button
               key={p}
               onClick={() => setPage(p)}
-              className={`px-3 py-1 rounded border text-sm ${p === page ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-300'}`}
+              className={`px-3 py-1 rounded border text-sm ${p === page ? 'bg-blue-600 text-white border-blue-600' : 'border-border-subtle'}`}
             >
               {p}
             </button>

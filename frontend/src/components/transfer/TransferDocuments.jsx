@@ -5,7 +5,7 @@ const PARTIES = [
     id: 'seller',
     label: 'Seller',
     icon: User,
-    color: 'text-deepblue',
+    color: 'text-primary',
     bg: 'bg-blue-50',
     border: 'border-blue-100',
     items: [
@@ -21,7 +21,7 @@ const PARTIES = [
     id: 'buyer',
     label: 'Buyer',
     icon: Users,
-    color: 'text-electric',
+    color: 'text-primary',
     bg: 'bg-indigo-50',
     border: 'border-indigo-100',
     items: [
@@ -58,15 +58,15 @@ export default function TransferDocuments() {
           className={`rounded-2xl border ${border} ${bg} p-5`}
         >
           <div className="flex items-center gap-2 mb-4">
-            <div className={`flex h-9 w-9 items-center justify-center rounded-xl bg-white shadow-sm`}>
+            <div className={`flex h-9 w-9 items-center justify-center rounded-xl bg-surface-container-lowest shadow-sm`}>
               <Icon className={`h-5 w-5 ${color}`} />
             </div>
-            <h3 className="font-bold text-ink">{label} Documents</h3>
+            <h3 className="font-bold text-on-surface">{label} Documents</h3>
           </div>
           <ul className="space-y-2.5">
             {items.map((item) => (
-              <li key={item} className="flex items-start gap-2 text-sm text-slatetext">
-                <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5 text-slatetext/50" />
+              <li key={item} className="flex items-start gap-2 text-sm text-on-surface-variant">
+                <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5 text-on-surface-variant/50" />
                 {item}
               </li>
             ))}

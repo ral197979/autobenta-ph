@@ -16,12 +16,12 @@ const NAV_SECTIONS = [
 
 function Section({ id, icon: Icon, label, children }) {
   return (
-    <section id={id} className="scroll-mt-20 py-12 border-b border-cardborder last:border-0">
+    <section id={id} className="scroll-mt-20 py-12 border-b border-border-subtle last:border-0">
       <div className="flex items-center gap-3 mb-8">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-deepblue/10">
-          <Icon className="h-5 w-5 text-deepblue" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+          <Icon className="h-5 w-5 text-primary" />
         </div>
-        <h2 className="text-xl font-bold text-ink">{label}</h2>
+        <h2 className="text-xl font-bold text-on-surface">{label}</h2>
       </div>
       {children}
     </section>
@@ -37,7 +37,7 @@ export default function OwnershipTransfer() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Hero */}
       <div className="relative overflow-hidden bg-ink text-white">
         <div className="pointer-events-none absolute inset-0">
@@ -70,7 +70,7 @@ export default function OwnershipTransfer() {
       </div>
 
       {/* Sticky section nav */}
-      <div className="sticky top-16 z-20 border-b border-cardborder bg-white/90 backdrop-blur-md">
+      <div className="sticky top-16 z-20 border-b border-border-subtle bg-surface/90 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex gap-1 overflow-x-auto py-2 scrollbar-hide">
             {NAV_SECTIONS.map(({ id, icon: Icon, label }) => (
@@ -78,7 +78,7 @@ export default function OwnershipTransfer() {
                 key={id}
                 type="button"
                 onClick={() => scrollTo(id)}
-                className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-slatetext transition-colors hover:bg-softbg hover:text-ink"
+                className="flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface"
               >
                 <Icon className="h-4 w-4" />
                 {label}
@@ -91,7 +91,7 @@ export default function OwnershipTransfer() {
       {/* Main content */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Section id="checklist" icon={ClipboardList} label="Ownership Transfer Checklist">
-          <p className="text-sm text-slatetext mb-6 max-w-2xl">
+          <p className="text-sm text-on-surface-variant mb-6 max-w-2xl">
             Track each step of your transfer. Progress is saved in your browser so you can pick up where you left off.
           </p>
           <div className="max-w-2xl">
@@ -100,28 +100,28 @@ export default function OwnershipTransfer() {
         </Section>
 
         <Section id="documents" icon={BookOpen} label="Required Documents">
-          <p className="text-sm text-slatetext mb-6 max-w-2xl">
+          <p className="text-sm text-on-surface-variant mb-6 max-w-2xl">
             Gather every document before visiting the LTO office. Incomplete submissions are the leading cause of transfer delays.
           </p>
           <TransferDocuments />
         </Section>
 
         <Section id="estimator" icon={Calculator} label="Transfer Cost Estimator">
-          <p className="text-sm text-slatetext mb-6 max-w-2xl">
+          <p className="text-sm text-on-surface-variant mb-6 max-w-2xl">
             Estimate total fees before completing the transaction. Input your vehicle type, region, and purchase price for a detailed breakdown.
           </p>
           <TransferCostEstimator />
         </Section>
 
         <Section id="timeline" icon={Clock} label="Typical Transfer Timeline">
-          <p className="text-sm text-slatetext mb-6 max-w-2xl">
+          <p className="text-sm text-on-surface-variant mb-6 max-w-2xl">
             A realistic 7–14 day timeline for a standard private vehicle transfer in the Philippines.
           </p>
           <TransferTimeline />
         </Section>
 
         <Section id="faq" icon={HelpCircle} label="Frequently Asked Questions">
-          <p className="text-sm text-slatetext mb-6 max-w-2xl">
+          <p className="text-sm text-on-surface-variant mb-6 max-w-2xl">
             Answers to the most common questions buyers and sellers face during the transfer process.
           </p>
           <div className="max-w-2xl">

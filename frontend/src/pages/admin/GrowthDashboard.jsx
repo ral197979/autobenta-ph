@@ -35,7 +35,7 @@ function SeedAccountsButton() {
     <button
       onClick={run}
       disabled={state === 'loading'}
-      className="inline-flex items-center gap-2 rounded-lg border border-cardborder px-3 py-2 text-xs font-semibold text-slatetext hover:text-ink hover:bg-softbg transition-colors disabled:opacity-50"
+      className="inline-flex items-center gap-2 rounded-lg border border-border-subtle px-3 py-2 text-xs font-semibold text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors disabled:opacity-50"
     >
       <FlaskConical className="h-3.5 w-3.5" />
       {state === 'loading' ? 'Seeding…' : state === 'error' ? 'Failed — retry' : 'Seed Test Accounts'}
@@ -69,7 +69,7 @@ const DEMO_STATUS_COLORS = {
   scheduled:  'bg-blue-100 text-blue-700',
   completed:  'bg-emerald-100 text-emerald-700',
   no_show:    'bg-red-100 text-red-600',
-  cancelled:  'bg-gray-100 text-gray-600',
+  cancelled:  'bg-surface-container text-on-surface-variant',
 };
 
 function fmt(n) {
@@ -81,12 +81,12 @@ function fmtDate(x) {
   return new Date(x).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function StatCard({ label, value, sub, icon: Icon, color = 'text-deepblue bg-deepblue/10', loading }) {
+function StatCard({ label, value, sub, icon: Icon, color = 'text-primary bg-primary/10', loading }) {
   if (loading) {
     return (
       <div className="card p-5">
-        <div className="h-3 w-24 bg-softbg rounded animate-pulse mb-3" />
-        <div className="h-7 w-20 bg-softbg rounded animate-pulse" />
+        <div className="h-3 w-24 bg-surface-container rounded animate-pulse mb-3" />
+        <div className="h-7 w-20 bg-surface-container rounded animate-pulse" />
       </div>
     );
   }
@@ -98,9 +98,9 @@ function StatCard({ label, value, sub, icon: Icon, color = 'text-deepblue bg-dee
         </div>
       )}
       <div>
-        <p className="text-xs font-semibold text-slatetext">{label}</p>
-        <p className="text-2xl font-bold text-ink mt-0.5">{value}</p>
-        {sub && <p className="text-xs text-slatetext mt-0.5">{sub}</p>}
+        <p className="text-xs font-semibold text-on-surface-variant">{label}</p>
+        <p className="text-2xl font-bold text-on-surface mt-0.5">{value}</p>
+        {sub && <p className="text-xs text-on-surface-variant mt-0.5">{sub}</p>}
       </div>
     </div>
   );
@@ -128,7 +128,7 @@ function BulletEditor({ storageKey, title, defaults }) {
   useEffect(() => { localStorage.setItem(storageKey, JSON.stringify(items)); }, [storageKey, items]);
   return (
     <div className="card p-4 space-y-2">
-      <p className="text-xs font-bold text-slatetext uppercase tracking-wide">{title}</p>
+      <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wide">{title}</p>
       {items.map((item, i) => (
         <input
           key={i}
@@ -159,15 +159,15 @@ function ExecutiveView() {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
       {/* Dealer #1 Status */}
       <div className="card p-5 col-span-1">
-        <p className="text-xs font-bold text-slatetext uppercase tracking-wide mb-3">Dealer #1 Status</p>
+        <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-3">Dealer #1 Status</p>
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
-            <p className="text-xs text-slatetext">Current MRR</p>
-            <p className="font-bold text-ink">₱0</p>
+            <p className="text-xs text-on-surface-variant">Current MRR</p>
+            <p className="font-bold text-on-surface">₱0</p>
           </div>
           <div>
-            <p className="text-xs text-slatetext">Pipeline MRR</p>
-            <p className="font-bold text-ink">₱{(closingSummary?.totalPipeline || 0).toLocaleString()}</p>
+            <p className="text-xs text-on-surface-variant">Pipeline MRR</p>
+            <p className="font-bold text-on-surface">₱{(closingSummary?.totalPipeline || 0).toLocaleString()}</p>
           </div>
         </div>
         <div className="mt-3 space-y-1 text-sm">
@@ -178,8 +178,8 @@ function ExecutiveView() {
             { label: 'Renewal Probability', value: '—' },
           ].map(({ label, value }) => (
             <div key={label} className="flex justify-between">
-              <span className="text-slatetext text-xs">{label}</span>
-              <span className="font-semibold text-ink text-xs">{value}</span>
+              <span className="text-on-surface-variant text-xs">{label}</span>
+              <span className="font-semibold text-on-surface text-xs">{value}</span>
             </div>
           ))}
         </div>
@@ -187,7 +187,7 @@ function ExecutiveView() {
 
       {/* Churn Risk */}
       <div className="card p-5">
-        <p className="text-xs font-bold text-slatetext uppercase tracking-wide mb-3">
+        <p className="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-3">
           Churn Risk
           {risks.length > 0 && (
             <span className="ml-2 inline-flex items-center rounded-full bg-red-100 text-red-700 px-2 py-0.5 text-[10px]">
@@ -196,14 +196,14 @@ function ExecutiveView() {
           )}
         </p>
         {topRisks.length === 0 ? (
-          <p className="text-xs text-slatetext">No churn risks detected.</p>
+          <p className="text-xs text-on-surface-variant">No churn risks detected.</p>
         ) : (
           <div className="space-y-2">
             {topRisks.map((r, i) => (
               <div key={i} className="flex items-center justify-between text-sm">
-                <span className="text-ink font-medium truncate">{r.dealerName || r.name || '—'}</span>
+                <span className="text-on-surface font-medium truncate">{r.dealerName || r.name || '—'}</span>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs text-slatetext">{r.trigger || r.topTrigger || '—'}</span>
+                  <span className="text-xs text-on-surface-variant">{r.trigger || r.topTrigger || '—'}</span>
                   <span className="inline-flex items-center rounded-full bg-red-100 text-red-700 px-2 py-0.5 text-[10px] font-bold">
                     {r.riskScore ?? r.score ?? '—'}
                   </span>
@@ -266,15 +266,15 @@ export default function GrowthDashboard() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-xl font-bold text-ink">Growth Dashboard</h1>
-          <p className="text-sm text-slatetext mt-1">Path to first 5 paying dealers</p>
+          <h1 className="text-xl font-bold text-on-surface">Growth Dashboard</h1>
+          <p className="text-sm text-on-surface-variant mt-1">Path to first 5 paying dealers</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <SeedAccountsButton />
           <button
             onClick={() => setExecView(v => !v)}
             className={`rounded-lg border px-4 py-2 text-xs font-semibold transition-colors ${
-              execView ? 'bg-deepblue text-white border-deepblue' : 'border-cardborder text-slatetext hover:text-ink hover:bg-softbg'
+              execView ? 'bg-primary text-on-primary border-primary' : 'border-border-subtle text-on-surface-variant hover:text-on-surface hover:bg-surface-container'
             }`}
           >
             {execView ? 'Full Dashboard' : 'Executive View'}
@@ -287,21 +287,21 @@ export default function GrowthDashboard() {
       {/* Progress bar — 5 founding dealer slots */}
       <div className="card p-5">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-sm font-bold text-ink">Founding Dealers</p>
-          <span className="text-sm font-bold text-deepblue">{wonCount} of 5</span>
+          <p className="text-sm font-bold text-on-surface">Founding Dealers</p>
+          <span className="text-sm font-bold text-primary">{wonCount} of 5</span>
         </div>
         <div className="flex gap-2">
           {Array.from({ length: 5 }).map((_, i) => (
             <div
               key={i}
-              className={`flex-1 h-4 rounded-full transition-colors ${i < wonCount ? 'bg-emerald-500' : 'bg-softbg border border-cardborder'}`}
+              className={`flex-1 h-4 rounded-full transition-colors ${i < wonCount ? 'bg-emerald-500' : 'bg-surface-container border border-border-subtle'}`}
             />
           ))}
         </div>
         {wonCount === 0 ? (
           <p className="text-sm font-bold text-orange-600 mt-3">No paying dealers yet — start here.</p>
         ) : (
-          <p className="text-xs text-slatetext mt-2">{5 - wonCount} slot{5 - wonCount !== 1 ? 's' : ''} remaining</p>
+          <p className="text-xs text-on-surface-variant mt-2">{5 - wonCount} slot{5 - wonCount !== 1 ? 's' : ''} remaining</p>
         )}
       </div>
 
@@ -311,7 +311,7 @@ export default function GrowthDashboard() {
           label="Total Prospects"
           value={growth?.prospects?.total ?? 0}
           icon={Users}
-          color="text-deepblue bg-deepblue/10"
+          color="text-primary bg-primary/10"
           loading={isLoading}
         />
         <StatCard
@@ -376,13 +376,13 @@ export default function GrowthDashboard() {
       {/* Pipeline funnel */}
       <div className="card p-5">
         <div className="flex items-center gap-2 mb-4">
-          <BarChart2 className="h-4 w-4 text-slatetext" />
-          <h2 className="text-base font-semibold text-ink">Pipeline Funnel</h2>
+          <BarChart2 className="h-4 w-4 text-on-surface-variant" />
+          <h2 className="text-base font-semibold text-on-surface">Pipeline Funnel</h2>
         </div>
         {isLoading ? (
           <div className="space-y-2">
             {STAGES.map(s => (
-              <div key={s.key} className="h-7 bg-softbg rounded-lg animate-pulse" />
+              <div key={s.key} className="h-7 bg-surface-container rounded-lg animate-pulse" />
             ))}
           </div>
         ) : (
@@ -392,14 +392,14 @@ export default function GrowthDashboard() {
               const widthPct = Math.round((count / maxStageCount) * 100);
               return (
                 <div key={s.key} className="flex items-center gap-3">
-                  <span className="text-xs font-medium text-slatetext w-28 shrink-0">{s.label}</span>
-                  <div className="flex-1 bg-softbg rounded-full h-5 overflow-hidden">
+                  <span className="text-xs font-medium text-on-surface-variant w-28 shrink-0">{s.label}</span>
+                  <div className="flex-1 bg-surface-container rounded-full h-5 overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${BAR_COLORS[s.key]}`}
                       style={{ width: count === 0 ? '2px' : `${widthPct}%` }}
                     />
                   </div>
-                  <span className="text-xs font-bold text-ink w-6 text-right shrink-0">{count}</span>
+                  <span className="text-xs font-bold text-on-surface w-6 text-right shrink-0">{count}</span>
                 </div>
               );
             })}
@@ -409,21 +409,21 @@ export default function GrowthDashboard() {
 
       {/* Pending demos */}
       <div className="card p-5">
-        <h2 className="text-base font-semibold text-ink mb-4">Upcoming Demos</h2>
+        <h2 className="text-base font-semibold text-on-surface mb-4">Upcoming Demos</h2>
         {demosLoading ? (
           <div className="space-y-2">
-            {[1, 2, 3].map(i => <div key={i} className="h-10 bg-softbg rounded-lg animate-pulse" />)}
+            {[1, 2, 3].map(i => <div key={i} className="h-10 bg-surface-container rounded-lg animate-pulse" />)}
           </div>
         ) : pendingDemos.length === 0 ? (
           <div className="text-center py-8">
-            <CalendarCheck className="h-8 w-8 opacity-30 mx-auto mb-2 text-slatetext" />
-            <p className="text-sm text-slatetext">No upcoming demos scheduled.</p>
+            <CalendarCheck className="h-8 w-8 opacity-30 mx-auto mb-2 text-on-surface-variant" />
+            <p className="text-sm text-on-surface-variant">No upcoming demos scheduled.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-cardborder bg-softbg text-left text-xs font-semibold text-slatetext uppercase tracking-wide">
+                <tr className="border-b border-border-subtle bg-surface-container text-left text-xs font-semibold text-on-surface-variant uppercase tracking-wide">
                   {['Date', 'Name', 'Company', 'Type', 'Status'].map(h => (
                     <th key={h} className="px-4 py-2 whitespace-nowrap">{h}</th>
                   ))}
@@ -431,13 +431,13 @@ export default function GrowthDashboard() {
               </thead>
               <tbody className="divide-y divide-cardborder">
                 {pendingDemos.map((d, i) => (
-                  <tr key={d.id || d._id || i} className="hover:bg-softbg transition-colors">
-                    <td className="px-4 py-2.5 text-slatetext whitespace-nowrap">{fmtDate(d.scheduledAt)}</td>
-                    <td className="px-4 py-2.5 font-medium text-ink">{d.name || d.contactName || '—'}</td>
-                    <td className="px-4 py-2.5 text-slatetext">{d.company || d.dealerName || '—'}</td>
-                    <td className="px-4 py-2.5 text-slatetext capitalize">{d.demoType?.replace('_', ' ') || '—'}</td>
+                  <tr key={d.id || d._id || i} className="hover:bg-surface-container transition-colors">
+                    <td className="px-4 py-2.5 text-on-surface-variant whitespace-nowrap">{fmtDate(d.scheduledAt)}</td>
+                    <td className="px-4 py-2.5 font-medium text-on-surface">{d.name || d.contactName || '—'}</td>
+                    <td className="px-4 py-2.5 text-on-surface-variant">{d.company || d.dealerName || '—'}</td>
+                    <td className="px-4 py-2.5 text-on-surface-variant capitalize">{d.demoType?.replace('_', ' ') || '—'}</td>
                     <td className="px-4 py-2.5">
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${DEMO_STATUS_COLORS[d.status] || 'bg-gray-100 text-gray-600'}`}>
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${DEMO_STATUS_COLORS[d.status] || 'bg-surface-container text-on-surface-variant'}`}>
                         {d.status || '—'}
                       </span>
                     </td>
@@ -452,13 +452,13 @@ export default function GrowthDashboard() {
       {/* Lost reasons */}
       {Object.keys(reasonCounts).length > 0 && (
         <div className="card p-5">
-          <h2 className="text-base font-semibold text-ink mb-4">Lost Reasons</h2>
+          <h2 className="text-base font-semibold text-on-surface mb-4">Lost Reasons</h2>
           <div className="space-y-2">
             {Object.entries(reasonCounts)
               .sort((a, b) => b[1] - a[1])
               .map(([reason, count]) => (
                 <div key={reason} className="flex items-center justify-between">
-                  <span className="text-sm text-ink">{reason}</span>
+                  <span className="text-sm text-on-surface">{reason}</span>
                   <span className="text-xs font-bold bg-red-100 text-red-700 rounded-full px-2 py-0.5">{count}</span>
                 </div>
               ))}
@@ -468,16 +468,16 @@ export default function GrowthDashboard() {
 
       {/* Goals checklist */}
       <div className="card p-5">
-        <h2 className="text-base font-semibold text-ink mb-4">Goals Checklist</h2>
+        <h2 className="text-base font-semibold text-on-surface mb-4">Goals Checklist</h2>
         <div className="space-y-2.5">
           {GOALS.map(({ label, check }) => {
             const met = check(growth);
             return (
               <div key={label} className="flex items-center gap-2.5">
-                <div className={`h-5 w-5 rounded-full flex items-center justify-center shrink-0 ${met ? 'bg-emerald-500' : 'bg-softbg border border-cardborder'}`}>
+                <div className={`h-5 w-5 rounded-full flex items-center justify-center shrink-0 ${met ? 'bg-emerald-500' : 'bg-surface-container border border-border-subtle'}`}>
                   {met && <CheckCircle className="h-3.5 w-3.5 text-white" />}
                 </div>
-                <span className={`text-sm ${met ? 'text-emerald-700 font-medium line-through' : 'text-ink'}`}>{label}</span>
+                <span className={`text-sm ${met ? 'text-emerald-700 font-medium line-through' : 'text-on-surface'}`}>{label}</span>
               </div>
             );
           })}

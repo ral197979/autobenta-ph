@@ -53,7 +53,7 @@ const PLANS = [
     price: null,
     icon: Zap,
     features: ['Up to 5 listings', 'Basic access'],
-    color: 'border-cardborder',
+    color: 'border-border-subtle',
   },
   {
     id: 'verified',
@@ -122,19 +122,19 @@ export default function DealerApply() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-softbg flex items-center justify-center p-6">
+      <div className="min-h-screen bg-surface-container flex items-center justify-center p-6">
         <div className="card p-8 max-w-md w-full text-center">
           <div className="h-14 w-14 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="h-7 w-7 text-emerald-600" />
           </div>
-          <h2 className="text-xl font-bold text-ink mb-2">Application Submitted!</h2>
-          <p className="text-sm text-slatetext leading-relaxed mb-2">
+          <h2 className="text-xl font-bold text-on-surface mb-2">Application Submitted!</h2>
+          <p className="text-sm text-on-surface-variant leading-relaxed mb-2">
             Our team will review within 2–3 business days.
           </p>
           {user?.email && (
-            <p className="text-sm text-slatetext mb-6">
+            <p className="text-sm text-on-surface-variant mb-6">
               You'll receive an email at{' '}
-              <span className="font-semibold text-ink">{user.email}</span> when approved.
+              <span className="font-semibold text-on-surface">{user.email}</span> when approved.
             </p>
           )}
           <Link to="/dashboard" className="btn-primary inline-flex items-center gap-1.5">
@@ -146,12 +146,12 @@ export default function DealerApply() {
   }
 
   return (
-    <div className="min-h-screen bg-softbg py-10 px-4">
+    <div className="min-h-screen bg-surface-container py-10 px-4">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-ink">Become a Dealer</h1>
-          <p className="text-sm text-slatetext mt-1">Complete the form to apply for a dealer account on AutoBentaPH.</p>
+          <h1 className="text-2xl font-bold text-on-surface">Become a Dealer</h1>
+          <p className="text-sm text-on-surface-variant mt-1">Complete the form to apply for a dealer account on AutoBentaPH.</p>
         </div>
 
         {/* Step indicator */}
@@ -164,11 +164,11 @@ export default function DealerApply() {
               <div key={s.label} className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="flex flex-col items-center gap-1">
                   <div className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                    done ? 'bg-emerald-500 text-white' : active ? 'bg-deepblue text-white' : 'bg-cardborder text-slatetext'
+                    done ? 'bg-emerald-500 text-white' : active ? 'bg-primary text-on-primary' : 'bg-cardborder text-on-surface-variant'
                   }`}>
                     {done ? '✓' : n}
                   </div>
-                  <span className={`text-[10px] font-medium whitespace-nowrap ${active ? 'text-deepblue' : 'text-slatetext'}`}>
+                  <span className={`text-[10px] font-medium whitespace-nowrap ${active ? 'text-primary' : 'text-on-surface-variant'}`}>
                     {s.label}
                   </span>
                 </div>
@@ -184,13 +184,13 @@ export default function DealerApply() {
         <div className="card p-6">
           {step === 1 && (
             <div className="space-y-4">
-              <h2 className="font-bold text-ink text-lg">Business Information</h2>
+              <h2 className="font-bold text-on-surface text-lg">Business Information</h2>
               <div>
-                <label className="block text-sm font-medium text-ink mb-1">Business Name <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-medium text-on-surface mb-1">Business Name <span className="text-red-500">*</span></label>
                 <input className="input" value={form.businessName} onChange={(e) => set('businessName', e.target.value)} placeholder="e.g. Metro Motorworks" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-ink mb-1">Business Type</label>
+                <label className="block text-sm font-medium text-on-surface mb-1">Business Type</label>
                 <select className="input" value={form.businessType} onChange={(e) => set('businessType', e.target.value)}>
                   <option value="independent">Independent Dealer</option>
                   <option value="multi_location">Multi-Location Dealer</option>
@@ -198,19 +198,19 @@ export default function DealerApply() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-ink mb-1">Contact Name <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-medium text-on-surface mb-1">Contact Name <span className="text-red-500">*</span></label>
                 <input className="input" value={form.contactName} onChange={(e) => set('contactName', e.target.value)} placeholder="Full name" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-ink mb-1">Contact Phone</label>
+                <label className="block text-sm font-medium text-on-surface mb-1">Contact Phone</label>
                 <input className="input" value={form.contactPhone} onChange={(e) => set('contactPhone', e.target.value)} placeholder="+63 900 000 0000" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-ink mb-1">Address</label>
+                <label className="block text-sm font-medium text-on-surface mb-1">Address</label>
                 <input className="input" value={form.address} onChange={(e) => set('address', e.target.value)} placeholder="Street address" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-ink mb-1">City</label>
+                <label className="block text-sm font-medium text-on-surface mb-1">City</label>
                 <input className="input" value={form.city} onChange={(e) => set('city', e.target.value)} placeholder="e.g. Quezon City" />
               </div>
             </div>
@@ -218,8 +218,8 @@ export default function DealerApply() {
 
           {step === 2 && (
             <div className="space-y-4">
-              <h2 className="font-bold text-ink text-lg">Verification Documents</h2>
-              <p className="text-sm text-slatetext leading-relaxed">
+              <h2 className="font-bold text-on-surface text-lg">Verification Documents</h2>
+              <p className="text-sm text-on-surface-variant leading-relaxed">
                 Check the documents you have ready. Documents will be requested once your application is submitted.
                 Our team reviews within 2–3 business days.
               </p>
@@ -228,7 +228,7 @@ export default function DealerApply() {
                   <label
                     key={doc.key}
                     className={`flex items-center gap-3 rounded-xl border p-3.5 cursor-pointer transition-colors ${
-                      docChecks[doc.key] ? 'border-emerald-300 bg-emerald-50' : 'border-cardborder bg-white hover:bg-softbg'
+                      docChecks[doc.key] ? 'border-emerald-300 bg-emerald-50' : 'border-border-subtle bg-surface-container-lowest hover:bg-surface-container'
                     }`}
                   >
                     <input
@@ -237,9 +237,9 @@ export default function DealerApply() {
                       checked={!!docChecks[doc.key]}
                       onChange={(e) => setDocChecks((prev) => ({ ...prev, [doc.key]: e.target.checked }))}
                     />
-                    <span className="flex-1 text-sm text-ink">{doc.label}</span>
+                    <span className="flex-1 text-sm text-on-surface">{doc.label}</span>
                     {!doc.required && (
-                      <span className="text-[10px] font-medium text-slatetext bg-softbg rounded px-1.5 py-0.5">Optional</span>
+                      <span className="text-[10px] font-medium text-on-surface-variant bg-surface-container rounded px-1.5 py-0.5">Optional</span>
                     )}
                     {doc.required && docChecks[doc.key] && (
                       <CheckCircle className="h-4 w-4 text-emerald-500 shrink-0" />
@@ -256,13 +256,13 @@ export default function DealerApply() {
 
           {step === 3 && (
             <div className="space-y-4">
-              <h2 className="font-bold text-ink text-lg">How will you add inventory?</h2>
+              <h2 className="font-bold text-on-surface text-lg">How will you add inventory?</h2>
               <div className="space-y-3">
                 {INVENTORY_OPTIONS.map((opt) => (
                   <label
                     key={opt.id}
                     className={`flex items-start gap-3 rounded-xl border-2 p-4 cursor-pointer transition-colors ${
-                      inventoryMethod === opt.id ? 'border-deepblue bg-deepblue/5' : 'border-cardborder bg-white hover:bg-softbg'
+                      inventoryMethod === opt.id ? 'border-primary bg-primary/5' : 'border-border-subtle bg-surface-container-lowest hover:bg-surface-container'
                     }`}
                   >
                     <input
@@ -275,14 +275,14 @@ export default function DealerApply() {
                     />
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-sm text-ink">{opt.title}</span>
+                        <span className="font-semibold text-sm text-on-surface">{opt.title}</span>
                         {opt.badge && (
                           <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold ${opt.badge.color}`}>
                             {opt.badge.label}
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-slatetext mt-0.5">{opt.description}</p>
+                      <p className="text-xs text-on-surface-variant mt-0.5">{opt.description}</p>
                     </div>
                   </label>
                 ))}
@@ -292,7 +292,7 @@ export default function DealerApply() {
 
           {step === 4 && (
             <div className="space-y-4">
-              <h2 className="font-bold text-ink text-lg">Choose Your Plan</h2>
+              <h2 className="font-bold text-on-surface text-lg">Choose Your Plan</h2>
               <div className="grid gap-3 sm:grid-cols-2">
                 {PLANS.map((p) => {
                   const Icon = p.icon;
@@ -301,7 +301,7 @@ export default function DealerApply() {
                     <label
                       key={p.id}
                       className={`relative rounded-2xl border-2 p-4 cursor-pointer flex flex-col gap-2 transition-colors ${p.color} ${
-                        selected ? 'ring-2 ring-deepblue ring-offset-1' : 'bg-white hover:bg-softbg'
+                        selected ? 'ring-2 ring-deepblue ring-offset-1' : 'bg-surface-container-lowest hover:bg-surface-container'
                       }`}
                     >
                       {p.recommended && (
@@ -320,17 +320,17 @@ export default function DealerApply() {
                         className="sr-only"
                       />
                       <div className="flex items-center gap-2">
-                        <div className="h-7 w-7 rounded-lg bg-softbg flex items-center justify-center shrink-0">
-                          <Icon className="h-4 w-4 text-ink" />
+                        <div className="h-7 w-7 rounded-lg bg-surface-container flex items-center justify-center shrink-0">
+                          <Icon className="h-4 w-4 text-on-surface" />
                         </div>
                         <div>
-                          <p className="font-bold text-sm text-ink">{p.name}</p>
-                          <p className="text-xs text-slatetext">{p.price || 'Free forever'}</p>
+                          <p className="font-bold text-sm text-on-surface">{p.name}</p>
+                          <p className="text-xs text-on-surface-variant">{p.price || 'Free forever'}</p>
                         </div>
                       </div>
                       <ul className="space-y-1">
                         {p.features.map((f) => (
-                          <li key={f} className="flex items-center gap-1.5 text-xs text-ink">
+                          <li key={f} className="flex items-center gap-1.5 text-xs text-on-surface">
                             <CheckCircle className="h-3 w-3 text-emerald-500 shrink-0" /> {f}
                           </li>
                         ))}
@@ -344,8 +344,8 @@ export default function DealerApply() {
 
           {step === 5 && (
             <div className="space-y-5">
-              <h2 className="font-bold text-ink text-lg">Review & Submit</h2>
-              <div className="rounded-xl border border-cardborder divide-y divide-cardborder text-sm">
+              <h2 className="font-bold text-on-surface text-lg">Review & Submit</h2>
+              <div className="rounded-xl border border-border-subtle divide-y divide-cardborder text-sm">
                 {[
                   { label: 'Business Name', value: form.businessName || '—' },
                   { label: 'Business Type', value: form.businessType.replace('_', ' ') },
@@ -356,8 +356,8 @@ export default function DealerApply() {
                   { label: 'Selected Plan', value: PLANS.find((p) => p.id === form.selectedPlan)?.name || '—' },
                 ].map(({ label, value }) => (
                   <div key={label} className="flex justify-between px-4 py-3">
-                    <span className="text-slatetext">{label}</span>
-                    <span className="font-medium text-ink capitalize">{value}</span>
+                    <span className="text-on-surface-variant">{label}</span>
+                    <span className="font-medium text-on-surface capitalize">{value}</span>
                   </div>
                 ))}
               </div>
