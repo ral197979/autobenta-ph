@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
-import { CheckCircle, XCircle, Crown, Zap, Building2, Rocket } from 'lucide-react';
+import { CheckCircle, XCircle, Crown, Zap, Building2, Rocket, Clock, AlertTriangle } from 'lucide-react';
 
 const PLANS = [
   {
@@ -78,8 +79,107 @@ const PLANS = [
   },
 ];
 
+const PRO_FEATURES = [
+  'Unlimited listings',
+  'Lead CRM',
+  'Analytics dashboard',
+  'Priority placement',
+  'Verified Dealer badge',
+  'V8Atlas sync',
+  'API access',
+];
+
+function TrialStatusCard({ trial }) {
+  const [showContact, setShowContact] = useState(false);
+
+  if (!trial) return null;
+
+  const expired = !trial.isOnTrial && trial.daysRemaining <= 0;
+  const urgent  = trial.isOnTrial && trial.daysRemaining <= 7;
+  const warning = trial.isOnTrial && trial.daysRemaining <= 30;
+
+  let cardClass, headerText, headerIcon, urgencyCopy;
+
+  if (expired) {
+    cardClass = 'border-red-300 bg-red-50';
+    headerText = 'Your trial has ended';
+    headerIcon = <AlertTriangle className="h-5 w-5 text-red-500" />;
+    urgencyCopy = 'Contact us to continue at ₱3,599/month.';
+  } else if (urgent) {
+    cardClass = 'border-amber-400 bg-amber-50';
+    headerText = `Free trial — ${trial.daysRemaining} day${trial.daysRemaining === 1 ? '' : 's'} remaining`;
+    headerIcon = <AlertTriangle className="h-5 w-5 text-amber-500" />;
+    urgencyCopy = 'Your Founding Dealer rate expires when your trial ends. Lock it in now.';
+  } else if (warning) {
+    cardClass = 'border-amber-300 bg-amber-50';
+    headerText = `Free trial — ${trial.daysRemaining} days remaining`;
+    headerIcon = <Clock className="h-5 w-5 text-amber-500" />;
+    urgencyCopy = 'Your Founding Dealer rate expires when your trial ends. Lock it in now.';
+  } else {
+    cardClass = 'border-deepblue/30 bg-deepblue/5';
+    headerText = `You're on a free trial — ${trial.daysRemaining} days remaining`;
+    headerIcon = <Zap className="h-5 w-5 text-deepblue" />;
+    urgencyCopy = null;
+  }
+
+  return (
+    <div className={`rounded-2xl border-2 p-6 space-y-4 ${cardClass}`}>
+      <div className="flex items-center gap-2">
+        {headerIcon}
+        <span className="font-bold text-ink">{headerText}</span>
+      </div>
+
+      {urgencyCopy && (
+        <p className="text-sm font-semibold text-amber-700">{urgencyCopy}</p>
+      )}
+
+      {!expired && (
+        <div>
+          <p className="text-sm text-slatetext mb-2">Full Pro features included during your trial:</p>
+          <ul className="grid sm:grid-cols-2 gap-1.5">
+            {PRO_FEATURES.map(f => (
+              <li key={f} className="flex items-center gap-2 text-sm text-ink">
+                <CheckCircle className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                {f}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div className="rounded-xl border border-deepblue/20 bg-white px-4 py-3">
+        <p className="text-sm text-slatetext">
+          After your trial: <span className="font-bold text-ink">₱3,599/month</span>
+          <span className="ml-2 text-xs text-slatetext">— Founding Dealer rate, locked for life</span>
+        </p>
+      </div>
+
+      <button
+        onClick={() => setShowContact(o => !o)}
+        className="rounded-xl bg-deepblue px-5 py-2.5 text-sm font-bold text-white hover:bg-deepblue/90 transition-colors"
+      >
+        {expired ? 'Contact Us to Continue' : 'Secure My Founding Dealer Rate'}
+      </button>
+
+      {showContact && (
+        <div className="rounded-xl border border-cardborder bg-white px-4 py-4 text-sm text-slatetext space-y-1">
+          <p>Para ma-activate ang inyong subscription pagkatapos ng trial:</p>
+          <p>i-message kami sa{' '}
+            <a href="mailto:dealers@autobentaph.com" className="text-deepblue font-semibold hover:underline">
+              dealers@autobentaph.com
+            </a>
+            {' '}or WhatsApp: <span className="font-semibold text-ink">+63 917 000 0000</span>.
+          </p>
+          <p>Mag-aayos kami ng GCash/Maya payment para sa inyo.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function DealerSubscription() {
-  const { plan } = useOutletContext();
+  const { plan, profile } = useOutletContext();
+  const trial = profile?.trial;
 
   return (
     <div className="space-y-6">
@@ -89,6 +189,8 @@ export default function DealerSubscription() {
           Current plan: <span className="font-semibold text-ink capitalize">{plan || 'Free'}</span>
         </p>
       </div>
+
+      {trial && <TrialStatusCard trial={trial} />}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {PLANS.map((p) => {
@@ -148,12 +250,12 @@ export default function DealerSubscription() {
                   Contact Sales
                 </a>
               ) : (
-                <button
-                  onClick={() => alert('Payment integration coming soon. Contact dealers@autobentaph.com to upgrade.')}
-                  className="rounded-xl bg-deepblue px-4 py-2 text-xs font-bold text-white hover:bg-deepblue/90 transition-colors"
+                <a
+                  href="mailto:dealers@autobentaph.com"
+                  className="rounded-xl bg-deepblue px-4 py-2 text-xs font-bold text-white hover:bg-deepblue/90 transition-colors text-center"
                 >
                   Upgrade to {p.name}
-                </button>
+                </a>
               )}
             </div>
           );
@@ -162,11 +264,11 @@ export default function DealerSubscription() {
 
       <div className="card p-5 bg-softbg">
         <p className="text-xs text-slatetext">
-          Payment processing is coming soon. To upgrade your plan now, contact{' '}
+          To activate your subscription, contact{' '}
           <a href="mailto:dealers@autobentaph.com" className="text-deepblue font-semibold hover:underline">
             dealers@autobentaph.com
           </a>
-          . All plans include a 14-day free trial.
+          . We'll set up GCash/Maya payment for you.
         </p>
       </div>
     </div>

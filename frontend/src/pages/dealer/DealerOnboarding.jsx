@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { CheckCircle, User, Car, CreditCard, Rocket, Copy } from 'lucide-react';
+import { CheckCircle, User, Car, CreditCard, Rocket, Copy, Zap } from 'lucide-react';
 import api from '../../api/client';
 
 const RANK_COLORS = {
@@ -14,7 +14,7 @@ const RANK_COLORS = {
 const STEPS = [
   { icon: User, label: 'Complete Your Profile' },
   { icon: Car, label: 'Add Your First Listing' },
-  { icon: CreditCard, label: 'Upgrade Your Plan' },
+  { icon: CreditCard, label: 'Your Free Trial' },
   { icon: Rocket, label: 'Go Live' },
 ];
 
@@ -66,7 +66,7 @@ export default function DealerOnboarding() {
   const completionChecklist = [
     { label: 'Profile complete', done: profileSaved || !!dealer?.description },
     { label: 'First listing active', done: hasListings },
-    { label: 'Plan selected', done: !isFreePlan },
+    { label: 'Free trial active', done: true },
   ];
 
   return (
@@ -182,37 +182,30 @@ export default function DealerOnboarding() {
 
         {step === 3 && (
           <div className="space-y-4">
-            <h2 className="font-bold text-ink">Upgrade Your Plan</h2>
-            {!isFreePlan ? (
-              <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700 font-medium">
-                <CheckCircle className="h-4 w-4 shrink-0" />
-                You're on <span className="capitalize ml-1">{dealer?.plan}</span> — you're all set.
+            <h2 className="font-bold text-ink">Your Free Trial</h2>
+            <div className="rounded-xl bg-deepblue/10 border border-deepblue/20 p-5">
+              <div className="flex items-center gap-2 mb-2">
+                <Zap className="h-5 w-5 text-deepblue" />
+                <span className="font-semibold text-ink">You're on a 90-day free trial</span>
               </div>
-            ) : (
-              <div className="space-y-3">
-                <p className="text-sm text-slatetext">
-                  You're currently on the Free plan (5 listings max). Upgrade to unlock more features.
-                </p>
-                <div className="rounded-xl border border-cardborder divide-y divide-cardborder text-sm">
-                  {[
-                    { plan: 'Verified', price: '₱1,499/mo', features: '25 listings · Badge · CRM' },
-                    { plan: 'Pro', price: '₱3,499/mo', features: '100 listings · Priority · Analytics' },
-                    { plan: 'Enterprise', price: 'Custom', features: 'Unlimited · V8Atlas · API · Multi-branch' },
-                  ].map(({ plan, price, features }) => (
-                    <div key={plan} className="flex items-center justify-between px-4 py-3">
-                      <div>
-                        <span className="font-semibold text-ink">{plan}</span>
-                        <span className="ml-2 text-xs text-slatetext">{features}</span>
-                      </div>
-                      <span className="text-xs font-medium text-slatetext">{price}</span>
-                    </div>
-                  ))}
-                </div>
-                <Link to="/dealer/subscription" className="btn-primary inline-flex items-center gap-1.5">
-                  Upgrade Now →
-                </Link>
-              </div>
-            )}
+              <p className="text-sm text-slatetext mb-3">
+                Full Pro features, no credit card required. Your Founding Dealer rate of <strong>₱3,599/month</strong> is locked in — just contact us before your trial ends to activate payment.
+              </p>
+              <ul className="space-y-1.5 text-sm text-slatetext">
+                {['Unlimited listings', 'Lead CRM', 'Analytics dashboard', 'Priority placement', 'Verified Dealer badge', 'V8Atlas sync', 'API access'].map(f => (
+                  <li key={f} className="flex items-center gap-2">
+                    <CheckCircle className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <button
+              onClick={() => setStep(4)}
+              className="btn-primary w-full"
+            >
+              Continue to Go Live →
+            </button>
           </div>
         )}
 

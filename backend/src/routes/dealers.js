@@ -272,7 +272,8 @@ router.get('/me/profile', authenticate, requireRole('dealer', 'admin'), async (r
       },
     });
     if (!dealer) return res.status(404).json({ error: 'Dealer profile not found' });
-    res.json(dealer);
+    const { getTrialStatus } = require('../services/trial');
+    res.json({ ...dealer, trial: getTrialStatus(dealer.subscription) });
   } catch (err) {
     next(err);
   }

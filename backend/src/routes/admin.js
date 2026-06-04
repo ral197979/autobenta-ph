@@ -357,12 +357,14 @@ router.patch('/applications/:id', async (req, res, next) => {
         },
       });
 
-      // Create subscription
+      // Create subscription — 90-day free trial, full Pro features
       await tx.dealerSubscription.create({
         data: {
-          dealerId: newDealer.id,
-          plan,
-          status: 'active',
+          dealerId:    newDealer.id,
+          plan:        'pro',
+          status:      'trial',
+          startedAt:   new Date(),
+          trialEndsAt: new Date(Date.now() + 90 * 86400000),
         },
       });
 
@@ -506,7 +508,7 @@ router.post('/seed-accounts', async (req, res, next) => {
         });
         dealerId = dealer.id;
         await prisma.dealerSubscription.create({
-          data: { dealerId: dealer.id, plan: account.dealer.plan, status: 'active', startedAt: new Date(), expiresAt: new Date(Date.now() + 30 * 86400000) },
+          data: { dealerId: dealer.id, plan: 'pro', status: 'trial', startedAt: new Date(), trialEndsAt: new Date(Date.now() + 90 * 86400000), expiresAt: null },
         });
       }
 
@@ -523,6 +525,16 @@ router.post('/seed-accounts', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+// POST /api/admin/dealers/:dealerId/start-trial
+// Manually start or reset a 90-day trial for a dealer
+router.post('/dealers/:dealerId/start-trial', async (req, res, next) => {
+  try {
+    const { startTrial } = require('../services/trial');
+    const sub = await startTrial(req.params.dealerId);
+    res.json({ ok: true, subscription: sub });
+  } catch (err) { next(err); }
 });
 
 module.exports = router;

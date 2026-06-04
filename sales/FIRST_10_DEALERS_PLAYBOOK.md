@@ -7,10 +7,13 @@
 
 ## The Only Metric That Matters Right Now
 
-> **Paying dealers on the platform.**
+> **Dealers on free trial — then converted to paid.**
+
+Phase 1: 10 dealers on the 90-day free trial.  
+Phase 2: Convert them to paying at day 75 — before the trial ends.
 
 Not demos booked. Not leads in the pipeline. Not messages sent.  
-Dealers paying ₱3,599/month. That's the number.
+Trial activations first, then ₱3,599/month paying dealers. Those are the two numbers.
 
 ---
 
@@ -115,14 +118,14 @@ If still no answer: ask for a yes or a no. Explain why you need to know.
 
 ## Pricing to Offer
 
-| Offer | Price | When to use |
+| Offer | Price | Notes |
 |---|---|---|
-| Founding Dealer | ₱3,599/mo | First 10 dealers — lock in forever |
-| 3-month free trial | ₱0 for 90 days | Only if they're genuinely hesitant but high-fit |
-| Annual prepay | ₱35,990/year (save ₱3,198) | When they ask for a discount |
+| **3-month free trial** | ₱0 for 90 days | Default offer — lead with this always |
+| Founding Dealer (after trial) | ₱3,599/mo | Locked for life — limited slots |
+| Annual prepay | ₱35,990/year | Offer when they ask for discount after trial |
 
-**Never discount the monthly price.** Offer annual prepay instead.  
-**Never waive the subscription entirely** for a dealer who should pay — it trains them that you're free.
+**Always lead with the free trial.** Never open with the price.  
+**Never discount the monthly price.** Offer annual prepay instead.
 
 ---
 
@@ -132,7 +135,10 @@ If still no answer: ask for a yes or a no. Explain why you need to know.
 > "₱3,599 lang per month — pero founding dealer rate 'to, locked for life kahit mag-increase kami ng price. Karamihan ng dealers namin nami-recover nila 'yun sa isang sale lang."
 
 ### "May libre ba?" (Is there a free trial?)
-> "Meron — 30 days free, walang credit card. Pagkatapos mo makita 'yung leads, tsaka ka mag-decide. Pwede ba bukas o sa makalawa tayo mag-setup?"
+> "Oo! 3 months libre, walang credit card, full features lahat. Saka ka lang mag-decide kung gusto mong ituloy pagkatapos ng trial. Pwede ba bukas o sa makalawa tayo mag-setup?"
+
+### "Magbabayad ba ako after 3 months?"
+> "Ikaw ang magde-decide pagkatapos ng 3 months. Pero kung gusto mong ituloy — ₱3,599 lang per month. Isa lang na sale at nare-recover mo na ang isang taon. At founding dealer rate 'yan — locked for life kahit mag-increase kami ng price."
 
 ### "Facebook na lang ako, libre naman 'yan"
 > "Tama, libre nga. Pero Facebook leads — buyers yung nagtatanong sa madaming seller sabay-sabay, di pa ready bumili. Sa Ryderr, buyer na naghahanap ng specific kotse ang nagcocontact — mas seryoso. Tsaka ikaw may dashboard para malaman mo kung aling kotse ang pinaka-maraming tinitingnan."
@@ -144,7 +150,7 @@ If still no answer: ask for a yes or a no. Explain why you need to know.
 > "Ako na bahala doon — setup ko mismo lahat para sa inyo. 30 minutes lang, tapos running na. Kasama rin support kung may tanong kayo after."
 
 ### "Mahal naman"
-> "Oo, may bayad nga. Pero isang sale na may ₱50,000 margin — nare-recover mo na 'yung 14 months na subscription. At kung wala kang makuhang buyer sa amin within 60 days, sasabihin ko mismo na itigil mo. Fair naman 'yan?"
+> "Hindi mo kailangang mag-bayad ngayon — libre muna ng 3 months, walang credit card. Subukan mo muna, tingnan natin kung kumikita. Pagkatapos ng 3 months, ₱3,599 lang per month — isa lang na sale, nare-recover mo na."
 
 ---
 
@@ -163,7 +169,7 @@ If still no answer: ask for a yes or a no. Explain why you need to know.
 "Makikita mo kung ilang tao ang nagtingin sa listing mo, ilang nagpaka-favorite, ilang nag-inquire. Hindi mo ito makita sa Facebook."
 
 **Minutes 13–15: Close**
-"Dalawang tanong lang: May kotse ka bang gusto mong i-list ngayon? At okay ba sa iyo ang ₱3,599 per month para sa Founding Dealer rate?"
+"Dalawang tanong lang: May kotse ka bang gusto mong i-list ngayon? At pwede ba natin simulan ang libreng 3-month trial mo ngayon?"
 
 ---
 
@@ -203,4 +209,4 @@ Their results become your case study.
 
 ---
 
-*Last updated: 2026-06-01*
+*Last updated: 2026-06-04*

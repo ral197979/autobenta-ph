@@ -7,8 +7,8 @@ import {
 const BENEFITS = [
   {
     icon: Tag,
-    title: '40% off Pro pricing — forever',
-    desc: '₱3,599/mo locked in for life. Standard Pro pricing is ₱5,999/mo. This discount never expires as long as you stay subscribed.',
+    title: '3 months free, then ₱3,599/mo — forever',
+    desc: 'Start with a full 90-day free trial. After your trial, your Founding Dealer rate of ₱3,599/mo is locked in for life. No credit card required to start.',
   },
   {
     icon: Star,
@@ -38,13 +38,13 @@ const FEATURES = [
   'Priority support (4-hr SLA)',
   'Founding Dealer badge on all listings',
   'Monthly product roadmap call',
-  'Locked-in ₱3,599/mo forever',
+  '3 months free, then ₱3,599/mo forever',
 ];
 
 const FAQS = [
   {
     q: 'Is the ₱3,599/mo price really locked forever?',
-    a: 'Yes. Founding Dealer pricing is guaranteed for the lifetime of your subscription. As long as you remain subscribed, your rate will never increase, even as we raise standard pricing for new customers.',
+    a: 'Yes. You get 3 months free, then ₱3,599/mo for life. Founding Dealer pricing is guaranteed for the lifetime of your subscription. As long as you remain subscribed, your rate will never increase, even as we raise standard pricing for new customers.',
   },
   {
     q: 'What happens once all 5 spots are filled?',
@@ -138,7 +138,7 @@ export default function FoundingDealer() {
             Become a Founding Dealer
           </h1>
           <p className="text-base text-white/70 max-w-2xl mx-auto mb-8 leading-relaxed">
-            Lock in founding pricing, shape the product roadmap, and be first to market with the Philippines' most advanced dealer platform.
+            3 months free, no credit card required. Then ₱3,599/month — locked for life. Shape the product roadmap and be first to market with the Philippines' most advanced dealer platform.
           </p>
           <a
             href="#apply"
@@ -190,9 +190,11 @@ export default function FoundingDealer() {
             </div>
             <div className="mt-6 pt-6 border-t border-cardborder flex items-center justify-between gap-4 flex-wrap">
               <div>
+                <span className="text-xl font-bold text-emerald-600">Free</span>
+                <span className="text-sm text-slatetext ml-1">for 3 months</span>
+                <span className="mx-2 text-slatetext">·</span>
                 <span className="text-3xl font-bold text-deepblue">₱3,599</span>
-                <span className="text-sm text-slatetext">/mo</span>
-                <span className="ml-2 text-xs text-slatetext line-through">₱5,999</span>
+                <span className="text-sm text-slatetext">/mo after</span>
               </div>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-700">
                 <ShieldCheck className="h-3 w-3" /> Founding price — locked forever

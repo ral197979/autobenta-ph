@@ -30,43 +30,29 @@ const PILLARS = [
 ];
 
 const STATS = [
-  { value: '50+', label: 'Listings / Dealer Avg' },
+  { value: '90', label: 'Days Free Trial' },
   { value: '3×', label: 'Faster Lead Response' },
   { value: '₱0', label: 'Setup Fee' },
 ];
 
 const PLANS = [
   {
-    name: 'Verified Dealer',
-    price: '₱2,999',
-    period: '/mo',
-    desc: 'Get started with verified listings and lead management.',
-    features: [
-      'Up to 20 listings',
-      'Lead CRM (8-stage pipeline)',
-      'Basic analytics',
-      'Email support',
-      'Verified Dealer badge',
-    ],
-    highlight: false,
-    cta: 'Get Started',
-  },
-  {
-    name: 'Dealer Pro',
-    price: '₱5,999',
-    period: '/mo',
-    desc: 'Everything you need to run a modern dealership.',
+    name: 'Founding Dealer',
+    price: 'Free',
+    period: ' — 3 months',
+    desc: 'Full Pro features for 90 days, then ₱3,599/month — locked for life.',
     features: [
       'Unlimited listings',
-      'V8Atlas DMS sync',
+      'Lead CRM (8-stage pipeline)',
       'Advanced analytics',
-      'Priority support',
-      'CSV bulk import',
-      'AI listing wizard',
-      'Response time tracking',
+      'Priority placement',
+      'Verified Dealer badge',
+      'V8Atlas DMS sync',
+      'API access',
     ],
     highlight: true,
-    cta: 'Start Free Trial',
+    cta: 'Start Free — 3 Months on Us',
+    note: 'No credit card required',
   },
   {
     name: 'Enterprise',
@@ -87,10 +73,12 @@ const PLANS = [
 ];
 
 const FOUNDING_BENEFITS = [
+  '3 months free — no credit card required',
+  'Then ₱3,599/month forever — Founding Dealer rate, locked for life',
   'Founding Dealer badge on all listings',
   'Direct line to product team — influence the roadmap',
   'Priority support with 4-hour response SLA',
-  'Lock in ₱3,599/mo forever (vs ₱5,999 standard)',
+  'Only available to the first dealers on the platform',
 ];
 
 function RoiCalculator() {
@@ -101,7 +89,7 @@ function RoiCalculator() {
   const additionalLeads = vehiclesSold * 3;
   const leadsConverted = additionalLeads * (conversionRate / 100);
   const revenueUplift = leadsConverted * avgProfit;
-  const platformCost = 5999;
+  const platformCost = 3599;
   const roi = ((revenueUplift - platformCost) / platformCost) * 100;
 
   const formatPeso = (n) =>
@@ -170,7 +158,7 @@ function RoiCalculator() {
               <div className="rounded-xl bg-softbg p-4 text-xs text-slatetext space-y-1">
                 <p>Additional leads / mo: <span className="font-semibold text-ink">{additionalLeads}</span></p>
                 <p>Leads converted: <span className="font-semibold text-ink">{leadsConverted.toFixed(1)}</span></p>
-                <p>Platform cost: <span className="font-semibold text-ink">₱5,999/mo (Pro plan)</span></p>
+                <p>Platform cost: <span className="font-semibold text-ink">₱3,599/mo (Founding Dealer rate)</span></p>
               </div>
             </div>
 
@@ -218,18 +206,19 @@ export default function ForDealers() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              to="/dealer/apply"
+              to="/register"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-bold text-ink hover:bg-accent/90 transition-colors"
             >
-              Start Free <ArrowRight className="h-4 w-4" />
+              Start Free — 3 Months on Us <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/for-dealers/founding"
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white hover:bg-white/20 transition-colors"
             >
-              See the Demo
+              Founding Dealer Program
             </Link>
           </div>
+          <p className="text-xs text-white/50 mt-3">No credit card required · Then ₱3,599/month</p>
         </div>
       </section>
 
@@ -420,10 +409,10 @@ export default function ForDealers() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <p className="text-xs font-semibold uppercase tracking-wider text-deepblue mb-2">Pricing</p>
-            <h2 className="text-2xl font-bold text-ink sm:text-3xl">Simple, transparent pricing</h2>
-            <p className="text-sm text-slatetext mt-2">No setup fees. No long-term contracts. Cancel anytime.</p>
+            <h2 className="text-2xl font-bold text-ink sm:text-3xl">3 months free, then ₱3,599/month</h2>
+            <p className="text-sm text-slatetext mt-2">No credit card required. Founding Dealer rate locked for life. Only available to the first dealers on the platform.</p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 max-w-2xl mx-auto">
             {PLANS.map((plan) => (
               <div
                 key={plan.name}
@@ -432,7 +421,7 @@ export default function ForDealers() {
                 {plan.highlight && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                     <span className="inline-flex items-center gap-1 rounded-full bg-deepblue px-3 py-0.5 text-[11px] font-bold text-white">
-                      <Star className="h-2.5 w-2.5" /> Recommended
+                      <Star className="h-2.5 w-2.5" /> Founding Dealer Offer
                     </span>
                   </div>
                 )}
@@ -451,11 +440,14 @@ export default function ForDealers() {
                   ))}
                 </ul>
                 <Link
-                  to={plan.name === 'Enterprise' ? '/for-dealers/founding' : '/dealer/apply'}
+                  to={plan.name === 'Enterprise' ? 'mailto:dealers@autobentaph.com' : '/register'}
                   className={`inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-xs font-bold transition-colors ${plan.highlight ? 'bg-deepblue text-white hover:bg-deepblue/90' : 'border border-cardborder text-ink hover:bg-softbg'}`}
                 >
                   {plan.cta}
                 </Link>
+                {plan.note && (
+                  <p className="text-center text-[11px] text-slatetext mt-2">{plan.note}</p>
+                )}
               </div>
             ))}
           </div>
@@ -506,14 +498,14 @@ export default function ForDealers() {
         <div className="mx-auto max-w-2xl px-4 text-center">
           <h2 className="text-2xl font-bold mb-3">Ready to grow?</h2>
           <p className="text-sm text-white/70 mb-8">
-            Apply in 3 minutes. No setup fee. Your first 30 days are free.
+            Register in 3 minutes. No credit card. 3 months free, then ₱3,599/month — locked for life.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              to="/dealer/apply"
+              to="/register"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-bold text-ink hover:bg-accent/90 transition-colors"
             >
-              Apply as a Dealer <ArrowRight className="h-4 w-4" />
+              Start Free — 3 Months on Us <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/for-dealers/founding"

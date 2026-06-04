@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import api from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
+import TrialBanner from '../../components/dealer/TrialBanner';
 
 const NAV = [
   { to: '/dealer', end: true, icon: LayoutDashboard, label: 'Dashboard' },
@@ -139,6 +140,7 @@ export default function DealerLayout() {
           </Link>
         </div>
 
+        <TrialBanner trial={profile?.trial} />
         <div className="p-6">
           <Outlet context={{ profile, sub, plan, tier }} />
         </div>

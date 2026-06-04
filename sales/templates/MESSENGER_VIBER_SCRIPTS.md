@@ -7,27 +7,27 @@
 ## TOUCH 1 — First Message
 
 ### Version A — For dealers active on Facebook Marketplace
-> Uy [Name], nakita ko 'yung [specific car — e.g. "2020 Fortuner mo na nakapost sa FB"]. Maganda yung kondisyon. Dealer ka ba or private seller?
+> Uy [Name], nakita ko yung mga kotse mo sa Facebook — active ka ah.
 >
-> Nagtatayo kami ng marketplace para sa used cars dito sa PH — AutoBentaPH — at naghahanap kami ng mga active dealers sa [city] na gusto naming i-feature. Libre mag-list, tapos direct sa inyo mapupunta 'yung leads ng buyers.
+> Gusto mo bang subukan ang AutoBentaPH? Naglalagay kami ng mga used car dealer sa aming marketplace para mas maraming buyer ang makakita ng inventory mo. **3 months libre** — walang credit card, walang commitment.
 >
-> Interesado ka bang malaman kung paano gumagana? 5 minutes lang kausapin.
+> Interesado ka? 5 minutes lang kausapin.
 
 ---
 
 ### Version B — For dealers currently paying on Philkotse
 > Hi [Name], nakita ko 'yung mga listings ninyo sa Philkotse. [X] cars — active kayo.
 >
-> Nagtatanong lang — kumikita ba 'yung Philkotse para sa inyo? Kasi maraming dealers ang nili-lipat na nila 'yung budget nila sa ibang platform dahil mas mura at mas maraming leads.
+> Nagtatanong lang — kumikita ba 'yung Philkotse para sa inyo? Kasi may alternative kami — AutoBentaPH. **3 months libre**, walang credit card. Pagkatapos ng trial, ₱3,599/mo lang — mas mura pa sa karamihan ng Philkotse plans.
 >
-> Pwede ba magtanong ng 5 minutes? Hindi ko kayo ibe-benta ng kahit ano — gusto ko lang malaman kung anong gumagana ngayon para sa mga dealer na katulad ninyo.
+> Pwede ba magtanong ng 5 minutes? Gusto ko lang malaman kung fit kayo bago ko pa isuggest.
 
 ---
 
 ### Version C — Referral (someone gave you their number)
 > Hi [Name], si [Your Name] ito. Si [Referrer Name] nagbigay ng contact mo — sabi niya active kayo sa used cars sa [city].
 >
-> Nagtatayo kami ng platform na nagcoconnect ng used car dealers sa verified buyers — AutoBentaPH. Si [Referrer] naka-list na, at sabi niya baka interesado rin kayo.
+> Nagtatayo kami ng platform na nagcoconnect ng used car dealers sa verified buyers — AutoBentaPH. Si [Referrer] naka-list na. **3 months libre** ang offer namin ngayon — walang credit card, walang commitment. Subukan mo lang, tingnan kung may leads.
 >
 > May time ba kayo bukas para mag-usap ng 10 minutes? Viber call or kita-kits sa lot ninyo, kahit alin.
 
@@ -38,7 +38,7 @@
 >
 > Nagtatanong lang — saan kayo usually nakakakuha ng mga buyer? Facebook pa rin o may ibang ginagamit kayo?
 >
-> Tinatanong ko kasi may gusto akong ipakita sa inyo na nakakatulong sa mga dealer na mas maraming qualified buyers ang mapuntahan sa kanila. 2 minutes lang — okay ba?
+> Tinatanong ko kasi may gusto akong ipakita sa inyo na nakakatulong sa mga dealer. **3 months libre** ang offer namin — walang credit card, walang risk sa inyo. 2 minutes lang — okay ba?
 
 ---
 
@@ -58,7 +58,7 @@
 >
 > Nagtatayo kami ng network ng used car dealers sa Metro Manila. Yung mga naka-list ngayon — nakakakuha na sila ng leads mula sa buyers na hindi nila narereachout sa Facebook.
 >
-> Kung gusto ninyong subukan — libre ang first 30 days, walang credit card. Kung hindi, totally gets ko.
+> 3 months libre, walang credit card. Kung wala kang makuhang lead in 90 days, nothing to lose.
 >
 > Reply lang ng "OO" or "HINDI" para malaman ko. Salamat.
 
@@ -80,11 +80,11 @@
 
 > [Name], salamat sa oras ninyo kanina.
 >
-> Isinend ko na yung proposal — [₱3,599/month, Founding Dealer rate, locked for life].
+> Trial na yung 90 days — libre. Walang credit card, full access sa lahat ng features.
 >
-> Para ma-activate ang account ninyo: listing ninyo ng 3 sasakyan, tapos active na kayo. Pwede natin gawin 'yan ngayong araw pa — 20 minutes lang.
+> Pagkatapos ng trial, ₱3,599/mo lang — Founding Dealer rate na locked for life. Kahit mag-increase kami ng price, 'yan na ang price mo.
 >
-> Okay ba bukas ng [time] para i-setup natin? O gusto mo ngayon na?
+> Para ma-activate: i-list mo lang ang 3 sasakyan mo, tapos active ka na. Kaya natin gawin ngayon — 20 minutes lang. Okay ba?
 
 ---
 
@@ -118,12 +118,13 @@
 >
 > Tsaka may analytics ka — makikita mo kung ilan tinitignan ang listing mo, ilan nag-favorite, ilan nag-inquire. Hindi mo makita 'yan sa Facebook.
 >
-> Libre naman subukan ng 30 days — walang mawawala. Tara?
+> 3 months libre naman subukan — walang credit card, walang mawawala. Tara?
 
-### When they ask for free forever
-> Hindi ko magagawa 'yan — kung libre, hindi na ito business at hindi na namin mapapanatili ang platform para sa inyo.
->
-> Pero ganito: libre ang 30 days, walang credit card. Pagkatapos ng 30 days, kung walang kahit isang lead na nakuha ninyo, hindi ko na kayo hihilingang mag-subscribe. Deal?
+### When they say "Mahal naman"
+> Hindi mo kailangang mag-bayad ngayon — libre muna ng 3 months, walang credit card. Subukan mo muna, tingnan natin kung kumikita. Pagkatapos ng 3 months, ₱3,599 lang per month — isa lang na sale, nare-recover mo na.
+
+### When they say "May libre ba?"
+> Oo! 3 months libre, walang credit card, full features lahat. Saka ka lang mag-decide kung gusto mong ituloy pagkatapos ng trial. Fair naman?
 
 ### When they want to think about it
 > Sige, gets ko. Isang linggo lang — May pinapanatili akong Founding Dealer slot para sa [city] ninyo, pero may limitasyon lang ang slots na ito.
@@ -141,15 +142,16 @@
 
 ## Rules for All Messages
 
-1. **Always use their name** or their business name in the first line
-2. **Reference something specific** — the car they posted, the platform they use, who referred them
-3. **One question per message** — never two
-4. **Never paste a link in Touch 1** — it looks spammy and gets ignored
-5. **Keep it under 5 lines** — they're reading on their phone between customers
-6. **Use Taglish** — full English feels corporate, full Filipino feels formal; Taglish is how they actually talk
-7. **Emoji sparingly** — one per message max, only where natural
-8. **Send on weekdays 9am–6pm** — dealers are most responsive mid-morning and early afternoon
+1. **Lead with "3 months libre"** — never lead with the price
+2. **Always use their name** or their business name in the first line
+3. **Reference something specific** — the car they posted, the platform they use, who referred them
+4. **One question per message** — never two
+5. **Never paste a link in Touch 1** — it looks spammy and gets ignored
+6. **Keep it under 5 lines** — they're reading on their phone between customers
+7. **Use Taglish** — full English feels corporate, full Filipino feels formal; Taglish is how they actually talk
+8. **Emoji sparingly** — one per message max, only where natural
+9. **Send on weekdays 9am–6pm** — dealers are most responsive mid-morning and early afternoon
 
 ---
 
-*Last updated: 2026-06-01*
+*Last updated: 2026-06-04*
