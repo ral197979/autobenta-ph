@@ -120,6 +120,7 @@ export default function Dashboard() {
                 {['dealer', 'admin'].includes(user?.role) && (
                   <Link to={`/promote/${l.id}`} className={`${BTN_SECONDARY} flex items-center gap-1`}><span className="material-symbols-outlined text-[16px]">rocket_launch</span> Promote</Link>
                 )}
+                <Link to={`/listings/${l.id}/edit`} className={`${BTN_SECONDARY} flex items-center gap-1`}><span className="material-symbols-outlined text-[16px]">edit</span> Edit</Link>
                 <Link to={`/cars/${l.id}`} className={BTN_SECONDARY}>View</Link>
               </div>
             </div>

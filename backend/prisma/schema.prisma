@@ -214,6 +214,7 @@ model User {
   reviewsReceived     Review[]          @relation("SellerReviews")
   reviewsWritten      Review[]          @relation("ReviewsWritten")
   messagesSent        Message[]         @relation("MessagesSent")
+  disputesFiled       Dispute[]         @relation("DisputesFiled")
   inspectionRequests  InspectionRequest[]
   financingRequests   FinancingRequest[]
   auditLogs           AuditLog[]
@@ -492,6 +493,28 @@ model Message {
   createdAt DateTime @default(now())
 
   @@map("messages")
+}
+
+model Dispute {
+  id          String        @id @default(uuid())
+  reporterId  String
+  reporter    User          @relation("DisputesFiled", fields: [reporterId], references: [id])
+  listingId   String?
+  category    String
+  subject     String
+  description String
+  status      DisputeStatus @default(open)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("disputes")
+}
+
+enum DisputeStatus {
+  open
+  under_review
+  resolved
+  dismissed
 }
 
 model Lead {

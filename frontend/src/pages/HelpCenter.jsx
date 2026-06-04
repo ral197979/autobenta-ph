@@ -12,6 +12,8 @@ const CATEGORIES = [
   { icon: 'fact_check', title: 'Ownership Transfer', desc: 'LTO requirements, fees, and checklist.', to: '/ownership-transfer' },
   { icon: 'payments', title: 'Financing & Taxes', desc: 'Loan calculator and pre-approval.', to: '/financing' },
   { icon: 'security', title: 'Account & Security', desc: 'Manage your profile and password.', to: '/account' },
+  { icon: 'gavel', title: 'Dispute Resolution', desc: 'Report a problem to trust & safety.', to: '/report-dispute' },
+  { icon: 'verified_user', title: 'Get Verified', desc: 'Earn a verified seller/dealer badge.', to: '/verification' },
 ];
 
 const FAQS = [

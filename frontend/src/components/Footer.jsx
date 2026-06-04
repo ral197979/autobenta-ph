@@ -15,6 +15,7 @@ const COLUMNS = [
     title: 'Support',
     links: [
       ['Help Center', '/help'],
+      ['Report a Dispute', '/report-dispute'],
       ['Safe Buying Guide', '/safe-buying'],
       ['Ownership Transfer', '/ownership-transfer'],
       ['Terms of Service', '/terms'],

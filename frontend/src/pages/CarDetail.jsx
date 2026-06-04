@@ -329,14 +329,20 @@ export default function CarDetail() {
                 </div>
               </div>
 
-              <div className="space-y-md">
-                <button onClick={() => openInquiry('')} className="w-full bg-primary text-on-primary py-4 rounded-xl text-label-md font-bold hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/10">
-                  <Icon name="payments" className="text-[20px]" /> Inquire Now
-                </button>
-                <button onClick={() => (user ? setShowOffer(true) : navigate('/login'))} className="w-full bg-surface-container-high border border-border-subtle text-primary py-4 rounded-xl text-label-md font-bold hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
-                  <Icon name="gavel" className="text-[20px]" /> {offerSent ? 'Offer Sent ✓' : 'Make an Offer'}
-                </button>
-              </div>
+              {user?.id === listing.sellerId ? (
+                <Link to={`/listings/${id}/edit`} className="w-full bg-primary text-on-primary py-4 rounded-xl text-label-md font-bold hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/10">
+                  <Icon name="edit" className="text-[20px]" /> Edit Your Listing
+                </Link>
+              ) : (
+                <div className="space-y-md">
+                  <button onClick={() => openInquiry('')} className="w-full bg-primary text-on-primary py-4 rounded-xl text-label-md font-bold hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/10">
+                    <Icon name="payments" className="text-[20px]" /> Inquire Now
+                  </button>
+                  <button onClick={() => (user ? setShowOffer(true) : navigate('/login'))} className="w-full bg-surface-container-high border border-border-subtle text-primary py-4 rounded-xl text-label-md font-bold hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
+                    <Icon name="gavel" className="text-[20px]" /> {offerSent ? 'Offer Sent ✓' : 'Make an Offer'}
+                  </button>
+                </div>
+              )}
 
               {/* Seller row */}
               {(listing.seller || listing.dealer) && (
@@ -416,6 +422,12 @@ export default function CarDetail() {
             <div className={`${CARD} p-4 text-center text-label-sm text-on-surface-variant`}>
               {listing.viewCount} views · {listing.inquiryCount} inquiries
             </div>
+
+            {user?.id !== listing.sellerId && (
+              <Link to={`/report-dispute?listingId=${id}`} className="flex items-center justify-center gap-1.5 text-label-sm text-on-surface-variant hover:text-error transition-colors">
+                <Icon name="flag" className="text-[16px]" /> Report this listing
+              </Link>
+            )}
           </div>
         </aside>
       </main>
