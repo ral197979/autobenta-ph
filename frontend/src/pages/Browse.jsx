@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { SlidersHorizontal, X, ArrowUpDown } from 'lucide-react';
+import { SlidersHorizontal, X, ArrowUpDown, Bookmark } from 'lucide-react';
 import api from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import { trackEvent } from '../utils/analytics';
 import CarCard from '../components/CarCard';
 import FilterPanel from '../components/FilterPanel';
@@ -19,10 +20,29 @@ const BASE_SORT_OPTIONS = [
 
 export default function Browse() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [showFilters, setShowFilters] = useState(false);
   const [sort, setSort] = useState('createdAt_desc');
   const [page, setPage] = useState(1);
+  const [savedMsg, setSavedMsg] = useState('');
   const geo = useGeolocation();
+
+  const saveSearch = async () => {
+    if (!user) return navigate('/login');
+    const suggested = [filters.make, filters.model, filters.search].filter(Boolean).join(' ') || 'All cars';
+    const name = window.prompt('Name this saved search:', suggested);
+    if (!name) return;
+    try {
+      const active = Object.fromEntries(Object.entries(filters).filter(([k, v]) => v && k !== 'radius'));
+      await api.post('/saved-searches', { name, filters: active, alertOn: true });
+      setSavedMsg('Saved! We’ll alert you on new matches.');
+      setTimeout(() => setSavedMsg(''), 3000);
+    } catch {
+      setSavedMsg('Could not save. Please try again.');
+      setTimeout(() => setSavedMsg(''), 3000);
+    }
+  };
 
   // Auto-activate geo if coming from a "near me" link
   useEffect(() => {
@@ -111,6 +131,12 @@ export default function Browse() {
         </div>
         <div className="flex items-center gap-md">
           <button
+            onClick={saveSearch}
+            className="flex items-center gap-2 rounded-xl border border-border-subtle text-on-surface px-md py-sm text-label-md hover:bg-surface-container transition-colors"
+          >
+            <Bookmark className="w-4 h-4" /> Save Search
+          </button>
+          <button
             onClick={() => setShowFilters(!showFilters)}
             className={`lg:hidden flex items-center gap-2 rounded-xl border px-md py-sm text-label-md transition-colors ${activeFilterCount > 0 ? 'border-primary text-primary' : 'border-border-subtle text-on-surface'}`}
           >
@@ -125,6 +151,12 @@ export default function Browse() {
           </div>
         </div>
       </div>
+
+      {savedMsg && (
+        <div className="mb-lg rounded-xl bg-trust-emerald/10 border border-trust-emerald/30 px-4 py-2.5 text-body-sm text-trust-emerald flex items-center gap-2">
+          <Bookmark className="w-4 h-4" /> {savedMsg} <a href="/saved-searches" className="ml-auto font-semibold hover:underline">View saved searches →</a>
+        </div>
+      )}
 
       {/* Active filter chips */}
       {filters.verified === 'true' && (

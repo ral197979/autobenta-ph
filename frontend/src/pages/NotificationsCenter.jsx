@@ -15,10 +15,20 @@ const TYPE = {
   inquiry: { label: 'Inquiry', labelCls: 'text-secondary', icon: 'chat', iconBg: 'bg-surface-container-high', iconCls: 'text-on-surface-variant' },
   offer: { label: 'Offer', labelCls: 'text-secondary', icon: 'local_offer', iconBg: 'bg-secondary-container', iconCls: 'text-on-secondary-container' },
   inspection: { label: 'Inspection', labelCls: 'text-trust-emerald', icon: 'verified', iconBg: 'bg-trust-emerald/15', iconCls: 'text-trust-emerald' },
+  search: { label: 'Saved Search', labelCls: 'text-primary', icon: 'bookmark', iconBg: 'bg-primary/10', iconCls: 'text-primary' },
 };
 
-function buildNotifications({ inquiries, inspections, offers, canReceive }) {
+function buildNotifications({ inquiries, inspections, offers, searches, canReceive }) {
   const out = [];
+  (searches || []).forEach((s) => {
+    if (!s.alertOn || !s.newCount) return;
+    out.push({
+      id: 'srch-' + s.id, type: 'search', time: new Date().toISOString(),
+      title: `${s.newCount} new match${s.newCount === 1 ? '' : 'es'} for "${s.name}"`,
+      body: `New listings match your saved search. Tap to view.`,
+      link: '/saved-searches',
+    });
+  });
   (inquiries || []).forEach((q) => {
     const car = `${q.listing?.year || ''} ${q.listing?.make || ''} ${q.listing?.model || ''}`.trim();
     out.push({
@@ -60,9 +70,10 @@ export default function NotificationsCenter() {
   const inqQ = useQuery({ queryKey: ['notif-inquiries', canReceive], queryFn: () => api.get(`/inquiries/${canReceive ? 'received' : 'sent'}`).then(r => r.data).catch(() => []) });
   const inspQ = useQuery({ queryKey: ['notif-inspections'], queryFn: () => api.get('/inspections').then(r => r.data).catch(() => []) });
   const offerQ = useQuery({ queryKey: ['notif-offers', canReceive], queryFn: () => api.get(`/offers?box=${canReceive ? 'received' : 'sent'}`).then(r => r.data).catch(() => []) });
+  const searchQ = useQuery({ queryKey: ['notif-searches'], queryFn: () => api.get('/saved-searches').then(r => r.data).catch(() => []) });
 
   const loading = inqQ.isLoading || inspQ.isLoading;
-  const all = buildNotifications({ inquiries: inqQ.data, inspections: inspQ.data, offers: offerQ.data, canReceive });
+  const all = buildNotifications({ inquiries: inqQ.data, inspections: inspQ.data, offers: offerQ.data, searches: searchQ.data, canReceive });
   const isUnread = (n) => new Date(n.time).getTime() > seen;
   const shown = tab === 'unread' ? all.filter(isUnread) : all;
 
