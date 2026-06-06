@@ -98,6 +98,9 @@ export default function NewCarDetail() {
               <Link to="/financing" className="w-full bg-surface-container-high border border-border-subtle text-primary py-4 rounded-xl text-label-md font-bold hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
                 <Icon name="calculate" className="text-[20px]" /> Estimate Financing
               </Link>
+              <Link to={`/new-cars/compare?ids=${m.id}`} className="w-full text-center text-label-md font-bold text-primary hover:underline flex items-center justify-center gap-1.5">
+                <Icon name="balance" className="text-[18px]" /> Compare with other models
+              </Link>
             </div>
             <div className="pt-md border-t border-border-subtle space-y-md">
               <TrustRow icon="verified_user" title="Official pricing" body="Indicative SRP — confirm with a dealer for the latest." />

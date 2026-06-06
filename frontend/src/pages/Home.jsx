@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import api from '../api/client';
+import { formatPrice } from '../utils/format';
 import FeaturedListings from '../components/home/FeaturedListings';
 
 const BODY_TYPES = [
@@ -303,13 +305,58 @@ function TrustPillars() {
   );
 }
 
+function RailCard({ m }) {
+  const [err, setErr] = useState(false);
+  return (
+    <Link to={`/new-cars/${m.id}`} className="shrink-0 w-64 bg-surface-container-lowest border border-border-subtle rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all">
+      <div className="relative h-36">
+        {m.imageUrl && !err ? (
+          <img src={m.imageUrl} alt={`${m.make} ${m.model}`} className="w-full h-full object-cover" onError={() => setErr(true)} />
+        ) : (
+          <div className="h-full w-full bg-gradient-to-br from-[#1e3a5f] to-[#0B1220] flex items-center justify-center">
+            <span className="text-headline-sm font-bold text-white/90 text-center px-2">{m.make} {m.model}</span>
+          </div>
+        )}
+        {m.isElectric && <span className="absolute top-2 left-2 bg-trust-emerald text-white text-[10px] font-bold px-2 py-1 rounded-full">EV</span>}
+      </div>
+      <div className="p-md">
+        <span className="text-label-sm text-on-surface-variant uppercase tracking-wider">{m.bodyType} · {m.year}</span>
+        <h3 className="text-headline-sm font-headline-sm text-on-surface line-clamp-1">{m.make} {m.model}</h3>
+        <p className="text-label-sm text-on-surface-variant mt-xs">Starts at</p>
+        <p className="text-headline-sm font-bold text-primary">{formatPrice(m.startingPrice)}</p>
+      </div>
+    </Link>
+  );
+}
+
+function NewCarsRail({ title, query, viewAllHref }) {
+  const { data } = useQuery({ queryKey: ['new-cars-rail', query], queryFn: () => api.get(`/new-cars?${query}&limit=10`).then((r) => r.data) });
+  const models = data?.models || [];
+  if (!models.length) return null;
+  return (
+    <section className="py-2xl bg-background">
+      <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop">
+        <div className="flex items-end justify-between mb-lg gap-4">
+          <h2 className="text-headline-lg font-headline-lg text-primary">{title}</h2>
+          <Link to={viewAllHref} className="text-primary font-label-md text-label-md hover:underline flex items-center gap-1 shrink-0">View all <span className="material-symbols-outlined text-[18px]">arrow_forward</span></Link>
+        </div>
+        <div className="flex gap-lg overflow-x-auto hide-scrollbar pb-2">
+          {models.map((m) => <RailCard key={m.id} m={m} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <div className="bg-background">
       <HeroSearch />
       <TopBrands />
       <HowItWorks />
+      <NewCarsRail title="Popular New Cars" query="sort=featured" viewAllHref="/new-cars" />
       <FeaturedListings />
+      <NewCarsRail title="Electric & Hybrid" query="green=true" viewAllHref="/new-cars?electric=true" />
       <SellCTA />
       <VerifiedDealers />
       <Newsletter />

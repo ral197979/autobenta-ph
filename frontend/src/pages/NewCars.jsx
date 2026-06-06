@@ -97,9 +97,14 @@ export default function NewCars() {
   return (
     <div className="bg-background min-h-screen">
       <main className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-lg">
-        <div className="mb-lg">
-          <h1 className="text-headline-lg font-headline-lg text-on-surface">New Cars</h1>
-          <p className="text-body-sm text-on-surface-variant mt-1">{isLoading ? 'Loading…' : `${data?.pagination?.total || 0} brand-new models with prices and specs.`}</p>
+        <div className="mb-lg flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-headline-lg font-headline-lg text-on-surface">New Cars</h1>
+            <p className="text-body-sm text-on-surface-variant mt-1">{isLoading ? 'Loading…' : `${data?.pagination?.total || 0} brand-new models with prices and specs.`}</p>
+          </div>
+          <Link to="/new-cars/compare" className="shrink-0 rounded-xl border border-border-subtle text-on-surface px-md py-sm text-label-md hover:bg-surface-container transition-colors flex items-center gap-1.5">
+            <Icon name="balance" className="text-[18px]" /> Compare
+          </Link>
         </div>
 
         <div className="flex gap-xl">

@@ -99,6 +99,25 @@ const MODELS = [
       { name: 'GLS IVT', price: 1395000, transmission: 'cvt', fuelType: 'gasoline' },
     ],
   },
+  {
+    make: 'Toyota', model: 'Corolla Cross', bodyType: 'Crossover', fuelType: 'hybrid', startingPrice: 1705000, year: 2025,
+    isFeatured: true,
+    description: 'A self-charging hybrid crossover blending SUV space with low fuel use.',
+    specs: { Engine: '1.8L Hybrid', Transmission: 'e-CVT', Seating: '5', Drivetrain: 'FWD', 'Fuel Economy': '~24 km/L' },
+    variants: [
+      { name: '1.8 G', price: 1705000, transmission: 'cvt', fuelType: 'gasoline' },
+      { name: '1.8 Hybrid', price: 1995000, transmission: 'cvt', fuelType: 'hybrid' },
+    ],
+  },
+  {
+    make: 'Nissan', model: 'Kicks e-POWER', bodyType: 'Crossover', fuelType: 'hybrid', startingPrice: 1509000, year: 2025,
+    description: 'An electric-motor-driven crossover with a gas range-extender — EV feel, no plugging in.',
+    specs: { Powertrain: 'e-POWER Hybrid', Transmission: 'Single-speed', Seating: '5', Drivetrain: 'FWD', 'Fuel Economy': '~23 km/L' },
+    variants: [
+      { name: 'VE', price: 1509000, transmission: 'automatic', fuelType: 'hybrid' },
+      { name: 'VL', price: 1639000, transmission: 'automatic', fuelType: 'hybrid' },
+    ],
+  },
 ];
 
 async function main() {

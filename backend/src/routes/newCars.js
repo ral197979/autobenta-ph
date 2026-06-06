@@ -13,6 +13,7 @@ router.get('/', async (req, res, next) => {
     if (bodyType) where.bodyType = { contains: bodyType, mode: 'insensitive' };
     if (fuelType) where.fuelType = { equals: fuelType, mode: 'insensitive' };
     if (electric === 'true') where.isElectric = true;
+    if (req.query.green === 'true') where.OR = [{ isElectric: true }, { fuelType: 'hybrid' }];
     if (priceMin || priceMax) where.startingPrice = { gte: priceMin ? parseFloat(priceMin) : undefined, lte: priceMax ? parseFloat(priceMax) : undefined };
 
     const orderBy =
