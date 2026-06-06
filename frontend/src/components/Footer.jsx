@@ -5,6 +5,8 @@ const COLUMNS = [
     title: 'Explore',
     links: [
       ['Browse Cars', '/cars'],
+      ['New Cars', '/new-cars'],
+      ['Dealer Directory', '/dealers'],
       ['Sell My Car', '/sell'],
       ['Ryderr Certified', '/inspection-services'],
       ['Financing', '/financing'],

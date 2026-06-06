@@ -8,14 +8,30 @@ const prisma = new PrismaClient();
 
 router.get('/', async (req, res, next) => {
   try {
+    const { city, verified, q } = req.query;
+    const where = {};
+    if (city) where.city = { contains: city, mode: 'insensitive' };
+    if (verified === 'true') where.isVerified = true;
+    if (q) where.businessName = { contains: q, mode: 'insensitive' };
+
     const dealers = await prisma.dealer.findMany({
+      where,
       include: {
         user: { select: { id: true, name: true, email: true } },
         _count: { select: { listings: true } },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ isVerified: 'desc' }, { createdAt: 'desc' }],
     });
-    res.json(dealers);
+
+    // Attach rating aggregates (reviews are keyed by the dealer's owner userId).
+    const userIds = dealers.map((d) => d.userId);
+    const grouped = userIds.length
+      ? await prisma.review.groupBy({ by: ['sellerId'], where: { sellerId: { in: userIds } }, _avg: { rating: true }, _count: { rating: true } })
+      : [];
+    const ratingByUser = Object.fromEntries(grouped.map((g) => [g.sellerId, { avg: Math.round((g._avg.rating || 0) * 10) / 10, count: g._count.rating }]));
+    const withRatings = dealers.map((d) => ({ ...d, rating: ratingByUser[d.userId] || { avg: 0, count: 0 } }));
+
+    res.json(withRatings);
   } catch (err) {
     next(err);
   }

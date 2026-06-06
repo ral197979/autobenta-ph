@@ -32,6 +32,7 @@ import NewCars from './pages/NewCars';
 import NewCarDetail from './pages/NewCarDetail';
 import NewCarCompare from './pages/NewCarCompare';
 import AdminNewCars from './pages/admin/AdminNewCars';
+import DealerDirectory from './pages/DealerDirectory';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AIListingWizard from './pages/AIListingWizard';
@@ -100,6 +101,7 @@ function AppRoutes() {
           <Route path="/notifications" element={<ProtectedRoute><NotificationsCenter /></ProtectedRoute>} />
           <Route path="/offers" element={<ProtectedRoute><ActiveOffers /></ProtectedRoute>} />
           <Route path="/help" element={<HelpCenter />} />
+          <Route path="/dealers" element={<DealerDirectory />} />
           <Route path="/seller/:id" element={<SellerProfile />} />
           <Route path="/messages/:id" element={<ProtectedRoute><MessageThread /></ProtectedRoute>} />
           <Route path="/promote/:listingId" element={<ProtectedRoute roles={['dealer', 'admin']}><PromoteListing /></ProtectedRoute>} />

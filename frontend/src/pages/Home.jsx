@@ -268,7 +268,7 @@ function VerifiedDealers() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-lg">
           {DEALERS.map((d) => (
-            <Link key={d.name} to="/cars" className="bg-surface-container-lowest p-lg rounded-xl border border-border-subtle flex flex-col items-center text-center group cursor-pointer hover:border-primary transition-all">
+            <Link key={d.name} to="/dealers" className="bg-surface-container-lowest p-lg rounded-xl border border-border-subtle flex flex-col items-center text-center group cursor-pointer hover:border-primary transition-all">
               <div className="w-20 h-20 bg-surface rounded-full flex items-center justify-center mb-md border border-border-subtle">
                 <span className="material-symbols-outlined text-3xl text-primary">storefront</span>
               </div>
