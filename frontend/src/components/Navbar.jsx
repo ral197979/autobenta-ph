@@ -143,6 +143,11 @@ export default function Navbar() {
                     <Icon name="article" className="text-base" /> News &amp; Reviews
                   </Link>
                 )}
+                {user.role === 'admin' && (
+                  <Link to="/admin/leads" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                    <Icon name="contacts" className="text-base" /> Finance/Insurance Leads
+                  </Link>
+                )}
                 <div className="my-1 border-t border-border-subtle" />
                 <button onClick={handleLogout} className="flex w-full items-center gap-2 px-4 py-2 text-body-sm text-error hover:bg-error-container/40">
                   <Icon name="logout" className="text-base" /> Sign Out

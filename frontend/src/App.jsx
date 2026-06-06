@@ -38,6 +38,7 @@ import TradeInValuation from './pages/TradeInValuation';
 import News from './pages/News';
 import ArticleDetail from './pages/ArticleDetail';
 import AdminArticles from './pages/admin/AdminArticles';
+import AdminLeads from './pages/admin/AdminLeads';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AIListingWizard from './pages/AIListingWizard';
@@ -112,6 +113,7 @@ function AppRoutes() {
           <Route path="/news" element={<News />} />
           <Route path="/news/:slug" element={<ArticleDetail />} />
           <Route path="/admin/articles" element={<ProtectedRoute roles={['admin']}><AdminArticles /></ProtectedRoute>} />
+          <Route path="/admin/leads" element={<ProtectedRoute roles={['admin']}><AdminLeads /></ProtectedRoute>} />
           <Route path="/seller/:id" element={<SellerProfile />} />
           <Route path="/messages/:id" element={<ProtectedRoute><MessageThread /></ProtectedRoute>} />
           <Route path="/promote/:listingId" element={<ProtectedRoute roles={['dealer', 'admin']}><PromoteListing /></ProtectedRoute>} />

@@ -592,6 +592,36 @@ enum BookingStatus {
   cancelled
 }
 
+model PartnerLead {
+  id          String     @id @default(uuid())
+  type        LeadType   @default(financing)
+  userId      String?
+  name        String
+  email       String
+  phone       String?
+  listingId   String?
+  vehicleInfo String?
+  amount      Decimal?   @db.Decimal(12, 2)
+  details     Json?
+  status      LeadStatus @default(new)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("partner_leads")
+}
+
+enum LeadType {
+  financing
+  insurance
+}
+
+enum LeadStatus {
+  new
+  contacted
+  approved
+  declined
+}
+
 model Article {
   id          String    @id @default(uuid())
   slug        String    @unique
