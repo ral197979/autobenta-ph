@@ -240,7 +240,7 @@ function SellCTA() {
             Our experts handle the inspection and paperwork. Get paid in as fast as 24 hours.
           </p>
           <div className="flex flex-col sm:flex-row gap-md justify-center md:justify-start">
-            <Link to="/sell" className="bg-surface-container-lowest text-primary px-3xl py-md rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-all shadow-lg active:scale-95">
+            <Link to="/valuation" className="bg-surface-container-lowest text-primary px-3xl py-md rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-all shadow-lg active:scale-95">
               Get Instant Quote
             </Link>
             <Link to="/safe-buying" className="bg-transparent border border-white/30 text-on-primary px-3xl py-md rounded-xl font-label-md text-label-md hover:bg-white/10 transition-all active:scale-95">

@@ -7,6 +7,7 @@ const COLUMNS = [
       ['Browse Cars', '/cars'],
       ['New Cars', '/new-cars'],
       ['Dealer Directory', '/dealers'],
+      ['Car Valuation', '/valuation'],
       ['Sell My Car', '/sell'],
       ['Ryderr Certified', '/inspection-services'],
       ['Financing', '/financing'],
