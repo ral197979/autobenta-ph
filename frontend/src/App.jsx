@@ -31,6 +31,7 @@ import VehicleDocumentVerification from './pages/VehicleDocumentVerification';
 import NewCars from './pages/NewCars';
 import NewCarDetail from './pages/NewCarDetail';
 import NewCarCompare from './pages/NewCarCompare';
+import AdminNewCars from './pages/admin/AdminNewCars';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AIListingWizard from './pages/AIListingWizard';
@@ -121,6 +122,7 @@ function AppRoutes() {
           <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminPanel /></ProtectedRoute>} />
           <Route path="/admin/dealers" element={<ProtectedRoute roles={['admin']}><DealerOperations /></ProtectedRoute>} />
           <Route path="/admin/revenue" element={<ProtectedRoute roles={['admin']}><RevenueInsights /></ProtectedRoute>} />
+          <Route path="/admin/new-cars" element={<ProtectedRoute roles={['admin']}><AdminNewCars /></ProtectedRoute>} />
           <Route path="/inspection-services" element={<InspectionServices />} />
           <Route path="/inspections" element={<ProtectedRoute><Inspections /></ProtectedRoute>} />
           <Route path="/inspections/:id" element={<ProtectedRoute><InspectionReport /></ProtectedRoute>} />

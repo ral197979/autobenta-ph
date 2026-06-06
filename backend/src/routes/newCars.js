@@ -1,8 +1,24 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
+const { authenticate, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 const prisma = new PrismaClient();
+
+const MODEL_FIELDS = ['make', 'model', 'bodyType', 'fuelType', 'year', 'imageUrl', 'brochureUrl', 'description', 'isElectric', 'isFeatured', 'specs'];
+
+function buildModelData(body) {
+  const data = {};
+  for (const k of MODEL_FIELDS) if (body[k] !== undefined) data[k] = body[k];
+  if (body.year !== undefined) data.year = parseInt(body.year);
+  if (body.startingPrice !== undefined) data.startingPrice = parseFloat(body.startingPrice);
+  return data;
+}
+
+const cleanVariants = (variants) =>
+  (Array.isArray(variants) ? variants : [])
+    .filter((v) => v && v.name && v.price != null)
+    .map((v) => ({ name: v.name, price: parseFloat(v.price), transmission: v.transmission || null, fuelType: v.fuelType || null }));
 
 // List new-car models with filters + pagination (public)
 router.get('/', async (req, res, next) => {
@@ -51,6 +67,52 @@ router.get('/:id', async (req, res, next) => {
     });
     if (!model) return res.status(404).json({ error: 'Model not found' });
     res.json(model);
+  } catch (e) { next(e); }
+});
+
+// --- Admin CRUD ---
+
+// Create a model (+ variants)
+router.post('/', authenticate, requireRole('admin'), async (req, res, next) => {
+  try {
+    const { make, model, bodyType, fuelType, startingPrice, year } = req.body;
+    if (!make || !model || !bodyType || !fuelType || startingPrice == null || year == null) {
+      return res.status(400).json({ error: 'make, model, bodyType, fuelType, startingPrice, and year are required' });
+    }
+    const created = await prisma.newCarModel.create({
+      data: { ...buildModelData(req.body), startingPrice: parseFloat(startingPrice), variants: { create: cleanVariants(req.body.variants) } },
+      include: { variants: true },
+    });
+    res.status(201).json(created);
+  } catch (e) { next(e); }
+});
+
+// Update a model; if `variants` provided, replace them
+router.patch('/:id', authenticate, requireRole('admin'), async (req, res, next) => {
+  try {
+    const exists = await prisma.newCarModel.findUnique({ where: { id: req.params.id } });
+    if (!exists) return res.status(404).json({ error: 'Model not found' });
+    if (Array.isArray(req.body.variants)) {
+      await prisma.newCarVariant.deleteMany({ where: { modelId: req.params.id } });
+    }
+    const updated = await prisma.newCarModel.update({
+      where: { id: req.params.id },
+      data: {
+        ...buildModelData(req.body),
+        ...(req.body.startingPrice !== undefined && { startingPrice: parseFloat(req.body.startingPrice) }),
+        ...(Array.isArray(req.body.variants) && { variants: { create: cleanVariants(req.body.variants) } }),
+      },
+      include: { variants: true },
+    });
+    res.json(updated);
+  } catch (e) { next(e); }
+});
+
+// Delete a model (variants cascade)
+router.delete('/:id', authenticate, requireRole('admin'), async (req, res, next) => {
+  try {
+    await prisma.newCarModel.delete({ where: { id: req.params.id } });
+    res.json({ ok: true });
   } catch (e) { next(e); }
 });
 
