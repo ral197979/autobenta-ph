@@ -7,6 +7,7 @@ import { formatPrice, formatMileage, formatRelativeTime, FUEL_LABELS, TRANSMISSI
 import { useAuth } from '../context/AuthContext';
 import ReadinessScore from '../components/ReadinessScore';
 import DealBadge from '../components/DealBadge';
+import TCOCalculator from '../components/TCOCalculator';
 import VehicleHistoryCard from '../components/VehicleHistoryCard';
 import MakeOfferModal from '../components/MakeOfferModal';
 import BookTestDriveModal from '../components/BookTestDriveModal';
@@ -251,6 +252,9 @@ export default function CarDetail() {
               ))}
             </div>
           </section>
+
+          {/* Total Cost of Ownership */}
+          <TCOCalculator listing={listing} />
 
           {/* Seller's Insight */}
           {(listing.description || true) && (
