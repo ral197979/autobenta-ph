@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { to: '/new-cars', label: 'New Cars' },
   { to: '/cars', label: 'Used Cars' },
   { to: '/inspection-services', label: 'Ryderr Certified' },
+  { to: '/news', label: 'News' },
   { to: '/sell', label: 'Sell My Car' },
 ];
 
@@ -135,6 +136,11 @@ export default function Navbar() {
                 {user.role === 'admin' && (
                   <Link to="/admin/new-cars" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
                     <Icon name="garage" className="text-base" /> New-Car Catalog
+                  </Link>
+                )}
+                {user.role === 'admin' && (
+                  <Link to="/admin/articles" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                    <Icon name="article" className="text-base" /> News &amp; Reviews
                   </Link>
                 )}
                 <div className="my-1 border-t border-border-subtle" />

@@ -592,6 +592,23 @@ enum BookingStatus {
   cancelled
 }
 
+model Article {
+  id          String    @id @default(uuid())
+  slug        String    @unique
+  title       String
+  category    String    @default("News")
+  excerpt     String?
+  body        String
+  coverUrl    String?
+  authorName  String?
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("articles")
+}
+
 model Lead {
   id         String        @id @default(uuid())
   dealerId   String
