@@ -71,6 +71,11 @@ export default function Footer() {
         <p className="text-on-surface-variant font-label-sm">© {year} AutoBentaPH Inc. — Ryderr™ automotive marketplace.</p>
         <span className="text-label-sm text-on-surface-variant">Metro Manila, PH</span>
       </div>
+      <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop mt-md">
+        <p className="text-[11px] text-on-surface-variant/60 leading-relaxed">
+          All manufacturer names, logos, and brands are the property of their respective owners. Ryderr is an independent marketplace and is not affiliated with, endorsed by, or sponsored by any vehicle manufacturer.
+        </p>
+      </div>
     </footer>
   );
 }
