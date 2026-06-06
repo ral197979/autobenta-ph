@@ -8,6 +8,7 @@ import {
   SELLER_TYPE_LABELS,
 } from '../utils/format';
 import api from '../api/client';
+import DealBadge from './DealBadge';
 
 const carPlaceholder = (text) => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="280"><rect fill="#1e293b" width="400" height="280"/><text fill="#64748b" font-family="sans-serif" font-size="16" font-weight="500" text-anchor="middle" x="200" y="148">${text}</text></svg>`;
@@ -104,6 +105,8 @@ export default function CarCard({ listing, onFavoriteToggle }) {
             <span className="text-[12px] font-medium text-on-surface">{FUEL_LABELS[listing.fuelType] || '—'}</span>
           </div>
         </div>
+
+        {listing.dealRating && <DealBadge rating={listing.dealRating} className="self-start" />}
 
         <div className="flex items-center justify-between mt-auto">
           <span className="text-headline-sm font-bold text-primary">{formatPrice(listing.price)}</span>

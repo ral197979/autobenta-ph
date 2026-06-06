@@ -6,6 +6,7 @@ import { trackEvent } from '../utils/analytics';
 import { formatPrice, formatMileage, formatRelativeTime, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_LABELS, carPlaceholder } from '../utils/format';
 import { useAuth } from '../context/AuthContext';
 import ReadinessScore from '../components/ReadinessScore';
+import DealBadge from '../components/DealBadge';
 import VehicleHistoryCard from '../components/VehicleHistoryCard';
 import MakeOfferModal from '../components/MakeOfferModal';
 import BookTestDriveModal from '../components/BookTestDriveModal';
@@ -330,6 +331,12 @@ export default function CarDetail() {
                   <span className="text-display-lg font-bold text-primary tracking-tight">{formatPrice(listing.price)}</span>
                   {listing.negotiable && <span className="text-label-sm text-on-surface-variant font-bold uppercase tracking-widest">Negotiable</span>}
                 </div>
+                {listing.dealRating && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <DealBadge rating={listing.dealRating} />
+                    {listing.marketAvg && <span className="text-label-sm text-on-surface-variant">Market avg {formatPrice(listing.marketAvg)}</span>}
+                  </div>
+                )}
               </div>
 
               {user?.id === listing.sellerId ? (

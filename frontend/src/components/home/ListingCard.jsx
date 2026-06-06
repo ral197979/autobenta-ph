@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import DealBadge from '../DealBadge';
 import {
   formatPrice,
   formatMileage,
@@ -106,6 +107,7 @@ export default function ListingCard({ listing }) {
           {listing.year}
           {listing.variant ? ` • ${listing.variant}` : ''} • {km}
         </p>
+        {listing.dealRating && <DealBadge rating={listing.dealRating} className="mb-md" />}
         <div className="flex gap-2 flex-wrap mb-lg">
           {listing.transmission && (
             <span className="bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-on-secondary-fixed-variant">

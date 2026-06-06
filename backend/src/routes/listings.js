@@ -12,6 +12,28 @@ const prisma = new PrismaClient();
 
 const LISTINGS_PER_PAGE = 20;
 
+// Attach a market-based "Deal Rating" to each listing by comparing its price to
+// the average of active listings of the same make+model (min 3 comps).
+async function withDealRatings(listings) {
+  if (!listings.length) return listings;
+  const groups = await prisma.vehicleListing.groupBy({
+    by: ['make', 'model'],
+    where: { status: 'active' },
+    _avg: { price: true },
+    _count: { _all: true },
+  });
+  const key = (mk, md) => `${mk}|${md}`.toLowerCase();
+  const avgMap = {};
+  groups.forEach((g) => { if (g._count._all >= 3 && g._avg.price) avgMap[key(g.make, g.model)] = Number(g._avg.price); });
+  return listings.map((l) => {
+    const avg = avgMap[key(l.make, l.model)];
+    if (!avg) return l;
+    const r = Number(l.price) / avg;
+    const rating = r <= 0.93 ? 'great' : r <= 1.0 ? 'good' : r <= 1.1 ? 'fair' : 'high';
+    return { ...l, dealRating: rating, marketAvg: Math.round(avg) };
+  });
+}
+
 // Haversine distance in km between two lat/lng points
 function haversineKm(lat1, lng1, lat2, lng2) {
   if (lat2 == null || lng2 == null) return null;
@@ -87,7 +109,7 @@ router.get('/', optionalAuth, async (req, res, next) => {
       const paginated = withDist.slice(skip, skip + LISTINGS_PER_PAGE);
 
       return res.json({
-        listings: paginated,
+        listings: await withDealRatings(paginated),
         pagination: { page: pageNum, total: withDist.length, pages: Math.ceil(withDist.length / LISTINGS_PER_PAGE), perPage: LISTINGS_PER_PAGE },
         nearbyMode: true,
       });
@@ -110,7 +132,7 @@ router.get('/', optionalAuth, async (req, res, next) => {
     ]);
 
     res.json({
-      listings,
+      listings: await withDealRatings(listings),
       pagination: { page: parseInt(page), total, pages: Math.ceil(total / LISTINGS_PER_PAGE), perPage: LISTINGS_PER_PAGE },
     });
   } catch (err) {
@@ -149,7 +171,8 @@ router.get('/:id', optionalAuth, async (req, res, next) => {
       ? !!(await prisma.favorite.findUnique({ where: { userId_listingId: { userId: req.user.id, listingId: req.params.id } } }))
       : false;
 
-    res.json({ ...listing, isFavorited });
+    const [rated] = await withDealRatings([listing]);
+    res.json({ ...rated, isFavorited });
   } catch (err) {
     next(err);
   }
