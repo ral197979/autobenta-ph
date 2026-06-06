@@ -2,7 +2,18 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import FeaturedListings from '../components/home/FeaturedListings';
 
-const BRANDS = ['Toyota', 'Mitsubishi', 'Honda', 'Ford', 'BMW', 'Nissan', 'Hyundai', 'Isuzu'];
+// Decorative per-brand monogram colors (not official brand marks — a letter in a
+// colour is trademark-safe, unlike the manufacturers' actual logos).
+const BRANDS = [
+  { name: 'Toyota', color: '#E11D2A' },
+  { name: 'Mitsubishi', color: '#C81E2B' },
+  { name: 'Honda', color: '#111827' },
+  { name: 'Ford', color: '#1D4ED8' },
+  { name: 'BMW', color: '#0EA5E9' },
+  { name: 'Nissan', color: '#BE123C' },
+  { name: 'Hyundai', color: '#1E3A8A' },
+  { name: 'Isuzu', color: '#DC2626' },
+];
 
 const DEALERS = [
   { name: 'Elite Motors', tag: 'Premium Partner' },
@@ -92,11 +103,14 @@ function TopBrands() {
         </div>
         <div className="flex items-center gap-xl overflow-x-auto hide-scrollbar py-2">
           {BRANDS.map((b) => (
-            <Link key={b} to={`/cars?make=${encodeURIComponent(b)}`} className="flex flex-col items-center gap-sm min-w-[100px] group cursor-pointer">
-              <div className="w-16 h-16 rounded-full bg-surface-container-low border border-border-subtle flex items-center justify-center group-hover:bg-primary transition-colors">
-                <span className="material-symbols-outlined text-primary group-hover:text-on-primary transition-colors">directions_car</span>
+            <Link key={b.name} to={`/cars?make=${encodeURIComponent(b.name)}`} className="flex flex-col items-center gap-sm min-w-[100px] group cursor-pointer">
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-headline-sm shadow-sm ring-1 ring-black/5 group-hover:scale-105 transition-transform"
+                style={{ backgroundColor: b.color }}
+              >
+                {b.name.charAt(0)}
               </div>
-              <span className="text-label-sm font-label-sm text-on-surface-variant">{b}</span>
+              <span className="text-label-sm font-label-sm text-on-surface-variant group-hover:text-primary transition-colors">{b.name}</span>
             </Link>
           ))}
         </div>
