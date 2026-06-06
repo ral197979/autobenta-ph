@@ -4,8 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 
 const NAV_LINKS = [
-  { to: '/', label: 'Home' },
-  { to: '/cars', label: 'Browse Cars' },
+  { to: '/new-cars', label: 'New Cars' },
+  { to: '/cars', label: 'Used Cars' },
   { to: '/inspection-services', label: 'Ryderr Certified' },
   { to: '/sell', label: 'Sell My Car' },
 ];

@@ -28,6 +28,8 @@ import EditListing from './pages/EditListing';
 import ReportDispute from './pages/ReportDispute';
 import Verification from './pages/Verification';
 import VehicleDocumentVerification from './pages/VehicleDocumentVerification';
+import NewCars from './pages/NewCars';
+import NewCarDetail from './pages/NewCarDetail';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AIListingWizard from './pages/AIListingWizard';
@@ -77,6 +79,8 @@ function AppRoutes() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/new-cars" element={<NewCars />} />
+          <Route path="/new-cars/:id" element={<NewCarDetail />} />
           <Route path="/cars" element={<Browse />} />
           <Route path="/cars/:id" element={<CarDetail />} />
           <Route path="/listings/:id/edit" element={<ProtectedRoute roles={['seller', 'dealer', 'admin']}><EditListing /></ProtectedRoute>} />

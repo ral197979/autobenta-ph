@@ -525,6 +525,38 @@ model Subscriber {
   @@map("subscribers")
 }
 
+model NewCarModel {
+  id            String          @id @default(uuid())
+  make          String
+  model         String
+  bodyType      String
+  fuelType      String
+  startingPrice Decimal         @db.Decimal(12, 2)
+  year          Int
+  imageUrl      String?
+  brochureUrl   String?
+  description   String?
+  isElectric    Boolean         @default(false)
+  isFeatured    Boolean         @default(false)
+  specs         Json?
+  variants      NewCarVariant[]
+  createdAt     DateTime        @default(now())
+
+  @@map("new_car_models")
+}
+
+model NewCarVariant {
+  id           String      @id @default(uuid())
+  modelId      String
+  model        NewCarModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  name         String
+  price        Decimal     @db.Decimal(12, 2)
+  transmission String?
+  fuelType     String?
+
+  @@map("new_car_variants")
+}
+
 model Lead {
   id         String        @id @default(uuid())
   dealerId   String
