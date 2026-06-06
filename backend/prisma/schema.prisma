@@ -517,6 +517,14 @@ enum DisputeStatus {
   dismissed
 }
 
+model Subscriber {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("subscribers")
+}
+
 model Lead {
   id         String        @id @default(uuid())
   dealerId   String

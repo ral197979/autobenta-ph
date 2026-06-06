@@ -1,6 +1,24 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../api/client';
 import FeaturedListings from '../components/home/FeaturedListings';
+
+const BODY_TYPES = [
+  { name: 'Sedan', icon: 'directions_car' },
+  { name: 'SUV', icon: 'directions_car' },
+  { name: 'Crossover', icon: 'directions_car' },
+  { name: 'Hatchback', icon: 'directions_car' },
+  { name: 'Pickup', icon: 'local_shipping' },
+  { name: 'MPV', icon: 'airport_shuttle' },
+  { name: 'Van', icon: 'airport_shuttle' },
+];
+
+const STEPS = [
+  { icon: 'search', title: 'Search & Filter', body: 'Browse verified listings with photos, history, and transparent pricing.' },
+  { icon: 'verified', title: 'Inspect & Verify', body: 'Request a Ryderr Certified inspection and check the readiness score.' },
+  { icon: 'forum', title: 'Inquire & Offer', body: 'Message the seller, make an offer, or counter — all in-app.' },
+  { icon: 'fact_check', title: 'Close & Transfer', body: 'Follow the LTO transfer checklist and complete the sale with confidence.' },
+];
 
 // Manufacturer logos for make-based browsing (nominative fair use). Served from
 // a stable, versioned CDN; `color` is the fallback monogram tint if a logo fails.
@@ -111,20 +129,98 @@ function Field({ label, placeholder, value, onChange, bordered }) {
 }
 
 function TopBrands() {
+  const [tab, setTab] = useState('makes');
   return (
     <section className="py-xl bg-surface-container-lowest border-b border-border-subtle">
       <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop">
-        <div className="flex items-center justify-between mb-lg">
-          <h2 className="text-headline-sm font-headline-sm text-primary">Top Brands</h2>
-          <Link to="/cars" className="text-on-tertiary-container font-label-md text-label-md hover:underline">View All Brands</Link>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-md mb-lg">
+          <h2 className="text-headline-sm font-headline-sm text-primary">Popular Makes &amp; Body Types</h2>
+          <div className="flex items-center gap-1 bg-surface-container rounded-full p-1 w-fit">
+            {[['makes', 'Car Makes'], ['types', 'Body Types']].map(([k, l]) => (
+              <button key={k} onClick={() => setTab(k)} className={`px-md py-1.5 rounded-full text-label-md transition-colors ${tab === k ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}>{l}</button>
+            ))}
+          </div>
         </div>
         <div className="flex items-center gap-xl overflow-x-auto hide-scrollbar py-2">
-          {BRANDS.map((b) => (
-            <Link key={b.name} to={`/cars?make=${encodeURIComponent(b.name)}`} className="flex flex-col items-center gap-sm min-w-[100px] group cursor-pointer">
-              <BrandLogo brand={b} />
-              <span className="text-label-sm font-label-sm text-on-surface-variant group-hover:text-primary transition-colors">{b.name}</span>
-            </Link>
+          {tab === 'makes'
+            ? BRANDS.map((b) => (
+                <Link key={b.name} to={`/cars?make=${encodeURIComponent(b.name)}`} className="flex flex-col items-center gap-sm min-w-[100px] group cursor-pointer">
+                  <BrandLogo brand={b} />
+                  <span className="text-label-sm font-label-sm text-on-surface-variant group-hover:text-primary transition-colors">{b.name}</span>
+                </Link>
+              ))
+            : BODY_TYPES.map((t) => (
+                <Link key={t.name} to={`/cars?bodyType=${encodeURIComponent(t.name)}`} className="flex flex-col items-center gap-sm min-w-[100px] group cursor-pointer">
+                  <div className="w-16 h-16 rounded-full bg-surface-container-low border border-border-subtle flex items-center justify-center group-hover:bg-primary transition-colors">
+                    <span className="material-symbols-outlined text-primary group-hover:text-on-primary transition-colors">{t.icon}</span>
+                  </div>
+                  <span className="text-label-sm font-label-sm text-on-surface-variant group-hover:text-primary transition-colors">{t.name}</span>
+                </Link>
+              ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HowItWorks() {
+  return (
+    <section className="py-3xl bg-background">
+      <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop">
+        <h2 className="text-headline-lg font-headline-lg text-primary text-center mb-2xl">How Ryderr Works</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg">
+          {STEPS.map((s, i) => (
+            <div key={s.title} className="bg-surface-container-lowest border border-border-subtle rounded-2xl p-lg text-center relative">
+              <span className="absolute top-4 right-4 text-headline-lg font-bold text-surface-container-high">{i + 1}</span>
+              <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center mb-md">
+                <span className="material-symbols-outlined text-primary text-2xl">{s.icon}</span>
+              </div>
+              <h3 className="text-headline-sm font-headline-sm text-on-surface mb-sm">{s.title}</h3>
+              <p className="text-body-sm text-on-surface-variant">{s.body}</p>
+            </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Newsletter() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('idle'); // idle | loading | done | error
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!email) return;
+    setStatus('loading');
+    try {
+      await api.post('/newsletter', { email });
+      setStatus('done');
+      setEmail('');
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  return (
+    <section className="py-2xl px-gutter-mobile md:px-gutter-desktop">
+      <div className="max-w-container-max mx-auto bg-primary-container rounded-2xl p-xl md:p-3xl relative overflow-hidden text-center">
+        <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-tertiary-container/30 blur-3xl" />
+        <div className="relative z-10 max-w-xl mx-auto">
+          <h2 className="text-headline-lg font-headline-lg text-on-primary mb-sm">Join thousands of car buyers</h2>
+          <p className="text-on-primary-container font-body-md mb-lg">Get new listings, price drops, and buying tips in your inbox. No spam.</p>
+          {status === 'done' ? (
+            <p className="text-on-primary font-label-md flex items-center justify-center gap-2"><span className="material-symbols-outlined">check_circle</span> You're subscribed — welcome aboard!</p>
+          ) : (
+            <form onSubmit={submit} className="flex flex-col sm:flex-row gap-sm max-w-md mx-auto">
+              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com"
+                className="flex-1 bg-surface-container-lowest border border-border-subtle rounded-xl px-md py-sm text-body-md text-on-surface focus:ring-2 focus:ring-primary outline-none" />
+              <button type="submit" disabled={status === 'loading'} className="bg-surface-container-lowest text-primary px-xl py-sm rounded-xl font-label-md hover:bg-surface-container-low transition-all active:scale-95 disabled:opacity-60">
+                {status === 'loading' ? 'Joining…' : 'Subscribe'}
+              </button>
+            </form>
+          )}
+          {status === 'error' && <p className="text-on-primary-container text-label-sm mt-2">Something went wrong — please try again.</p>}
         </div>
       </div>
     </section>
@@ -212,9 +308,11 @@ export default function Home() {
     <div className="bg-background">
       <HeroSearch />
       <TopBrands />
+      <HowItWorks />
       <FeaturedListings />
       <SellCTA />
       <VerifiedDealers />
+      <Newsletter />
       <TrustPillars />
     </div>
   );

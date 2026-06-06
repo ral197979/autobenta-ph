@@ -49,6 +49,7 @@ router.get('/', optionalAuth, async (req, res, next) => {
     if (location && !nearbyMode) where.city = { contains: location, mode: 'insensitive' };
     if (sellerType) where.sellerType = sellerType;
     if (req.query.sellerId) where.sellerId = req.query.sellerId;
+    if (req.query.bodyType) where.bodyType = { contains: req.query.bodyType, mode: 'insensitive' };
     if (condition) where.condition = condition;
     if (verified === 'true') {
       if (!where.AND) where.AND = [];
