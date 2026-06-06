@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import ReadinessScore from '../components/ReadinessScore';
 import VehicleHistoryCard from '../components/VehicleHistoryCard';
 import MakeOfferModal from '../components/MakeOfferModal';
+import BookTestDriveModal from '../components/BookTestDriveModal';
 
 // Material Symbols icon helper (Stitch uses these throughout).
 function Icon({ name, className = '', filled = false }) {
@@ -34,6 +35,8 @@ export default function CarDetail() {
   const [inspectionRequested, setInspectionRequested] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
   const [offerSent, setOfferSent] = useState(false);
+  const [showBooking, setShowBooking] = useState(false);
+  const [bookingDone, setBookingDone] = useState(false);
 
   const { data: listing, isLoading } = useQuery({
     queryKey: ['listing', id],
@@ -341,6 +344,9 @@ export default function CarDetail() {
                   <button onClick={() => (user ? setShowOffer(true) : navigate('/login'))} className="w-full bg-surface-container-high border border-border-subtle text-primary py-4 rounded-xl text-label-md font-bold hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
                     <Icon name="gavel" className="text-[20px]" /> {offerSent ? 'Offer Sent ✓' : 'Make an Offer'}
                   </button>
+                  <button onClick={() => (user ? setShowBooking(true) : navigate('/login'))} className="w-full bg-surface-container-high border border-border-subtle text-primary py-4 rounded-xl text-label-md font-bold hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
+                    <Icon name="event" className="text-[20px]" /> {bookingDone ? 'Booking Requested ✓' : 'Book a Test Drive'}
+                  </button>
                 </div>
               )}
 
@@ -437,6 +443,13 @@ export default function CarDetail() {
           listing={listing}
           onClose={() => setShowOffer(false)}
           onSubmitted={() => { setShowOffer(false); setOfferSent(true); }}
+        />
+      )}
+      {showBooking && (
+        <BookTestDriveModal
+          listing={listing}
+          onClose={() => setShowBooking(false)}
+          onBooked={() => { setShowBooking(false); setBookingDone(true); }}
         />
       )}
     </div>

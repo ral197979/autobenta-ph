@@ -111,6 +111,9 @@ export default function Navbar() {
                 <Link to="/offers" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
                   <Icon name="local_offer" className="text-base" /> Offers
                 </Link>
+                <Link to="/appointments" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                  <Icon name="event" className="text-base" /> Test Drives
+                </Link>
                 <Link to="/account" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
                   <Icon name="settings" className="text-base" /> Account Settings
                 </Link>

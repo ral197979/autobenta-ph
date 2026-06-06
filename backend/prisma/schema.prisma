@@ -215,6 +215,8 @@ model User {
   reviewsWritten      Review[]          @relation("ReviewsWritten")
   messagesSent        Message[]         @relation("MessagesSent")
   disputesFiled       Dispute[]         @relation("DisputesFiled")
+  bookingsMade        Booking[]         @relation("BuyerBookings")
+  bookingsReceived    Booking[]         @relation("SellerBookings")
   inspectionRequests  InspectionRequest[]
   financingRequests   FinancingRequest[]
   auditLogs           AuditLog[]
@@ -368,6 +370,7 @@ model VehicleListing {
   favorites            Favorite[]
   inquiries            Inquiry[]
   offers               Offer[]
+  bookings             Booking[]
   inspectionRequests   InspectionRequest[]
   financingRequests    FinancingRequest[]
   aiAnalyses           AIAnalysis[]
@@ -555,6 +558,38 @@ model NewCarVariant {
   fuelType     String?
 
   @@map("new_car_variants")
+}
+
+model Booking {
+  id            String         @id @default(uuid())
+  listingId     String
+  listing       VehicleListing @relation(fields: [listingId], references: [id])
+  buyerId       String
+  buyer         User           @relation("BuyerBookings", fields: [buyerId], references: [id])
+  sellerId      String
+  seller        User           @relation("SellerBookings", fields: [sellerId], references: [id])
+  type          BookingType    @default(test_drive)
+  preferredDate DateTime
+  timeSlot      String?
+  message       String?
+  status        BookingStatus  @default(requested)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@map("bookings")
+}
+
+enum BookingType {
+  test_drive
+  viewing
+}
+
+enum BookingStatus {
+  requested
+  confirmed
+  declined
+  completed
+  cancelled
 }
 
 model Lead {
