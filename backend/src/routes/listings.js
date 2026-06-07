@@ -139,6 +139,39 @@ router.get('/', optionalAuth, async (req, res, next) => {
   }
 });
 
+// Facets for the homepage hero search: makes (with their models) and price range,
+// derived from live active inventory so users can't pick a zero-result combo.
+router.get('/facets', async (req, res, next) => {
+  try {
+    const groups = await prisma.vehicleListing.groupBy({
+      by: ['make', 'model'],
+      where: { status: 'active' },
+      _count: { _all: true },
+    });
+    const makeMap = new Map();
+    for (const g of groups) {
+      if (!g.make) continue;
+      if (!makeMap.has(g.make)) makeMap.set(g.make, { make: g.make, count: 0, models: [] });
+      const entry = makeMap.get(g.make);
+      entry.count += g._count._all;
+      if (g.model) entry.models.push({ model: g.model, count: g._count._all });
+    }
+    const makes = [...makeMap.values()]
+      .sort((a, b) => b.count - a.count || a.make.localeCompare(b.make))
+      .map((m) => ({ ...m, models: m.models.sort((a, b) => a.model.localeCompare(b.model)) }));
+
+    const agg = await prisma.vehicleListing.aggregate({
+      where: { status: 'active' },
+      _min: { price: true },
+      _max: { price: true },
+    });
+    res.json({
+      makes,
+      priceRange: { min: Number(agg._min.price) || 0, max: Number(agg._max.price) || 0 },
+    });
+  } catch (err) { next(err); }
+});
+
 router.get('/:id', optionalAuth, async (req, res, next) => {
   try {
     const listing = await prisma.vehicleListing.findUnique({

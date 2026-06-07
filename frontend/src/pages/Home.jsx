@@ -65,17 +65,36 @@ const TRUST = [
   { icon: 'support_agent', title: '24/7 Expert Help', body: 'Our specialists guide you through every step of the buying or selling process.' },
 ];
 
+const BUDGET_OPTIONS = [
+  { label: 'Any budget', min: '', max: '' },
+  { label: 'Under ₱500K', min: '', max: '500000' },
+  { label: '₱500K – ₱1M', min: '500000', max: '1000000' },
+  { label: '₱1M – ₱2M', min: '1000000', max: '2000000' },
+  { label: '₱2M – ₱3M', min: '2000000', max: '3000000' },
+  { label: '₱3M & up', min: '3000000', max: '' },
+];
+
 function HeroSearch() {
   const navigate = useNavigate();
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
-  const [budget, setBudget] = useState('');
+  const [budgetIdx, setBudgetIdx] = useState(0);
+
+  const { data: facets } = useQuery({
+    queryKey: ['listing-facets'],
+    queryFn: () => api.get('/listings/facets').then((r) => r.data),
+    staleTime: 5 * 60 * 1000,
+  });
+  const makes = facets?.makes || [];
+  const models = makes.find((m) => m.make === brand)?.models || [];
 
   const onSearch = () => {
     const params = new URLSearchParams();
     if (brand) params.set('make', brand);
-    if (model) params.set('q', model);
-    if (budget) params.set('budget', budget);
+    if (model) params.set('model', model);
+    const b = BUDGET_OPTIONS[budgetIdx];
+    if (b?.min) params.set('priceMin', b.min);
+    if (b?.max) params.set('priceMax', b.max);
     navigate(`/cars${params.toString() ? `?${params}` : ''}`);
   };
 
@@ -95,9 +114,15 @@ function HeroSearch() {
           Discover the Philippines' most trusted marketplace for verified, high-performance vehicles.
         </p>
         <div className="bg-surface-container-lowest p-sm md:p-md rounded-xl shadow-xl max-w-4xl mx-auto flex flex-col md:flex-row items-stretch gap-sm border border-border-subtle">
-          <Field label="Brand" placeholder="e.g. Toyota" value={brand} onChange={setBrand} bordered />
-          <Field label="Model" placeholder="e.g. Fortuner" value={model} onChange={setModel} bordered />
-          <Field label="Budget" placeholder="e.g. 1M - 2M" value={budget} onChange={setBudget} />
+          <SelectField label="Brand" value={brand} onChange={(v) => { setBrand(v); setModel(''); }} bordered placeholder="All brands">
+            {makes.map((m) => <option key={m.make} value={m.make} className="bg-surface text-on-surface">{m.make} ({m.count})</option>)}
+          </SelectField>
+          <SelectField label="Model" value={model} onChange={setModel} bordered disabled={!brand} placeholder={brand ? 'All models' : 'Select a brand first'}>
+            {models.map((m) => <option key={m.model} value={m.model} className="bg-surface text-on-surface">{m.model} ({m.count})</option>)}
+          </SelectField>
+          <SelectField label="Budget" value={String(budgetIdx)} onChange={(v) => setBudgetIdx(Number(v))}>
+            {BUDGET_OPTIONS.map((b, i) => <option key={i} value={i} className="bg-surface text-on-surface">{b.label}</option>)}
+          </SelectField>
           <button
             onClick={onSearch}
             className="bg-primary text-on-primary px-xl py-md rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95"
@@ -111,21 +136,23 @@ function HeroSearch() {
   );
 }
 
-function Field({ label, placeholder, value, onChange, bordered }) {
+function SelectField({ label, value, onChange, children, bordered, placeholder, disabled }) {
   return (
     <label
-      className={`flex-1 flex flex-col items-start px-md py-sm hover:bg-surface-container-low rounded-lg transition-colors cursor-text ${
-        bordered ? 'border-b md:border-b-0 md:border-r border-border-subtle' : ''
-      }`}
+      className={`flex-1 flex flex-col items-start px-md py-sm rounded-lg transition-colors ${
+        disabled ? 'opacity-60' : 'hover:bg-surface-container-low cursor-pointer'
+      } ${bordered ? 'border-b md:border-b-0 md:border-r border-border-subtle' : ''}`}
     >
       <span className="text-label-sm font-label-sm text-secondary uppercase tracking-wider mb-1">{label}</span>
-      <input
-        className="w-full border-none p-0 focus:ring-0 text-body-md font-body-md text-on-surface bg-transparent placeholder:text-outline-variant"
-        placeholder={placeholder}
+      <select
+        className="w-full border-none p-0 focus:ring-0 text-body-md font-body-md text-on-surface bg-transparent cursor-pointer disabled:cursor-not-allowed"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        type="text"
-      />
+        disabled={disabled}
+      >
+        {placeholder !== undefined && <option value="" className="bg-surface text-on-surface">{placeholder}</option>}
+        {children}
+      </select>
     </label>
   );
 }
