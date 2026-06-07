@@ -63,7 +63,8 @@ export default function Browse() {
     yearMin: '', yearMax: '',
     priceMin: searchParams.get('priceMin') || '',
     priceMax: searchParams.get('priceMax') || '',
-    mileageMax: '', fuelType: '', transmission: '', location: '',
+    mileageMax: '', fuelType: '', transmission: '',
+    location: searchParams.get('location') || '',
     sellerType: '', condition: '', radius: '50',
     verified: searchParams.get('verified') || '',
   });

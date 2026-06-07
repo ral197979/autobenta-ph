@@ -165,8 +165,20 @@ router.get('/facets', async (req, res, next) => {
       _min: { price: true },
       _max: { price: true },
     });
+
+    const cityGroups = await prisma.vehicleListing.groupBy({
+      by: ['city'],
+      where: { status: 'active' },
+      _count: { _all: true },
+    });
+    const cities = cityGroups
+      .filter((c) => c.city)
+      .map((c) => ({ city: c.city, count: c._count._all }))
+      .sort((a, b) => b.count - a.count || a.city.localeCompare(b.city));
+
     res.json({
       makes,
+      cities,
       priceRange: { min: Number(agg._min.price) || 0, max: Number(agg._max.price) || 0 },
     });
   } catch (err) { next(err); }

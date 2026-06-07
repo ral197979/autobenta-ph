@@ -76,26 +76,41 @@ const BUDGET_OPTIONS = [
 
 function HeroSearch() {
   const navigate = useNavigate();
+  const [condition, setCondition] = useState('used'); // 'used' | 'new'
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
   const [budgetIdx, setBudgetIdx] = useState(0);
+  const [location, setLocation] = useState('');
 
   const { data: facets } = useQuery({
     queryKey: ['listing-facets'],
     queryFn: () => api.get('/listings/facets').then((r) => r.data),
     staleTime: 5 * 60 * 1000,
   });
-  const makes = facets?.makes || [];
-  const models = makes.find((m) => m.make === brand)?.models || [];
+  const { data: newMakes } = useQuery({
+    queryKey: ['new-car-makes'],
+    queryFn: () => api.get('/new-cars/makes').then((r) => r.data),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const isNew = condition === 'new';
+  const usedMakes = facets?.makes || [];
+  const cities = facets?.cities || [];
+  const brandOptions = isNew ? (newMakes || []).map((m) => ({ make: m })) : usedMakes;
+  const models = usedMakes.find((m) => m.make === brand)?.models || [];
+
+  const switchCondition = (c) => { setCondition(c); setBrand(''); setModel(''); setLocation(''); };
 
   const onSearch = () => {
     const params = new URLSearchParams();
     if (brand) params.set('make', brand);
-    if (model) params.set('model', model);
+    if (!isNew && model) params.set('model', model);
     const b = BUDGET_OPTIONS[budgetIdx];
     if (b?.min) params.set('priceMin', b.min);
     if (b?.max) params.set('priceMax', b.max);
-    navigate(`/cars${params.toString() ? `?${params}` : ''}`);
+    if (!isNew && location) params.set('location', location);
+    const base = isNew ? '/new-cars' : '/cars';
+    navigate(`${base}${params.toString() ? `?${params}` : ''}`);
   };
 
   return (
@@ -110,25 +125,55 @@ function HeroSearch() {
         <h1 className="text-white font-display-lg text-display-lg mb-lg max-w-3xl mx-auto">
           Precision Engineering. Seamless Ownership.
         </h1>
-        <p className="text-white/90 font-body-lg text-body-lg mb-3xl max-w-2xl mx-auto">
+        <p className="text-white/90 font-body-lg text-body-lg mb-xl max-w-2xl mx-auto">
           Discover the Philippines' most trusted marketplace for verified, high-performance vehicles.
         </p>
-        <div className="bg-surface-container-lowest p-sm md:p-md rounded-xl shadow-xl max-w-4xl mx-auto flex flex-col md:flex-row items-stretch gap-sm border border-border-subtle">
+        {/* New / Used toggle */}
+        <div className="inline-flex p-1 mb-md rounded-full bg-white/10 backdrop-blur-sm">
+          {[['used', 'Used Cars'], ['new', 'New Cars']].map(([c, label]) => (
+            <button
+              key={c}
+              onClick={() => switchCondition(c)}
+              className={`px-lg py-sm rounded-full text-label-md font-bold transition-all ${
+                condition === c ? 'bg-primary text-on-primary shadow' : 'text-white/80 hover:text-white'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div className="bg-surface-container-lowest p-sm md:p-md rounded-xl shadow-xl max-w-5xl mx-auto flex flex-col md:flex-row items-stretch gap-sm border border-border-subtle">
           <SelectField label="Brand" value={brand} onChange={(v) => { setBrand(v); setModel(''); }} bordered placeholder="All brands">
-            {makes.map((m) => <option key={m.make} value={m.make} className="bg-surface text-on-surface">{m.make} ({m.count})</option>)}
+            {brandOptions.map((m) => <option key={m.make} value={m.make} className="bg-surface text-on-surface">{m.make}{m.count ? ` (${m.count})` : ''}</option>)}
           </SelectField>
-          <SelectField label="Model" value={model} onChange={setModel} bordered disabled={!brand} placeholder={brand ? 'All models' : 'Select a brand first'}>
-            {models.map((m) => <option key={m.model} value={m.model} className="bg-surface text-on-surface">{m.model} ({m.count})</option>)}
+          <SelectField
+            label="Model"
+            value={model}
+            onChange={setModel}
+            bordered
+            disabled={isNew || !brand}
+            placeholder={isNew ? 'Choose at next step' : brand ? 'All models' : 'Select a brand first'}
+          >
+            {!isNew && models.map((m) => <option key={m.model} value={m.model} className="bg-surface text-on-surface">{m.model} ({m.count})</option>)}
           </SelectField>
-          <SelectField label="Budget" value={String(budgetIdx)} onChange={(v) => setBudgetIdx(Number(v))}>
+          <SelectField label="Budget" value={String(budgetIdx)} onChange={(v) => setBudgetIdx(Number(v))} bordered>
             {BUDGET_OPTIONS.map((b, i) => <option key={i} value={i} className="bg-surface text-on-surface">{b.label}</option>)}
+          </SelectField>
+          <SelectField
+            label="Location"
+            value={location}
+            onChange={setLocation}
+            disabled={isNew}
+            placeholder={isNew ? 'Nationwide' : 'Any location'}
+          >
+            {!isNew && cities.map((c) => <option key={c.city} value={c.city} className="bg-surface text-on-surface">{c.city} ({c.count})</option>)}
           </SelectField>
           <button
             onClick={onSearch}
-            className="bg-primary text-on-primary px-xl py-md rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95"
+            className="bg-primary text-on-primary px-xl py-md rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95 whitespace-nowrap"
           >
             <span className="material-symbols-outlined">search</span>
-            Search Marketplace
+            {isNew ? 'Search New Cars' : 'Search Marketplace'}
           </button>
         </div>
       </div>
