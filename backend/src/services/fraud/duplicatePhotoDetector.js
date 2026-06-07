@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require("../../lib/prisma");
 
 /**
  * Check if a listing's photos reuse storage keys that appear in other listings.

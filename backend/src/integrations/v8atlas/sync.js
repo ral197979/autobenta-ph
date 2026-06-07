@@ -1,7 +1,6 @@
 'use strict';
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../../lib/prisma");
 const { V8AtlasInventoryProvider } = require('./inventory');
-const prisma = new PrismaClient();
 const provider = new V8AtlasInventoryProvider();
 
 /**

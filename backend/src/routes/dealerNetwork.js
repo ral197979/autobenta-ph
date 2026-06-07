@@ -4,7 +4,7 @@
  * Versioned at /api/dealer-network/v1/
  */
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { authenticate, requireRole } = require('../middleware/auth');
 const { distributeLeadToProviders } = require('../services/dealerNetwork/LeadProvider');
 const { broadcastTrustUpdate } = require('../services/dealerNetwork/TrustProvider');
@@ -12,7 +12,6 @@ const { computeReadinessScore } = require('../services/verification/readinessEng
 const { auditLog } = require('../services/audit/auditLogger');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // All dealer-network routes require authentication + dealer/admin
 router.use(authenticate, requireRole('dealer', 'admin'));

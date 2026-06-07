@@ -1,12 +1,11 @@
 'use strict';
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { authenticate } = require('../middleware/auth');
 const { saveV8AtlasToken, disconnectV8Atlas } = require('../integrations/v8atlas/auth');
 const { syncDealerInventory } = require('../integrations/v8atlas/sync');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // All routes require authenticated dealer user
 router.use(authenticate);

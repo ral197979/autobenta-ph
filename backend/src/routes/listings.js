@@ -1,6 +1,6 @@
 const express = require('express');
 const { body, query, validationResult } = require('express-validator');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { authenticate, optionalAuth, requireRole } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 const path = require('path');
@@ -8,7 +8,6 @@ const { analyzeListingWithAI } = require('../services/ai');
 const storage = require('../services/storage/storageProvider');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 const LISTINGS_PER_PAGE = 20;
 

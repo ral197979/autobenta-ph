@@ -1,10 +1,9 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // List the current user's disputes (admins see all)
 router.get('/', authenticate, async (req, res, next) => {

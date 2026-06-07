@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { authenticate, requireRole } = require('../middleware/auth');
 
-const prisma = new PrismaClient();
 
 // GET /admin/value-proof/:dealerId
 router.get('/admin/value-proof/:dealerId', authenticate, requireRole('admin'), async (req, res) => {

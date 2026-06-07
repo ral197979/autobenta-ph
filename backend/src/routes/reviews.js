@@ -1,10 +1,9 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // List reviews for a seller — ?sellerId= (public)
 router.get('/', async (req, res, next) => {

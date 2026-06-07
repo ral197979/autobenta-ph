@@ -1,9 +1,8 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // Subscribe an email to the newsletter (idempotent).
 router.post('/', [body('email').isEmail().normalizeEmail()], async (req, res, next) => {

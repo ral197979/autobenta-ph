@@ -1,9 +1,8 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 const CONDITION_MULT = { excellent: 1.06, good: 1.0, fair: 0.9, poor: 0.8 };
 const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));

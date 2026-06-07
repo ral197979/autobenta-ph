@@ -18,8 +18,7 @@ const pinoHttp = require('pino-http');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require("./lib/prisma");
 
 const authRoutes = require('./routes/auth');
 const listingRoutes = require('./routes/listings');

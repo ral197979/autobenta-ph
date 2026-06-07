@@ -2,10 +2,9 @@
 // Uses Prisma for storage — no Redis required.
 // Concurrency: single-process polling (safe for Render.com single-instance deployment).
 
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../../lib/prisma");
 const { auditLog } = require('../audit/auditLogger');
 
-const prisma = new PrismaClient();
 
 // Backoff delays per attempt (ms): 1min, 5min, 15min, 1hr, 4hr
 const BACKOFF_MS = [60_000, 300_000, 900_000, 3_600_000, 14_400_000];
