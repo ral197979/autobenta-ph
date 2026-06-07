@@ -39,6 +39,7 @@ export default function CarDetail() {
   const [offerSent, setOfferSent] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
   const [bookingDone, setBookingDone] = useState(false);
+  const [tracked, setTracked] = useState(false);
 
   const { data: listing, isLoading } = useQuery({
     queryKey: ['listing', id],
@@ -75,6 +76,16 @@ export default function CarDetail() {
       setInquirySent(true);
     } catch (e) {
       alert(e.response?.data?.error || 'Failed to send inquiry');
+    }
+  };
+
+  const trackCar = async () => {
+    if (!user) return navigate('/login');
+    try {
+      await api.post('/deal-tracker', { listingId: id });
+      setTracked(true);
+    } catch (e) {
+      alert(e.response?.data?.error || 'Failed to add to pipeline');
     }
   };
 
@@ -358,6 +369,15 @@ export default function CarDetail() {
                   <button onClick={() => (user ? setShowBooking(true) : navigate('/login'))} className="w-full bg-surface-container-high border border-border-subtle text-primary py-4 rounded-xl text-label-md font-bold hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
                     <Icon name="event" className="text-[20px]" /> {bookingDone ? 'Booking Requested ✓' : 'Book a Test Drive'}
                   </button>
+                  {tracked ? (
+                    <Link to="/pipeline" className="w-full text-trust-emerald py-2 rounded-xl text-label-md font-bold flex items-center justify-center gap-2 hover:underline">
+                      <Icon name="check_circle" className="text-[20px]" filled /> Added — View Deal Tracker
+                    </Link>
+                  ) : (
+                    <button onClick={trackCar} className="w-full text-on-surface-variant py-2 rounded-xl text-label-md font-bold hover:text-primary transition-all flex items-center justify-center gap-2">
+                      <Icon name="view_kanban" className="text-[20px]" /> Track this car
+                    </button>
+                  )}
                 </div>
               )}
 

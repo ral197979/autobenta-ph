@@ -36,6 +36,7 @@ import DealerDirectory from './pages/DealerDirectory';
 import Appointments from './pages/Appointments';
 import TradeInValuation from './pages/TradeInValuation';
 import SavedSearches from './pages/SavedSearches';
+import DealTracker from './pages/DealTracker';
 import News from './pages/News';
 import ArticleDetail from './pages/ArticleDetail';
 import AdminArticles from './pages/admin/AdminArticles';
@@ -109,6 +110,7 @@ function AppRoutes() {
           <Route path="/offers" element={<ProtectedRoute><ActiveOffers /></ProtectedRoute>} />
           <Route path="/appointments" element={<ProtectedRoute><Appointments /></ProtectedRoute>} />
           <Route path="/saved-searches" element={<ProtectedRoute><SavedSearches /></ProtectedRoute>} />
+          <Route path="/pipeline" element={<ProtectedRoute><DealTracker /></ProtectedRoute>} />
           <Route path="/help" element={<HelpCenter />} />
           <Route path="/dealers" element={<DealerDirectory />} />
           <Route path="/valuation" element={<TradeInValuation />} />

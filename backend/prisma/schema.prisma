@@ -208,6 +208,7 @@ model User {
   dealerApplication   DealerApplication?
   listings            VehicleListing[]
   favorites           Favorite[]
+  dealCards           DealCard[]
   inquiriesSent       Inquiry[]         @relation("BuyerInquiries")
   offersMade          Offer[]           @relation("BuyerOffers")
   offersReceived      Offer[]           @relation("SellerOffers")
@@ -368,6 +369,7 @@ model VehicleListing {
 
   photos               VehiclePhoto[]
   favorites            Favorite[]
+  dealCards            DealCard[]
   inquiries            Inquiry[]
   offers               Offer[]
   bookings             Booking[]
@@ -425,6 +427,24 @@ model Favorite {
 
   @@unique([userId, listingId])
   @@map("favorites")
+}
+
+// Buyer's purchase pipeline: track multiple cars through stages toward a deal.
+model DealCard {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listingId String
+  listing   VehicleListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  stage     String   @default("saved") // saved | inquired | test_drive | negotiating
+  position  Int      @default(0)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, listingId])
+  @@index([userId])
+  @@map("deal_cards")
 }
 
 model Inquiry {

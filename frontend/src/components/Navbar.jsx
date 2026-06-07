@@ -118,6 +118,9 @@ export default function Navbar() {
                 <Link to="/saved-searches" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
                   <Icon name="bookmark" className="text-base" /> Saved Searches
                 </Link>
+                <Link to="/pipeline" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                  <Icon name="view_kanban" className="text-base" /> Deal Tracker
+                </Link>
                 <Link to="/account" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
                   <Icon name="settings" className="text-base" /> Account Settings
                 </Link>
