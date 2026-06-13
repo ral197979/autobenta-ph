@@ -60,12 +60,13 @@ export default function Browse() {
     search: searchParams.get('search') || '',
     make: searchParams.get('make') || '',
     model: searchParams.get('model') || '',
+    bodyType: searchParams.get('bodyType') || '',
     yearMin: '', yearMax: '',
     priceMin: searchParams.get('priceMin') || '',
     priceMax: searchParams.get('priceMax') || '',
     mileageMax: '', fuelType: '', transmission: '',
     location: searchParams.get('location') || '',
-    sellerType: '', condition: '', radius: '50',
+    sellerType: searchParams.get('sellerType') || '', condition: '', radius: '50',
     verified: searchParams.get('verified') || '',
   });
 
@@ -114,7 +115,7 @@ export default function Browse() {
   });
 
   const resetFilters = () => {
-    setFilters({ search: '', make: '', model: '', yearMin: '', yearMax: '', priceMin: '', priceMax: '', mileageMax: '', fuelType: '', transmission: '', location: '', sellerType: '', condition: '', radius: '50', verified: '' });
+    setFilters({ search: '', make: '', model: '', bodyType: '', yearMin: '', yearMax: '', priceMin: '', priceMax: '', mileageMax: '', fuelType: '', transmission: '', location: '', sellerType: '', condition: '', radius: '50', verified: '' });
     setSearchParams({});
   };
 
@@ -162,19 +163,34 @@ export default function Browse() {
       )}
 
       {/* Active filter chips */}
-      {filters.verified === 'true' && (
-        <div className="flex items-center gap-2 mb-4">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-label-sm text-primary">
-            Verified sellers only
-            <button
-              type="button"
-              onClick={() => setFilters(p => ({ ...p, verified: '' }))}
-              className="ml-0.5 hover:opacity-70 transition-opacity"
-              aria-label="Remove filter"
-            >
-              <X className="h-3 w-3" />
-            </button>
-          </span>
+      {(filters.verified === 'true' || filters.bodyType) && (
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          {filters.verified === 'true' && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-label-sm text-primary">
+              Verified sellers only
+              <button
+                type="button"
+                onClick={() => setFilters(p => ({ ...p, verified: '' }))}
+                className="ml-0.5 hover:opacity-70 transition-opacity"
+                aria-label="Remove filter"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          )}
+          {filters.bodyType && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-label-sm text-primary capitalize">
+              {filters.bodyType}
+              <button
+                type="button"
+                onClick={() => setFilters(p => ({ ...p, bodyType: '' }))}
+                className="ml-0.5 hover:opacity-70 transition-opacity"
+                aria-label="Remove filter"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          )}
         </div>
       )}
 
