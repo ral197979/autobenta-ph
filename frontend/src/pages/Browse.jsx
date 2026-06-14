@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { SlidersHorizontal, X, ArrowUpDown, Bookmark } from 'lucide-react';
 import api from '../api/client';
@@ -158,7 +158,7 @@ export default function Browse() {
 
       {savedMsg && (
         <div className="mb-lg rounded-xl bg-trust-emerald/10 border border-trust-emerald/30 px-4 py-2.5 text-body-sm text-trust-emerald flex items-center gap-2">
-          <Bookmark className="w-4 h-4" /> {savedMsg} <a href="/saved-searches" className="ml-auto font-semibold hover:underline">View saved searches →</a>
+          <Bookmark className="w-4 h-4" /> {savedMsg} <Link to="/saved-searches" className="ml-auto font-semibold hover:underline">View saved searches →</Link>
         </div>
       )}
 

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const Section = ({ title, children }) => (
   <section className="mb-10">
@@ -75,7 +76,7 @@ export default function TermsOfService() {
         <Section title="6. Dealer Accounts and Verification">
           <p>Dealers who apply for a verified dealer account must submit business registration documents and government-issued identification. We reserve the right to approve or reject dealer applications at our sole discretion.</p>
           <p>Verified dealers receive trust badges and enhanced platform features. Verification does not constitute an endorsement of the dealer's business practices, financial condition, or the quality of vehicles they sell.</p>
-          <p>Dealer accounts are subject to the separate <a href="/dealer-agreement" className="text-blue-600 hover:underline">Dealer Service Agreement</a>, which governs subscription fees, billing, and termination. In the event of conflict between these Terms and the Dealer Service Agreement, the Dealer Service Agreement controls for dealer-specific matters.</p>
+          <p>Dealer accounts are subject to the separate <Link to="/dealer-agreement" className="text-blue-600 hover:underline">Dealer Service Agreement</Link>, which governs subscription fees, billing, and termination. In the event of conflict between these Terms and the Dealer Service Agreement, the Dealer Service Agreement controls for dealer-specific matters.</p>
         </Section>
 
         <Section title="7. Intellectual Property">
@@ -85,7 +86,7 @@ export default function TermsOfService() {
         </Section>
 
         <Section title="8. Privacy">
-          <p>Our collection and use of personal information is governed by our <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>, which is incorporated into these Terms by reference.</p>
+          <p>Our collection and use of personal information is governed by our <Link to="/privacy" className="text-blue-600 hover:underline">Privacy Policy</Link>, which is incorporated into these Terms by reference.</p>
         </Section>
 
         <Section title="9. Disclaimers">
