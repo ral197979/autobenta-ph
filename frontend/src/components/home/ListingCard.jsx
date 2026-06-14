@@ -110,22 +110,22 @@ export default function ListingCard({ listing }) {
         {listing.dealRating && <DealBadge rating={listing.dealRating} className="mb-md" />}
         <div className="flex gap-2 flex-wrap mb-lg">
           {listing.transmission && (
-            <span className="bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-on-secondary-fixed-variant">
+            <span className="bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-on-surface-variant">
               {TRANSMISSION_LABELS[listing.transmission] || listing.transmission}
             </span>
           )}
           {listing.fuelType && (
-            <span className="bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-on-secondary-fixed-variant">
+            <span className="bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-on-surface-variant">
               {FUEL_LABELS[listing.fuelType] || listing.fuelType}
             </span>
           )}
           {listing.city && (
-            <span className="bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-on-secondary-fixed-variant">
+            <span className="bg-surface-container-low px-2 py-1 rounded text-label-sm font-label-sm text-on-surface-variant">
               {listing.city}
             </span>
           )}
         </div>
-        <span className="mt-auto block w-full text-center bg-primary-container text-white py-sm rounded-lg font-label-md text-label-md group-hover:bg-primary transition-colors">
+        <span className="mt-auto block w-full text-center bg-primary text-on-primary py-sm rounded-lg font-label-md text-label-md group-hover:opacity-90 transition-opacity">
           View Details
         </span>
       </div>

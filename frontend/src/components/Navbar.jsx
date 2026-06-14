@@ -59,7 +59,7 @@ export default function Navbar() {
             className={
               isActive(to)
                 ? 'text-primary dark:text-tertiary-fixed-dim font-bold text-label-md transition-all active:opacity-80 active:scale-95'
-                : 'text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container-low transition-colors text-label-md px-2 py-1 rounded'
+                : 'text-on-surface-variant dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-colors text-label-md px-2 py-1 rounded'
             }
           >
             {label}
