@@ -68,8 +68,22 @@ function ModelForm({ model, onClose, onSaved }) {
   const [variants, setVariants] = useState(() => (model?.variants || []).map((v) => ({ name: v.name, price: String(v.price), transmission: v.transmission || '', fuelType: v.fuelType || '' })));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   const set = (k, v) => setF((p) => ({ ...p, [k]: v }));
+
+  const uploadBrochure = async (file) => {
+    if (!file) return;
+    setUploading(true); setError(null);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const { data } = await api.post('/new-cars/brochure', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      set('brochureUrl', data.url);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Brochure upload failed.');
+    } finally { setUploading(false); }
+  };
 
   const save = async (e) => {
     e.preventDefault();
@@ -109,7 +123,17 @@ function ModelForm({ model, onClose, onSaved }) {
             <Field label="Year"><input type="number" value={f.year} onChange={(e) => set('year', e.target.value)} className={INPUT} /></Field>
             <Field label="Starting Price (₱)"><input type="number" value={f.startingPrice} onChange={(e) => set('startingPrice', e.target.value)} className={INPUT} /></Field>
             <Field label="Image URL"><input value={f.imageUrl} onChange={(e) => set('imageUrl', e.target.value)} className={INPUT} placeholder="https://…" /></Field>
-            <Field label="Brochure URL"><input value={f.brochureUrl} onChange={(e) => set('brochureUrl', e.target.value)} className={INPUT} placeholder="https://… (PDF)" /></Field>
+            <Field label="Brochure (PDF)">
+              <div className="flex gap-2">
+                <input value={f.brochureUrl} onChange={(e) => set('brochureUrl', e.target.value)} className={INPUT} placeholder="https://… or upload →" />
+                <label className={`shrink-0 cursor-pointer bg-surface-container-high border border-border-subtle rounded-lg px-3 py-2 text-body-sm font-semibold text-primary hover:bg-surface-container-highest flex items-center gap-1 ${uploading ? 'opacity-60 pointer-events-none' : ''}`}>
+                  <Icon name={uploading ? 'progress_activity' : 'upload'} className={uploading ? 'animate-spin' : ''} />
+                  {uploading ? '…' : 'PDF'}
+                  <input type="file" accept="application/pdf,.pdf" className="hidden" onChange={(e) => uploadBrochure(e.target.files?.[0])} disabled={uploading} />
+                </label>
+              </div>
+              {f.brochureUrl && <a href={f.brochureUrl} target="_blank" rel="noopener noreferrer" className="text-label-sm text-primary hover:underline mt-1 inline-block">Preview current brochure ↗</a>}
+            </Field>
           </div>
           <Field label="Description"><textarea rows={2} value={f.description} onChange={(e) => set('description', e.target.value)} className={`${INPUT} resize-none`} /></Field>
           <div className="flex gap-lg">

@@ -4,6 +4,25 @@ const { authenticate, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 
+// PDF brochure uploads (the shared upload middleware is image-only).
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
+const brochureDir = path.join(__dirname, '../../../uploads');
+if (!fs.existsSync(brochureDir)) fs.mkdirSync(brochureDir, { recursive: true });
+const brochureUpload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => cb(null, brochureDir),
+    filename: (req, file, cb) => cb(null, `brochure-${uuidv4()}.pdf`),
+  }),
+  fileFilter: (req, file, cb) =>
+    path.extname(file.originalname).toLowerCase() === '.pdf'
+      ? cb(null, true)
+      : cb(new Error('Only PDF files are allowed'), false),
+  limits: { fileSize: 20 * 1024 * 1024 },
+});
+
 const MODEL_FIELDS = ['make', 'model', 'bodyType', 'fuelType', 'year', 'imageUrl', 'brochureUrl', 'description', 'isElectric', 'isFeatured', 'specs'];
 
 function buildModelData(body) {
@@ -113,6 +132,15 @@ router.delete('/:id', authenticate, requireRole('admin'), async (req, res, next)
     await prisma.newCarModel.delete({ where: { id: req.params.id } });
     res.json({ ok: true });
   } catch (e) { next(e); }
+});
+
+// POST /api/new-cars/brochure — admin uploads a PDF brochure, returns its URL
+router.post('/brochure', authenticate, requireRole('admin'), (req, res, next) => {
+  brochureUpload.single('file')(req, res, (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+    if (!req.file) return res.status(400).json({ error: 'No PDF uploaded' });
+    res.status(201).json({ url: `/uploads/${req.file.filename}` });
+  });
 });
 
 module.exports = router;
