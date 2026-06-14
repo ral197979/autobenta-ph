@@ -114,7 +114,7 @@ function HeroSearch() {
   };
 
   return (
-    <section className="relative w-full h-[600px] md:h-[720px] flex items-center justify-center px-gutter-mobile md:px-gutter-desktop overflow-hidden bg-ink">
+    <section className="relative w-full min-h-[600px] md:min-h-[720px] flex items-center justify-center px-gutter-mobile md:px-gutter-desktop py-2xl overflow-hidden bg-ink">
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0B1220] via-[#131b2e] to-[#1e3a5f]" />
         <div className="absolute -top-24 -right-24 w-[28rem] h-[28rem] rounded-full bg-electric/20 blur-3xl" />
