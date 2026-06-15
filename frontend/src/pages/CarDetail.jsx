@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../api/client';
 import { trackEvent } from '../utils/analytics';
 import { formatPrice, formatMileage, formatRelativeTime, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_LABELS, carPlaceholder } from '../utils/format';
+import { monthlyPayment } from '../utils/finance';
 import { useAuth } from '../context/AuthContext';
 import ReadinessScore from '../components/ReadinessScore';
 import CarCard from '../components/CarCard';
@@ -153,8 +154,7 @@ export default function CarDetail() {
 
   // Simple financing estimate — 30% down, 60 months, ~7.5% p.a.
   const down = Math.round(listing.price * 0.3);
-  const principal = listing.price - down;
-  const monthly = Math.round((principal * (1 + 0.075 * 5)) / 60);
+  const monthly = monthlyPayment(listing.price);
 
   return (
     <div className="bg-surface">

@@ -5,6 +5,7 @@ import { SlidersHorizontal, X, ArrowUpDown, Bookmark } from 'lucide-react';
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { trackEvent } from '../utils/analytics';
+import { priceFromMonthly } from '../utils/finance';
 import CarCard from '../components/CarCard';
 import FilterPanel from '../components/FilterPanel';
 import useGeolocation from '../hooks/useGeolocation';
@@ -66,6 +67,7 @@ export default function Browse() {
     priceMax: searchParams.get('priceMax') || '',
     mileageMax: '', fuelType: '', transmission: '',
     location: searchParams.get('location') || '',
+    monthlyMax: '',
     sellerType: searchParams.get('sellerType') || '', condition: '', radius: '50',
     verified: searchParams.get('verified') || '',
   });
@@ -99,7 +101,13 @@ export default function Browse() {
     const isNearby = sort === 'nearby_asc' && geo.active;
     const [sortBy, sortOrder] = isNearby ? ['createdAt', 'desc'] : sort.split('_');
     const params = new URLSearchParams({ page, sortBy, sortOrder });
-    Object.entries(filters).forEach(([k, v]) => { if (v && k !== 'radius') params.set(k, v); });
+    Object.entries(filters).forEach(([k, v]) => { if (v && k !== 'radius' && k !== 'monthlyMax') params.set(k, v); });
+    // A monthly-budget cap becomes a price ceiling, combined with any explicit Max ₱.
+    if (filters.monthlyMax) {
+      const ceil = priceFromMonthly(filters.monthlyMax);
+      const existing = filters.priceMax ? Number(filters.priceMax) : Infinity;
+      params.set('priceMax', String(Math.min(existing, ceil)));
+    }
     if (isNearby) {
       params.set('lat', geo.lat);
       params.set('lng', geo.lng);
@@ -115,7 +123,7 @@ export default function Browse() {
   });
 
   const resetFilters = () => {
-    setFilters({ search: '', make: '', model: '', bodyType: '', yearMin: '', yearMax: '', priceMin: '', priceMax: '', mileageMax: '', fuelType: '', transmission: '', location: '', sellerType: '', condition: '', radius: '50', verified: '' });
+    setFilters({ search: '', make: '', model: '', bodyType: '', yearMin: '', yearMax: '', priceMin: '', priceMax: '', mileageMax: '', fuelType: '', transmission: '', location: '', monthlyMax: '', sellerType: '', condition: '', radius: '50', verified: '' });
     setSearchParams({});
   };
 
