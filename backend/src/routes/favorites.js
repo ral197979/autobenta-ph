@@ -30,8 +30,8 @@ router.post('/:listingId', authenticate, async (req, res, next) => {
 
     const favorite = await prisma.favorite.upsert({
       where: { userId_listingId: { userId: req.user.id, listingId: req.params.listingId } },
-      create: { userId: req.user.id, listingId: req.params.listingId },
-      update: {},
+      create: { userId: req.user.id, listingId: req.params.listingId, priceWhenSaved: listing.price },
+      update: {}, // keep the original snapshot if already favorited
     });
     res.status(201).json(favorite);
   } catch (err) {

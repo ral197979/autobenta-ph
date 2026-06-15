@@ -16,10 +16,23 @@ const TYPE = {
   offer: { label: 'Offer', labelCls: 'text-secondary', icon: 'local_offer', iconBg: 'bg-secondary-container', iconCls: 'text-on-secondary-container' },
   inspection: { label: 'Inspection', labelCls: 'text-trust-emerald', icon: 'verified', iconBg: 'bg-trust-emerald/15', iconCls: 'text-trust-emerald' },
   search: { label: 'Saved Search', labelCls: 'text-primary', icon: 'bookmark', iconBg: 'bg-primary/10', iconCls: 'text-primary' },
+  price_drop: { label: 'Price Drop', labelCls: 'text-error', icon: 'trending_down', iconBg: 'bg-error/10', iconCls: 'text-error' },
 };
 
-function buildNotifications({ inquiries, inspections, offers, searches, canReceive }) {
+function buildNotifications({ inquiries, inspections, offers, searches, favorites, canReceive }) {
   const out = [];
+  (favorites || []).forEach((f) => {
+    const l = f.listing || {};
+    if (f.priceWhenSaved == null || l.price == null || Number(l.price) >= Number(f.priceWhenSaved)) return;
+    const drop = Number(f.priceWhenSaved) - Number(l.price);
+    const car = `${l.year || ''} ${l.make || ''} ${l.model || ''}`.trim();
+    out.push({
+      id: 'drop-' + f.id, type: 'price_drop', time: new Date().toISOString(),
+      title: `Price dropped ₱${drop.toLocaleString()} on your saved ${car}`,
+      body: `Now ₱${Number(l.price).toLocaleString()} (was ₱${Number(f.priceWhenSaved).toLocaleString()}). Tap to view.`,
+      link: `/cars/${f.listingId}`,
+    });
+  });
   (searches || []).forEach((s) => {
     if (!s.alertOn || !s.newCount) return;
     out.push({
@@ -71,9 +84,10 @@ export default function NotificationsCenter() {
   const inspQ = useQuery({ queryKey: ['notif-inspections'], queryFn: () => api.get('/inspections').then(r => r.data).catch(() => []) });
   const offerQ = useQuery({ queryKey: ['notif-offers', canReceive], queryFn: () => api.get(`/offers?box=${canReceive ? 'received' : 'sent'}`).then(r => r.data).catch(() => []) });
   const searchQ = useQuery({ queryKey: ['notif-searches'], queryFn: () => api.get('/saved-searches').then(r => r.data).catch(() => []) });
+  const favQ = useQuery({ queryKey: ['notif-favorites'], queryFn: () => api.get('/favorites').then(r => r.data).catch(() => []) });
 
   const loading = inqQ.isLoading || inspQ.isLoading;
-  const all = buildNotifications({ inquiries: inqQ.data, inspections: inspQ.data, offers: offerQ.data, searches: searchQ.data, canReceive });
+  const all = buildNotifications({ inquiries: inqQ.data, inspections: inspQ.data, offers: offerQ.data, searches: searchQ.data, favorites: favQ.data, canReceive });
   const isUnread = (n) => new Date(n.time).getTime() > seen;
   const shown = tab === 'unread' ? all.filter(isUnread) : all;
 

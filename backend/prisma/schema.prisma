@@ -418,12 +418,13 @@ model VehiclePhoto {
 }
 
 model Favorite {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  listingId String
-  listing   VehicleListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listingId     String
+  listing       VehicleListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  priceWhenSaved Float?  // snapshot of the listing price at favorite time, for price-drop alerts
+  createdAt     DateTime @default(now())
 
   @@unique([userId, listingId])
   @@map("favorites")
