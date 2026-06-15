@@ -123,9 +123,11 @@ function ModelForm({ model, onClose, onSaved }) {
             <Field label="Year"><input type="number" value={f.year} onChange={(e) => set('year', e.target.value)} className={INPUT} /></Field>
             <Field label="Starting Price (₱)"><input type="number" value={f.startingPrice} onChange={(e) => set('startingPrice', e.target.value)} className={INPUT} /></Field>
             <Field label="Image URL"><input value={f.imageUrl} onChange={(e) => set('imageUrl', e.target.value)} className={INPUT} placeholder="https://…" /></Field>
-            <Field label="Brochure (PDF)">
+            {/* Plain div (not Field) so the inner upload <label> isn't nested in a <label> */}
+            <div className="space-y-1">
+              <span className="block text-label-sm font-label-sm text-on-surface-variant">Brochure (PDF)</span>
               <div className="flex gap-2">
-                <input value={f.brochureUrl} onChange={(e) => set('brochureUrl', e.target.value)} className={INPUT} placeholder="https://… or upload →" />
+                <input value={f.brochureUrl} onChange={(e) => set('brochureUrl', e.target.value)} aria-label="Brochure URL" className={INPUT} placeholder="https://… or upload →" />
                 <label className={`shrink-0 cursor-pointer bg-surface-container-high border border-border-subtle rounded-lg px-3 py-2 text-body-sm font-semibold text-primary hover:bg-surface-container-highest flex items-center gap-1 ${uploading ? 'opacity-60 pointer-events-none' : ''}`}>
                   <Icon name={uploading ? 'progress_activity' : 'upload'} className={uploading ? 'animate-spin' : ''} />
                   {uploading ? '…' : 'PDF'}
@@ -133,7 +135,7 @@ function ModelForm({ model, onClose, onSaved }) {
                 </label>
               </div>
               {f.brochureUrl && <a href={f.brochureUrl} target="_blank" rel="noopener noreferrer" className="text-label-sm text-primary hover:underline mt-1 inline-block">Preview current brochure ↗</a>}
-            </Field>
+            </div>
           </div>
           <Field label="Description"><textarea rows={2} value={f.description} onChange={(e) => set('description', e.target.value)} className={`${INPUT} resize-none`} /></Field>
           <div className="flex gap-lg">
@@ -181,5 +183,5 @@ function ModelForm({ model, onClose, onSaved }) {
 }
 
 function Field({ label, children }) {
-  return <div className="space-y-1"><label className="block text-label-sm font-label-sm text-on-surface-variant">{label}</label>{children}</div>;
+  return <label className="block space-y-1"><span className="block text-label-sm font-label-sm text-on-surface-variant">{label}</span>{children}</label>;
 }

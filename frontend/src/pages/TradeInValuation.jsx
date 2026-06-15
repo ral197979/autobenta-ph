@@ -105,5 +105,6 @@ export default function TradeInValuation() {
 }
 
 function Field({ label, children }) {
-  return <div className="space-y-1"><label className="block text-label-sm font-label-sm text-on-surface-variant px-1">{label}</label>{children}</div>;
+  // Nest the control inside the <label> so it's programmatically associated.
+  return <label className="block space-y-1"><span className="block text-label-sm font-label-sm text-on-surface-variant px-1">{label}</span>{children}</label>;
 }
