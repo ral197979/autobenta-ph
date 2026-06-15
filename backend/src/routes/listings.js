@@ -222,6 +222,45 @@ router.get('/:id', optionalAuth, async (req, res, next) => {
   }
 });
 
+// GET /api/listings/:id/similar — active listings like this one (make/body, ±30% price)
+router.get('/:id/similar', async (req, res, next) => {
+  try {
+    const listing = await prisma.vehicleListing.findUnique({ where: { id: req.params.id } });
+    if (!listing) return res.status(404).json({ error: 'Listing not found' });
+
+    const price = Number(listing.price) || 0;
+    const or = [];
+    if (listing.bodyType) or.push({ bodyType: listing.bodyType });
+    if (listing.make) or.push({ make: listing.make });
+
+    const where = {
+      status: 'active',
+      id: { not: listing.id },
+      ...(price ? { price: { gte: price * 0.7, lte: price * 1.3 } } : {}),
+      ...(or.length ? { OR: or } : {}),
+    };
+
+    const candidates = await prisma.vehicleListing.findMany({
+      where,
+      include: { photos: { where: { isPrimary: true }, take: 1 } },
+      take: 24,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Rank: same make + same body type first, then closest price.
+    candidates.sort((a, b) => {
+      const score = (l) => (l.make === listing.make ? 2 : 0) + (l.bodyType === listing.bodyType ? 1 : 0);
+      const s = score(b) - score(a);
+      if (s) return s;
+      return Math.abs(Number(a.price) - price) - Math.abs(Number(b.price) - price);
+    });
+
+    res.json(await withDealRatings(candidates.slice(0, 6)));
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post('/', authenticate, requireRole('seller', 'dealer', 'admin'), [
   body('make').trim().notEmpty(),
   body('model').trim().notEmpty(),

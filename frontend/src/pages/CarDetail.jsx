@@ -6,6 +6,7 @@ import { trackEvent } from '../utils/analytics';
 import { formatPrice, formatMileage, formatRelativeTime, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_LABELS, carPlaceholder } from '../utils/format';
 import { useAuth } from '../context/AuthContext';
 import ReadinessScore from '../components/ReadinessScore';
+import CarCard from '../components/CarCard';
 import DealBadge from '../components/DealBadge';
 import TCOCalculator from '../components/TCOCalculator';
 import VehicleHistoryCard from '../components/VehicleHistoryCard';
@@ -49,6 +50,12 @@ export default function CarDetail() {
   const { data: aiAnalysis } = useQuery({
     queryKey: ['ai-analysis', id],
     queryFn: () => api.get(`/ai/listing/${id}/analysis`).then(r => r.data),
+    enabled: !!id,
+  });
+
+  const { data: similar } = useQuery({
+    queryKey: ['similar', id],
+    queryFn: () => api.get(`/listings/${id}/similar`).then(r => r.data),
     enabled: !!id,
   });
 
@@ -468,6 +475,21 @@ export default function CarDetail() {
           </div>
         </aside>
       </main>
+
+      {/* Similar cars */}
+      {similar?.length > 0 && (
+        <section className="max-w-[1280px] mx-auto px-gutter-mobile md:px-gutter-desktop pb-3xl">
+          <div className="flex items-center justify-between mb-xl">
+            <h2 className="text-headline-md font-bold text-primary">Similar cars</h2>
+            <Link to={`/cars?make=${encodeURIComponent(listing.make)}`} className="text-label-md font-bold text-primary hover:underline flex items-center gap-1">
+              View more <Icon name="arrow_forward" className="text-[18px]" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-xl">
+            {similar.map((s) => <CarCard key={s.id} listing={s} />)}
+          </div>
+        </section>
+      )}
 
       {showOffer && (
         <MakeOfferModal
