@@ -46,7 +46,7 @@ export default function DealerDirectory() {
         <div className="flex flex-col md:flex-row gap-md mb-lg">
           <div className="relative flex-1">
             <Icon name="search" className="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search dealerships…" className="w-full bg-surface-container border border-border-subtle rounded-full pl-12 pr-md py-sm text-body-md text-on-surface focus:ring-2 focus:ring-primary outline-none placeholder-on-surface-variant/60" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search dealerships" placeholder="Search dealerships…" className="w-full bg-surface-container border border-border-subtle rounded-full pl-12 pr-md py-sm text-body-md text-on-surface focus:ring-2 focus:ring-primary outline-none placeholder-on-surface-variant/60" />
           </div>
           <select value={city} onChange={(e) => setCity(e.target.value)} className="bg-surface-container border border-border-subtle rounded-xl px-md py-sm text-body-sm text-on-surface focus:ring-2 focus:ring-primary outline-none">
             <option value="">All Cities</option>

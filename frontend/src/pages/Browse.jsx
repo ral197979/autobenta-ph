@@ -199,6 +199,7 @@ export default function Browse() {
         <span className="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
         <input
           type="text"
+          aria-label="Search cars"
           placeholder="Search by brand, model, or body style…"
           value={filters.search}
           onChange={e => setFilters(p => ({ ...p, search: e.target.value }))}

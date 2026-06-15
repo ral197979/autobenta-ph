@@ -78,6 +78,7 @@ export default function DealerLeads() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />
         <input
           type="text"
+          aria-label="Search leads by buyer name or vehicle"
           placeholder="Search leads by buyer name or vehicle..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}

@@ -47,6 +47,7 @@ export default function DealerCustomers() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />
           <input
             className="input pl-9 text-sm py-2"
+            aria-label="Search customers by name, email, or phone"
             placeholder="Search name, email, phone…"
             value={search}
             onChange={e => setSearch(e.target.value)}
