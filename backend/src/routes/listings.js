@@ -184,6 +184,21 @@ router.get('/facets', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// GET /api/listings/recently-viewed — the signed-in user's recently viewed cars
+router.get('/recently-viewed', authenticate, async (req, res, next) => {
+  try {
+    const rows = await prisma.recentlyViewed.findMany({
+      where: { userId: req.user.id, listing: { status: 'active' } },
+      include: { listing: { include: { photos: { where: { isPrimary: true }, take: 1 } } } },
+      orderBy: { viewedAt: 'desc' },
+      take: 10,
+    });
+    res.json(await withDealRatings(rows.map((r) => r.listing)));
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get('/:id', optionalAuth, async (req, res, next) => {
   try {
     const listing = await prisma.vehicleListing.findUnique({
@@ -210,6 +225,15 @@ router.get('/:id', optionalAuth, async (req, res, next) => {
       where: { id: req.params.id },
       data: { viewCount: { increment: 1 } },
     });
+
+    // Track recently-viewed for signed-in users (most recent view wins).
+    if (req.user) {
+      await prisma.recentlyViewed.upsert({
+        where: { userId_listingId: { userId: req.user.id, listingId: req.params.id } },
+        create: { userId: req.user.id, listingId: req.params.id },
+        update: { viewedAt: new Date() },
+      }).catch(() => {});
+    }
 
     const isFavorited = req.user
       ? !!(await prisma.favorite.findUnique({ where: { userId_listingId: { userId: req.user.id, listingId: req.params.id } } }))

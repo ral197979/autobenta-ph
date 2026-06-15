@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import { formatPrice } from '../utils/format';
+import CarCard from '../components/CarCard';
 import FeaturedListings from '../components/home/FeaturedListings';
 
 const BODY_TYPES = [
@@ -420,10 +422,36 @@ function NewCarsRail({ title, query, viewAllHref }) {
   );
 }
 
+function RecentlyViewed() {
+  const { user } = useAuth();
+  const { data } = useQuery({
+    queryKey: ['recently-viewed'],
+    queryFn: () => api.get('/listings/recently-viewed').then((r) => r.data),
+    enabled: !!user,
+  });
+  if (!user || !data?.length) return null;
+  return (
+    <section className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-2xl">
+      <div className="flex items-center justify-between mb-xl">
+        <h2 className="text-headline-md font-bold text-on-surface">Jump back in</h2>
+        <Link to="/cars" className="text-label-md font-bold text-primary hover:underline">Browse all</Link>
+      </div>
+      <div className="flex gap-lg overflow-x-auto hide-scrollbar pb-2 -mx-1 px-1">
+        {data.map((l) => (
+          <div key={l.id} className="w-72 shrink-0">
+            <CarCard listing={l} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <div className="bg-background">
       <HeroSearch />
+      <RecentlyViewed />
       <TopBrands />
       <HowItWorks />
       <NewCarsRail title="Popular New Cars" query="sort=featured" viewAllHref="/new-cars" />
