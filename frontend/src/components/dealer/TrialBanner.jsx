@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { X, Clock } from 'lucide-react';
 
 export default function TrialBanner({ trial }) {
@@ -20,9 +21,9 @@ export default function TrialBanner({ trial }) {
           ? `Your free trial ends in ${trial.daysRemaining} days. Upgrade now to keep the Founding Dealer rate of ₱3,599/mo.`
           : `You're on a 90-day free trial — ${trial.daysRemaining} days remaining. Full Pro features, no credit card needed.`
         }
-        <a href="/dealer/subscription" className="underline font-semibold ml-1">
+        <Link to="/dealer/subscription" className="underline font-semibold ml-1">
           {urgent || warning ? 'Upgrade now →' : 'Learn more →'}
-        </a>
+        </Link>
       </div>
       <button onClick={() => setDismissed(true)} className="shrink-0 opacity-80 hover:opacity-100">
         <X className="h-4 w-4" />

@@ -5,11 +5,10 @@
  */
 const express = require('express');
 const crypto = require('crypto');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { auditLog } = require('../services/audit/auditLogger');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // ─── Signature verification middleware ────────────────────────────────────────
 

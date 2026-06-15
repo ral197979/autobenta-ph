@@ -72,17 +72,26 @@ export default function SavedVehicles() {
             {items.map((f) => {
               const l = f.listing || {};
               const certified = l.inspectionRequests?.some((r) => r.status === 'completed') || l.dealer?.isVerified;
+              const saved = Number(f.priceWhenSaved);
+              const drop = f.priceWhenSaved && l.price != null && Number(l.price) < saved ? saved - Number(l.price) : 0;
               return (
                 <div key={f.id} className="group bg-surface-container-lowest rounded-xl border border-border-subtle shadow-sm overflow-hidden transition-all hover:shadow-lg">
                   <div className="relative h-56 w-full">
                     <Link to={`/cars/${f.listingId}`}>
                       <img src={photoOrFallback(l.photos?.[0]?.url, l.make)} alt={`${l.year} ${l.make} ${l.model}`} className="w-full h-full object-cover" />
                     </Link>
-                    {certified && (
-                      <div className="absolute top-md left-md">
-                        <span className="bg-trust-emerald text-white text-label-sm font-label-md px-sm py-1 rounded-full flex items-center gap-xs">
-                          <Icon name="verified" className="text-[14px]" filled /> Ryderr Certified
-                        </span>
+                    {(drop > 0 || certified) && (
+                      <div className="absolute top-md left-md flex flex-col gap-1.5 items-start">
+                        {drop > 0 && (
+                          <span className="bg-error text-white text-label-sm font-bold px-sm py-1 rounded-full flex items-center gap-xs shadow">
+                            <Icon name="trending_down" className="text-[14px]" /> Price dropped {formatPrice(drop)}
+                          </span>
+                        )}
+                        {certified && (
+                          <span className="bg-trust-emerald text-white text-label-sm font-label-md px-sm py-1 rounded-full flex items-center gap-xs">
+                            <Icon name="verified" className="text-[14px]" filled /> Ryderr Certified
+                          </span>
+                        )}
                       </div>
                     )}
                     <button
@@ -96,7 +105,10 @@ export default function SavedVehicles() {
                   <div className="p-md">
                     <div className="flex justify-between items-start mb-xs gap-2">
                       <h3 className="font-headline-sm text-headline-sm text-primary line-clamp-1">{l.year} {l.make} {l.model}</h3>
-                      <span className="font-headline-sm text-headline-sm text-primary-container whitespace-nowrap">{formatPrice(l.price)}</span>
+                      <div className="flex flex-col items-end shrink-0">
+                        <span className="font-headline-sm text-headline-sm text-primary whitespace-nowrap">{formatPrice(l.price)}</span>
+                        {drop > 0 && <span className="text-label-sm text-on-surface-variant/70 line-through whitespace-nowrap">{formatPrice(saved)}</span>}
+                      </div>
                     </div>
                     <div className="flex flex-wrap gap-sm mb-lg">
                       <span className="flex items-center gap-xs text-on-surface-variant text-label-sm"><Icon name="speed" className="text-[16px]" /> {formatMileage(l.mileage)}</span>

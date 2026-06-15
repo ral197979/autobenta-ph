@@ -1,10 +1,9 @@
 'use strict';
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { apiKeyAuth, requirePermission } = require('../middleware/apiKeyAuth');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // All routes require API key authentication
 router.use(apiKeyAuth);

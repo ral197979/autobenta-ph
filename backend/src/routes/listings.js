@@ -1,6 +1,6 @@
 const express = require('express');
 const { body, query, validationResult } = require('express-validator');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { authenticate, optionalAuth, requireRole } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 const path = require('path');
@@ -8,9 +8,30 @@ const { analyzeListingWithAI } = require('../services/ai');
 const storage = require('../services/storage/storageProvider');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 const LISTINGS_PER_PAGE = 20;
+
+// Attach a market-based "Deal Rating" to each listing by comparing its price to
+// the average of active listings of the same make+model (min 3 comps).
+async function withDealRatings(listings) {
+  if (!listings.length) return listings;
+  const groups = await prisma.vehicleListing.groupBy({
+    by: ['make', 'model'],
+    where: { status: 'active' },
+    _avg: { price: true },
+    _count: { _all: true },
+  });
+  const key = (mk, md) => `${mk}|${md}`.toLowerCase();
+  const avgMap = {};
+  groups.forEach((g) => { if (g._count._all >= 3 && g._avg.price) avgMap[key(g.make, g.model)] = Number(g._avg.price); });
+  return listings.map((l) => {
+    const avg = avgMap[key(l.make, l.model)];
+    if (!avg) return l;
+    const r = Number(l.price) / avg;
+    const rating = r <= 0.93 ? 'great' : r <= 1.0 ? 'good' : r <= 1.1 ? 'fair' : 'high';
+    return { ...l, dealRating: rating, marketAvg: Math.round(avg) };
+  });
+}
 
 // Haversine distance in km between two lat/lng points
 function haversineKm(lat1, lng1, lat2, lng2) {
@@ -49,6 +70,7 @@ router.get('/', optionalAuth, async (req, res, next) => {
     if (location && !nearbyMode) where.city = { contains: location, mode: 'insensitive' };
     if (sellerType) where.sellerType = sellerType;
     if (req.query.sellerId) where.sellerId = req.query.sellerId;
+    if (req.query.bodyType) where.bodyType = { contains: req.query.bodyType, mode: 'insensitive' };
     if (condition) where.condition = condition;
     if (verified === 'true') {
       if (!where.AND) where.AND = [];
@@ -86,7 +108,7 @@ router.get('/', optionalAuth, async (req, res, next) => {
       const paginated = withDist.slice(skip, skip + LISTINGS_PER_PAGE);
 
       return res.json({
-        listings: paginated,
+        listings: await withDealRatings(paginated),
         pagination: { page: pageNum, total: withDist.length, pages: Math.ceil(withDist.length / LISTINGS_PER_PAGE), perPage: LISTINGS_PER_PAGE },
         nearbyMode: true,
       });
@@ -109,9 +131,69 @@ router.get('/', optionalAuth, async (req, res, next) => {
     ]);
 
     res.json({
-      listings,
+      listings: await withDealRatings(listings),
       pagination: { page: parseInt(page), total, pages: Math.ceil(total / LISTINGS_PER_PAGE), perPage: LISTINGS_PER_PAGE },
     });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Facets for the homepage hero search: makes (with their models) and price range,
+// derived from live active inventory so users can't pick a zero-result combo.
+router.get('/facets', async (req, res, next) => {
+  try {
+    const groups = await prisma.vehicleListing.groupBy({
+      by: ['make', 'model'],
+      where: { status: 'active' },
+      _count: { _all: true },
+    });
+    const makeMap = new Map();
+    for (const g of groups) {
+      if (!g.make) continue;
+      if (!makeMap.has(g.make)) makeMap.set(g.make, { make: g.make, count: 0, models: [] });
+      const entry = makeMap.get(g.make);
+      entry.count += g._count._all;
+      if (g.model) entry.models.push({ model: g.model, count: g._count._all });
+    }
+    const makes = [...makeMap.values()]
+      .sort((a, b) => b.count - a.count || a.make.localeCompare(b.make))
+      .map((m) => ({ ...m, models: m.models.sort((a, b) => a.model.localeCompare(b.model)) }));
+
+    const agg = await prisma.vehicleListing.aggregate({
+      where: { status: 'active' },
+      _min: { price: true },
+      _max: { price: true },
+    });
+
+    const cityGroups = await prisma.vehicleListing.groupBy({
+      by: ['city'],
+      where: { status: 'active' },
+      _count: { _all: true },
+    });
+    const cities = cityGroups
+      .filter((c) => c.city)
+      .map((c) => ({ city: c.city, count: c._count._all }))
+      .sort((a, b) => b.count - a.count || a.city.localeCompare(b.city));
+
+    res.json({
+      makes,
+      cities,
+      priceRange: { min: Number(agg._min.price) || 0, max: Number(agg._max.price) || 0 },
+    });
+  } catch (err) { next(err); }
+});
+
+// GET /api/listings/recently-viewed — the signed-in user's recently viewed cars
+router.get('/recently-viewed', authenticate, async (req, res, next) => {
+  try {
+    const rows = await prisma.recentlyViewed.findMany({
+      where: { userId: req.user.id, listing: { status: 'active' } },
+      include: { listing: { include: { photos: { where: { isPrimary: true }, take: 1 } } } },
+      orderBy: { viewedAt: 'desc' },
+      take: 10,
+    });
+    res.json(await withDealRatings(rows.map((r) => r.listing)));
   } catch (err) {
     next(err);
   }
@@ -144,11 +226,60 @@ router.get('/:id', optionalAuth, async (req, res, next) => {
       data: { viewCount: { increment: 1 } },
     });
 
+    // Track recently-viewed for signed-in users (most recent view wins).
+    if (req.user) {
+      await prisma.recentlyViewed.upsert({
+        where: { userId_listingId: { userId: req.user.id, listingId: req.params.id } },
+        create: { userId: req.user.id, listingId: req.params.id },
+        update: { viewedAt: new Date() },
+      }).catch(() => {});
+    }
+
     const isFavorited = req.user
       ? !!(await prisma.favorite.findUnique({ where: { userId_listingId: { userId: req.user.id, listingId: req.params.id } } }))
       : false;
 
-    res.json({ ...listing, isFavorited });
+    const [rated] = await withDealRatings([listing]);
+    res.json({ ...rated, isFavorited });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/listings/:id/similar — active listings like this one (make/body, ±30% price)
+router.get('/:id/similar', async (req, res, next) => {
+  try {
+    const listing = await prisma.vehicleListing.findUnique({ where: { id: req.params.id } });
+    if (!listing) return res.status(404).json({ error: 'Listing not found' });
+
+    const price = Number(listing.price) || 0;
+    const or = [];
+    if (listing.bodyType) or.push({ bodyType: listing.bodyType });
+    if (listing.make) or.push({ make: listing.make });
+
+    const where = {
+      status: 'active',
+      id: { not: listing.id },
+      ...(price ? { price: { gte: price * 0.7, lte: price * 1.3 } } : {}),
+      ...(or.length ? { OR: or } : {}),
+    };
+
+    const candidates = await prisma.vehicleListing.findMany({
+      where,
+      include: { photos: { where: { isPrimary: true }, take: 1 } },
+      take: 24,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Rank: same make + same body type first, then closest price.
+    candidates.sort((a, b) => {
+      const score = (l) => (l.make === listing.make ? 2 : 0) + (l.bodyType === listing.bodyType ? 1 : 0);
+      const s = score(b) - score(a);
+      if (s) return s;
+      return Math.abs(Number(a.price) - price) - Math.abs(Number(b.price) - price);
+    });
+
+    res.json(await withDealRatings(candidates.slice(0, 6)));
   } catch (err) {
     next(err);
   }

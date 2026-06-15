@@ -1,11 +1,58 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import api from '../api/client';
+import { useAuth } from '../context/AuthContext';
+import { formatPrice } from '../utils/format';
+import CarCard from '../components/CarCard';
 import FeaturedListings from '../components/home/FeaturedListings';
 
-const HERO_IMG =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuD-vrDwHtyBgVcmht_LRmmztVGmtuFzeFTWmRqjPGREVXGyL6wTRAiIX0MoAOOG_VtBrv6DtAPUkWzsYn1l8gvftLGgdceqZvLGbmXfkVSbzLLyyvO6Gr8qG9sofD3_bb3JRyB9bNn6GXR54Svg98fxKjMQ3Yt-2rmJLKE-hKkrbpttzUB6I6fZfpi9daZhGmwfOH9cKua3A1wIv4aB-jILfO7vXU6oLH-7cptZUmhUmc7W9KrB31lR8g4mqPGb-tQIWb6KQErp7Yo';
+const BODY_TYPES = [
+  { name: 'Sedan', icon: 'directions_car' },
+  { name: 'SUV', icon: 'directions_car' },
+  { name: 'Crossover', icon: 'directions_car' },
+  { name: 'Hatchback', icon: 'directions_car' },
+  { name: 'Pickup', icon: 'local_shipping' },
+  { name: 'MPV', icon: 'airport_shuttle' },
+  { name: 'Van', icon: 'airport_shuttle' },
+];
 
-const BRANDS = ['Toyota', 'Mitsubishi', 'Honda', 'Ford', 'BMW', 'Nissan', 'Hyundai', 'Isuzu'];
+const STEPS = [
+  { icon: 'search', title: 'Search & Filter', body: 'Browse verified listings with photos, history, and transparent pricing.' },
+  { icon: 'verified', title: 'Inspect & Verify', body: 'Request a Ryderr Certified inspection and check the readiness score.' },
+  { icon: 'forum', title: 'Inquire & Offer', body: 'Message the seller, make an offer, or counter — all in-app.' },
+  { icon: 'fact_check', title: 'Close & Transfer', body: 'Follow the LTO transfer checklist and complete the sale with confidence.' },
+];
+
+// Manufacturer logos for make-based browsing (nominative fair use). Served from
+// a stable, versioned CDN; `color` is the fallback monogram tint if a logo fails.
+const LOGO = (slug) => `https://cdn.jsdelivr.net/gh/filippofilip95/car-logos-dataset@master/logos/optimized/${slug}.png`;
+const BRANDS = [
+  { name: 'Toyota', slug: 'toyota', color: '#E11D2A' },
+  { name: 'Mitsubishi', slug: 'mitsubishi', color: '#C81E2B' },
+  { name: 'Honda', slug: 'honda', color: '#111827' },
+  { name: 'Ford', slug: 'ford', color: '#1D4ED8' },
+  { name: 'BMW', slug: 'bmw', color: '#0EA5E9' },
+  { name: 'Nissan', slug: 'nissan', color: '#BE123C' },
+  { name: 'Hyundai', slug: 'hyundai', color: '#1E3A8A' },
+  { name: 'Isuzu', slug: 'isuzu', color: '#DC2626' },
+];
+
+function BrandLogo({ brand }) {
+  const [err, setErr] = useState(false);
+  if (err) {
+    return (
+      <div className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-headline-sm shadow-sm ring-1 ring-black/5" style={{ backgroundColor: brand.color }}>
+        {brand.name.charAt(0)}
+      </div>
+    );
+  }
+  return (
+    <div className="w-16 h-16 rounded-full bg-white border border-border-subtle flex items-center justify-center p-2.5 shadow-sm group-hover:scale-105 transition-transform">
+      <img src={LOGO(brand.slug)} alt={`${brand.name} logo`} className="w-full h-full object-contain" loading="lazy" onError={() => setErr(true)} />
+    </div>
+  );
+}
 
 const DEALERS = [
   { name: 'Elite Motors', tag: 'Premium Partner' },
@@ -20,43 +67,115 @@ const TRUST = [
   { icon: 'support_agent', title: '24/7 Expert Help', body: 'Our specialists guide you through every step of the buying or selling process.' },
 ];
 
+const BUDGET_OPTIONS = [
+  { label: 'Any budget', min: '', max: '' },
+  { label: 'Under ₱500K', min: '', max: '500000' },
+  { label: '₱500K – ₱1M', min: '500000', max: '1000000' },
+  { label: '₱1M – ₱2M', min: '1000000', max: '2000000' },
+  { label: '₱2M – ₱3M', min: '2000000', max: '3000000' },
+  { label: '₱3M & up', min: '3000000', max: '' },
+];
+
 function HeroSearch() {
   const navigate = useNavigate();
+  const [condition, setCondition] = useState('used'); // 'used' | 'new'
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
-  const [budget, setBudget] = useState('');
+  const [budgetIdx, setBudgetIdx] = useState(0);
+  const [location, setLocation] = useState('');
+
+  const { data: facets } = useQuery({
+    queryKey: ['listing-facets'],
+    queryFn: () => api.get('/listings/facets').then((r) => r.data),
+    staleTime: 5 * 60 * 1000,
+  });
+  const { data: newMakes } = useQuery({
+    queryKey: ['new-car-makes'],
+    queryFn: () => api.get('/new-cars/makes').then((r) => r.data),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const isNew = condition === 'new';
+  const usedMakes = facets?.makes || [];
+  const cities = facets?.cities || [];
+  const brandOptions = isNew ? (newMakes || []).map((m) => ({ make: m })) : usedMakes;
+  const models = usedMakes.find((m) => m.make === brand)?.models || [];
+
+  const switchCondition = (c) => { setCondition(c); setBrand(''); setModel(''); setLocation(''); };
 
   const onSearch = () => {
     const params = new URLSearchParams();
     if (brand) params.set('make', brand);
-    if (model) params.set('q', model);
-    if (budget) params.set('budget', budget);
-    navigate(`/cars${params.toString() ? `?${params}` : ''}`);
+    if (!isNew && model) params.set('model', model);
+    const b = BUDGET_OPTIONS[budgetIdx];
+    if (b?.min) params.set('priceMin', b.min);
+    if (b?.max) params.set('priceMax', b.max);
+    if (!isNew && location) params.set('location', location);
+    const base = isNew ? '/new-cars' : '/cars';
+    navigate(`${base}${params.toString() ? `?${params}` : ''}`);
   };
 
   return (
-    <section className="relative w-full h-[600px] md:h-[720px] flex items-center justify-center px-gutter-mobile md:px-gutter-desktop">
+    <section className="relative w-full min-h-[600px] md:min-h-[720px] flex items-center justify-center px-gutter-mobile md:px-gutter-desktop py-2xl overflow-hidden bg-ink">
       <div className="absolute inset-0 z-0">
-        <img className="w-full h-full object-cover" src={HERO_IMG} alt="Premium vehicle at dusk" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0B1220] via-[#131b2e] to-[#1e3a5f]" />
+        <div className="absolute -top-24 -right-24 w-[28rem] h-[28rem] rounded-full bg-electric/20 blur-3xl" />
+        <div className="absolute -bottom-32 -left-20 w-[26rem] h-[26rem] rounded-full bg-accent/10 blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
       </div>
       <div className="relative z-10 max-w-container-max w-full text-center">
         <h1 className="text-white font-display-lg text-display-lg mb-lg max-w-3xl mx-auto">
           Precision Engineering. Seamless Ownership.
         </h1>
-        <p className="text-white/90 font-body-lg text-body-lg mb-3xl max-w-2xl mx-auto">
+        <p className="text-white/90 font-body-lg text-body-lg mb-xl max-w-2xl mx-auto">
           Discover the Philippines' most trusted marketplace for verified, high-performance vehicles.
         </p>
-        <div className="bg-surface-container-lowest p-sm md:p-md rounded-xl shadow-xl max-w-4xl mx-auto flex flex-col md:flex-row items-stretch gap-sm border border-border-subtle">
-          <Field label="Brand" placeholder="e.g. Toyota" value={brand} onChange={setBrand} bordered />
-          <Field label="Model" placeholder="e.g. Fortuner" value={model} onChange={setModel} bordered />
-          <Field label="Budget" placeholder="e.g. 1M - 2M" value={budget} onChange={setBudget} />
+        {/* New / Used toggle */}
+        <div className="inline-flex p-1 mb-md rounded-full bg-white/10 backdrop-blur-sm">
+          {[['used', 'Used Cars'], ['new', 'New Cars']].map(([c, label]) => (
+            <button
+              key={c}
+              onClick={() => switchCondition(c)}
+              className={`px-lg py-sm rounded-full text-label-md font-bold transition-all ${
+                condition === c ? 'bg-primary text-on-primary shadow' : 'text-white/80 hover:text-white'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <div className="bg-surface-container-lowest p-sm md:p-md rounded-xl shadow-xl max-w-5xl mx-auto flex flex-col md:flex-row items-stretch gap-sm border border-border-subtle">
+          <SelectField label="Brand" value={brand} onChange={(v) => { setBrand(v); setModel(''); }} bordered placeholder="All brands">
+            {brandOptions.map((m) => <option key={m.make} value={m.make} className="bg-surface text-on-surface">{m.make}{m.count ? ` (${m.count})` : ''}</option>)}
+          </SelectField>
+          <SelectField
+            label="Model"
+            value={model}
+            onChange={setModel}
+            bordered
+            disabled={isNew || !brand}
+            placeholder={isNew ? 'Choose at next step' : brand ? 'All models' : 'Select a brand first'}
+          >
+            {!isNew && models.map((m) => <option key={m.model} value={m.model} className="bg-surface text-on-surface">{m.model} ({m.count})</option>)}
+          </SelectField>
+          <SelectField label="Budget" value={String(budgetIdx)} onChange={(v) => setBudgetIdx(Number(v))} bordered>
+            {BUDGET_OPTIONS.map((b, i) => <option key={i} value={i} className="bg-surface text-on-surface">{b.label}</option>)}
+          </SelectField>
+          <SelectField
+            label="Location"
+            value={location}
+            onChange={setLocation}
+            disabled={isNew}
+            placeholder={isNew ? 'Nationwide' : 'Any location'}
+          >
+            {!isNew && cities.map((c) => <option key={c.city} value={c.city} className="bg-surface text-on-surface">{c.city} ({c.count})</option>)}
+          </SelectField>
           <button
             onClick={onSearch}
-            className="bg-primary text-on-primary px-xl py-md rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95"
+            className="bg-primary text-on-primary px-xl py-md rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:opacity-90 transition-all active:scale-95 whitespace-nowrap"
           >
             <span className="material-symbols-outlined">search</span>
-            Search Marketplace
+            {isNew ? 'Search New Cars' : 'Search Marketplace'}
           </button>
         </div>
       </div>
@@ -64,42 +183,120 @@ function HeroSearch() {
   );
 }
 
-function Field({ label, placeholder, value, onChange, bordered }) {
+function SelectField({ label, value, onChange, children, bordered, placeholder, disabled }) {
   return (
     <label
-      className={`flex-1 flex flex-col items-start px-md py-sm hover:bg-surface-container-low rounded-lg transition-colors cursor-text ${
-        bordered ? 'border-b md:border-b-0 md:border-r border-border-subtle' : ''
-      }`}
+      className={`flex-1 flex flex-col items-start px-md py-sm rounded-lg transition-colors ${
+        disabled ? 'opacity-60' : 'hover:bg-surface-container-low cursor-pointer'
+      } ${bordered ? 'border-b md:border-b-0 md:border-r border-border-subtle' : ''}`}
     >
       <span className="text-label-sm font-label-sm text-secondary uppercase tracking-wider mb-1">{label}</span>
-      <input
-        className="w-full border-none p-0 focus:ring-0 text-body-md font-body-md text-on-surface bg-transparent placeholder:text-outline-variant"
-        placeholder={placeholder}
+      <select
+        className="w-full border-none p-0 focus:ring-0 text-body-md font-body-md text-on-surface bg-transparent cursor-pointer disabled:cursor-not-allowed"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        type="text"
-      />
+        disabled={disabled}
+      >
+        {placeholder !== undefined && <option value="" className="bg-surface text-on-surface">{placeholder}</option>}
+        {children}
+      </select>
     </label>
   );
 }
 
 function TopBrands() {
+  const [tab, setTab] = useState('makes');
   return (
     <section className="py-xl bg-surface-container-lowest border-b border-border-subtle">
       <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop">
-        <div className="flex items-center justify-between mb-lg">
-          <h2 className="text-headline-sm font-headline-sm text-primary">Top Brands</h2>
-          <Link to="/cars" className="text-on-tertiary-container font-label-md text-label-md hover:underline">View All Brands</Link>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-md mb-lg">
+          <h2 className="text-headline-sm font-headline-sm text-primary">Popular Makes &amp; Body Types</h2>
+          <div className="flex items-center gap-1 bg-surface-container rounded-full p-1 w-fit">
+            {[['makes', 'Car Makes'], ['types', 'Body Types']].map(([k, l]) => (
+              <button key={k} onClick={() => setTab(k)} className={`px-md py-1.5 rounded-full text-label-md transition-colors ${tab === k ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}>{l}</button>
+            ))}
+          </div>
         </div>
         <div className="flex items-center gap-xl overflow-x-auto hide-scrollbar py-2">
-          {BRANDS.map((b) => (
-            <Link key={b} to={`/cars?make=${encodeURIComponent(b)}`} className="flex flex-col items-center gap-sm min-w-[100px] group cursor-pointer">
-              <div className="w-16 h-16 rounded-full bg-surface-container-low border border-border-subtle flex items-center justify-center group-hover:bg-primary transition-colors">
-                <span className="material-symbols-outlined text-primary group-hover:text-on-primary transition-colors">directions_car</span>
+          {tab === 'makes'
+            ? BRANDS.map((b) => (
+                <Link key={b.name} to={`/cars?make=${encodeURIComponent(b.name)}`} className="flex flex-col items-center gap-sm min-w-[100px] group cursor-pointer">
+                  <BrandLogo brand={b} />
+                  <span className="text-label-sm font-label-sm text-on-surface-variant group-hover:text-primary transition-colors">{b.name}</span>
+                </Link>
+              ))
+            : BODY_TYPES.map((t) => (
+                <Link key={t.name} to={`/cars?bodyType=${encodeURIComponent(t.name)}`} className="flex flex-col items-center gap-sm min-w-[100px] group cursor-pointer">
+                  <div className="w-16 h-16 rounded-full bg-surface-container-low border border-border-subtle flex items-center justify-center group-hover:bg-primary transition-colors">
+                    <span className="material-symbols-outlined text-primary group-hover:text-on-primary transition-colors">{t.icon}</span>
+                  </div>
+                  <span className="text-label-sm font-label-sm text-on-surface-variant group-hover:text-primary transition-colors">{t.name}</span>
+                </Link>
+              ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HowItWorks() {
+  return (
+    <section className="py-3xl bg-background">
+      <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop">
+        <h2 className="text-headline-lg font-headline-lg text-primary text-center mb-2xl">How Ryderr Works</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg">
+          {STEPS.map((s, i) => (
+            <div key={s.title} className="bg-surface-container-lowest border border-border-subtle rounded-2xl p-lg text-center relative">
+              <span className="absolute top-4 right-4 text-headline-lg font-bold text-surface-container-high">{i + 1}</span>
+              <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center mb-md">
+                <span className="material-symbols-outlined text-primary text-2xl">{s.icon}</span>
               </div>
-              <span className="text-label-sm font-label-sm text-on-surface-variant">{b}</span>
-            </Link>
+              <h3 className="text-headline-sm font-headline-sm text-on-surface mb-sm">{s.title}</h3>
+              <p className="text-body-sm text-on-surface-variant">{s.body}</p>
+            </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Newsletter() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('idle'); // idle | loading | done | error
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!email) return;
+    setStatus('loading');
+    try {
+      await api.post('/newsletter', { email });
+      setStatus('done');
+      setEmail('');
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  return (
+    <section className="py-2xl px-gutter-mobile md:px-gutter-desktop">
+      <div className="max-w-container-max mx-auto bg-primary-container rounded-2xl p-xl md:p-3xl relative overflow-hidden text-center">
+        <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-tertiary-container/30 blur-3xl" />
+        <div className="relative z-10 max-w-xl mx-auto">
+          <h2 className="text-headline-lg font-headline-lg text-on-primary mb-sm">Join thousands of car buyers</h2>
+          <p className="text-on-primary-container font-body-md mb-lg">Get new listings, price drops, and buying tips in your inbox. No spam.</p>
+          {status === 'done' ? (
+            <p className="text-on-primary font-label-md flex items-center justify-center gap-2"><span className="material-symbols-outlined">check_circle</span> You're subscribed — welcome aboard!</p>
+          ) : (
+            <form onSubmit={submit} className="flex flex-col sm:flex-row gap-sm max-w-md mx-auto">
+              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com"
+                className="flex-1 bg-surface-container-lowest border border-border-subtle rounded-xl px-md py-sm text-body-md text-on-surface focus:ring-2 focus:ring-primary outline-none" />
+              <button type="submit" disabled={status === 'loading'} className="bg-surface-container-lowest text-primary px-xl py-sm rounded-xl font-label-md hover:bg-surface-container-low transition-all active:scale-95 disabled:opacity-60">
+                {status === 'loading' ? 'Joining…' : 'Subscribe'}
+              </button>
+            </form>
+          )}
+          {status === 'error' && <p className="text-on-primary-container text-label-sm mt-2">Something went wrong — please try again.</p>}
         </div>
       </div>
     </section>
@@ -117,7 +314,7 @@ function SellCTA() {
             Our experts handle the inspection and paperwork. Get paid in as fast as 24 hours.
           </p>
           <div className="flex flex-col sm:flex-row gap-md justify-center md:justify-start">
-            <Link to="/sell" className="bg-surface-container-lowest text-primary px-3xl py-md rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-all shadow-lg active:scale-95">
+            <Link to="/valuation" className="bg-surface-container-lowest text-primary px-3xl py-md rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-all shadow-lg active:scale-95">
               Get Instant Quote
             </Link>
             <Link to="/safe-buying" className="bg-transparent border border-white/30 text-on-primary px-3xl py-md rounded-xl font-label-md text-label-md hover:bg-white/10 transition-all active:scale-95">
@@ -125,12 +322,8 @@ function SellCTA() {
             </Link>
           </div>
         </div>
-        <div className="relative z-10 w-full md:w-[400px] h-[300px] rounded-2xl overflow-hidden shadow-2xl">
-          <img
-            className="w-full h-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJ85zTadMOZKa2DCoV7IkaZjLdTCsPkimhR299XQ1JTtLaAkbdQln4xWOVeorRsSuupbgoNt-A5fKI1jhz676tnNz6hBVZhf4z2KG85zJ4_fVbOiKthOMR1rycNqj15T1jsSmI3KpbNipSNje6keemnJfeYro5oVi8QmgLURq-np_GsSmau4H2bZaeSGGVCaM1s7qva9AbepIzcOYdnOEWIN01yUmIvrAdKyutU8ohpITOaa-ix8Ri_UOvGamsv0mhbNJcS0X0U6o"
-            alt="Sell your car with Ryderr"
-          />
+        <div className="relative z-10 w-full md:w-[400px] h-[300px] rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-[#1e3a5f] to-[#0B1220] flex items-center justify-center">
+          <span className="material-symbols-outlined text-white/30" style={{ fontSize: '96px' }}>directions_car</span>
         </div>
       </div>
     </section>
@@ -149,7 +342,7 @@ function VerifiedDealers() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-lg">
           {DEALERS.map((d) => (
-            <Link key={d.name} to="/cars" className="bg-surface-container-lowest p-lg rounded-xl border border-border-subtle flex flex-col items-center text-center group cursor-pointer hover:border-primary transition-all">
+            <Link key={d.name} to="/dealers" className="bg-surface-container-lowest p-lg rounded-xl border border-border-subtle flex flex-col items-center text-center group cursor-pointer hover:border-primary transition-all">
               <div className="w-20 h-20 bg-surface rounded-full flex items-center justify-center mb-md border border-border-subtle">
                 <span className="material-symbols-outlined text-3xl text-primary">storefront</span>
               </div>
@@ -186,14 +379,87 @@ function TrustPillars() {
   );
 }
 
+function RailCard({ m }) {
+  const [err, setErr] = useState(false);
+  return (
+    <Link to={`/new-cars/${m.id}`} className="shrink-0 w-64 bg-surface-container-lowest border border-border-subtle rounded-2xl overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all">
+      <div className="relative h-36">
+        {m.imageUrl && !err ? (
+          <img src={m.imageUrl} alt={`${m.make} ${m.model}`} className="w-full h-full object-cover" onError={() => setErr(true)} />
+        ) : (
+          <div className="h-full w-full bg-gradient-to-br from-[#1e3a5f] to-[#0B1220] flex items-center justify-center">
+            <span className="text-headline-sm font-bold text-white/90 text-center px-2">{m.make} {m.model}</span>
+          </div>
+        )}
+        {m.isElectric && <span className="absolute top-2 left-2 bg-trust-emerald text-white text-[10px] font-bold px-2 py-1 rounded-full">EV</span>}
+      </div>
+      <div className="p-md">
+        <span className="text-label-sm text-on-surface-variant uppercase tracking-wider">{m.bodyType} · {m.year}</span>
+        <h3 className="text-headline-sm font-headline-sm text-on-surface line-clamp-1">{m.make} {m.model}</h3>
+        <p className="text-label-sm text-on-surface-variant mt-xs">Starts at</p>
+        <p className="text-headline-sm font-bold text-primary">{formatPrice(m.startingPrice)}</p>
+      </div>
+    </Link>
+  );
+}
+
+function NewCarsRail({ title, query, viewAllHref }) {
+  const { data } = useQuery({ queryKey: ['new-cars-rail', query], queryFn: () => api.get(`/new-cars?${query}&limit=10`).then((r) => r.data) });
+  const models = data?.models || [];
+  if (!models.length) return null;
+  return (
+    <section className="py-2xl bg-background">
+      <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop">
+        <div className="flex items-end justify-between mb-lg gap-4">
+          <h2 className="text-headline-lg font-headline-lg text-primary">{title}</h2>
+          <Link to={viewAllHref} className="text-primary font-label-md text-label-md hover:underline flex items-center gap-1 shrink-0">View all <span className="material-symbols-outlined text-[18px]">arrow_forward</span></Link>
+        </div>
+        <div className="flex gap-lg overflow-x-auto hide-scrollbar pb-2">
+          {models.map((m) => <RailCard key={m.id} m={m} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function RecentlyViewed() {
+  const { user } = useAuth();
+  const { data } = useQuery({
+    queryKey: ['recently-viewed'],
+    queryFn: () => api.get('/listings/recently-viewed').then((r) => r.data),
+    enabled: !!user,
+  });
+  if (!user || !data?.length) return null;
+  return (
+    <section className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-2xl">
+      <div className="flex items-center justify-between mb-xl">
+        <h2 className="text-headline-md font-bold text-on-surface">Jump back in</h2>
+        <Link to="/cars" className="text-label-md font-bold text-primary hover:underline">Browse all</Link>
+      </div>
+      <div className="flex gap-lg overflow-x-auto hide-scrollbar pb-2 -mx-1 px-1">
+        {data.map((l) => (
+          <div key={l.id} className="w-72 shrink-0">
+            <CarCard listing={l} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   return (
     <div className="bg-background">
       <HeroSearch />
+      <RecentlyViewed />
       <TopBrands />
+      <HowItWorks />
+      <NewCarsRail title="Popular New Cars" query="sort=featured" viewAllHref="/new-cars" />
       <FeaturedListings />
+      <NewCarsRail title="Electric & Hybrid" query="green=true" viewAllHref="/new-cars?electric=true" />
       <SellCTA />
       <VerifiedDealers />
+      <Newsletter />
       <TrustPillars />
     </div>
   );

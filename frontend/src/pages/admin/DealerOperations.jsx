@@ -181,6 +181,7 @@ export default function DealerOperations() {
           <div className="flex flex-wrap gap-3">
             <input
               className="input text-sm py-2 w-60"
+              aria-label="Search dealers by name or email"
               placeholder="Search by name or email…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}

@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require("../lib/prisma");
 
 // Middleware: block suspended users immediately
 async function blockSuspended(req, res, next) {

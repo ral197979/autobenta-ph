@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const Section = ({ title, children }) => (
   <section className="mb-10">
@@ -108,7 +109,7 @@ export default function DealerAgreement() {
         </Section>
 
         <Section title="11. Entire Agreement">
-          <p>This Agreement, together with the AutoBentaPH <a href="/terms" className="text-blue-600 hover:underline">Terms of Service</a> and <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>, constitutes the entire agreement between the parties regarding the dealer platform subscription. It supersedes all prior proposals, negotiations, or representations, whether written or oral.</p>
+          <p>This Agreement, together with the AutoBentaPH <Link to="/terms" className="text-blue-600 hover:underline">Terms of Service</Link> and <Link to="/privacy" className="text-blue-600 hover:underline">Privacy Policy</Link>, constitutes the entire agreement between the parties regarding the dealer platform subscription. It supersedes all prior proposals, negotiations, or representations, whether written or oral.</p>
           <p>In the event of conflict between this Agreement and the Terms of Service on dealer-specific matters (fees, data, cancellation), this Agreement controls.</p>
           <p>No amendment to this Agreement is valid unless made in writing and signed (or electronically acknowledged) by both parties.</p>
         </Section>

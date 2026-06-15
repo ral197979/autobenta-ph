@@ -208,12 +208,16 @@ model User {
   dealerApplication   DealerApplication?
   listings            VehicleListing[]
   favorites           Favorite[]
+  dealCards           DealCard[]
   inquiriesSent       Inquiry[]         @relation("BuyerInquiries")
   offersMade          Offer[]           @relation("BuyerOffers")
   offersReceived      Offer[]           @relation("SellerOffers")
   reviewsReceived     Review[]          @relation("SellerReviews")
   reviewsWritten      Review[]          @relation("ReviewsWritten")
   messagesSent        Message[]         @relation("MessagesSent")
+  disputesFiled       Dispute[]         @relation("DisputesFiled")
+  bookingsMade        Booking[]         @relation("BuyerBookings")
+  bookingsReceived    Booking[]         @relation("SellerBookings")
   inspectionRequests  InspectionRequest[]
   financingRequests   FinancingRequest[]
   auditLogs           AuditLog[]
@@ -365,8 +369,10 @@ model VehicleListing {
 
   photos               VehiclePhoto[]
   favorites            Favorite[]
+  dealCards            DealCard[]
   inquiries            Inquiry[]
   offers               Offer[]
+  bookings             Booking[]
   inspectionRequests   InspectionRequest[]
   financingRequests    FinancingRequest[]
   aiAnalyses           AIAnalysis[]
@@ -412,15 +418,34 @@ model VehiclePhoto {
 }
 
 model Favorite {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listingId     String
+  listing       VehicleListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  priceWhenSaved Float?  // snapshot of the listing price at favorite time, for price-drop alerts
+  createdAt     DateTime @default(now())
+
+  @@unique([userId, listingId])
+  @@map("favorites")
+}
+
+// Buyer's purchase pipeline: track multiple cars through stages toward a deal.
+model DealCard {
   id        String   @id @default(uuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   listingId String
   listing   VehicleListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  stage     String   @default("saved") // saved | inquired | test_drive | negotiating
+  position  Int      @default(0)
+  notes     String?
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([userId, listingId])
-  @@map("favorites")
+  @@index([userId])
+  @@map("deal_cards")
 }
 
 model Inquiry {
@@ -492,6 +517,147 @@ model Message {
   createdAt DateTime @default(now())
 
   @@map("messages")
+}
+
+model Dispute {
+  id          String        @id @default(uuid())
+  reporterId  String
+  reporter    User          @relation("DisputesFiled", fields: [reporterId], references: [id])
+  listingId   String?
+  category    String
+  subject     String
+  description String
+  status      DisputeStatus @default(open)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("disputes")
+}
+
+enum DisputeStatus {
+  open
+  under_review
+  resolved
+  dismissed
+}
+
+model Subscriber {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("subscribers")
+}
+
+model NewCarModel {
+  id            String          @id @default(uuid())
+  make          String
+  model         String
+  bodyType      String
+  fuelType      String
+  startingPrice Decimal         @db.Decimal(12, 2)
+  year          Int
+  imageUrl      String?
+  brochureUrl   String?
+  description   String?
+  isElectric    Boolean         @default(false)
+  isFeatured    Boolean         @default(false)
+  specs         Json?
+  variants      NewCarVariant[]
+  createdAt     DateTime        @default(now())
+
+  @@map("new_car_models")
+}
+
+model NewCarVariant {
+  id           String      @id @default(uuid())
+  modelId      String
+  model        NewCarModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  name         String
+  price        Decimal     @db.Decimal(12, 2)
+  transmission String?
+  fuelType     String?
+
+  @@map("new_car_variants")
+}
+
+model Booking {
+  id            String         @id @default(uuid())
+  listingId     String
+  listing       VehicleListing @relation(fields: [listingId], references: [id])
+  buyerId       String
+  buyer         User           @relation("BuyerBookings", fields: [buyerId], references: [id])
+  sellerId      String
+  seller        User           @relation("SellerBookings", fields: [sellerId], references: [id])
+  type          BookingType    @default(test_drive)
+  preferredDate DateTime
+  timeSlot      String?
+  message       String?
+  status        BookingStatus  @default(requested)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@map("bookings")
+}
+
+enum BookingType {
+  test_drive
+  viewing
+}
+
+enum BookingStatus {
+  requested
+  confirmed
+  declined
+  completed
+  cancelled
+}
+
+model PartnerLead {
+  id          String     @id @default(uuid())
+  type        LeadType   @default(financing)
+  userId      String?
+  name        String
+  email       String
+  phone       String?
+  listingId   String?
+  vehicleInfo String?
+  amount      Decimal?   @db.Decimal(12, 2)
+  details     Json?
+  status      LeadStatus @default(new)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("partner_leads")
+}
+
+enum LeadType {
+  financing
+  insurance
+}
+
+enum LeadStatus {
+  new
+  contacted
+  approved
+  declined
+}
+
+model Article {
+  id          String    @id @default(uuid())
+  slug        String    @unique
+  title       String
+  category    String    @default("News")
+  excerpt     String?
+  body        String
+  coverUrl    String?
+  authorName  String?
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("articles")
 }
 
 model Lead {

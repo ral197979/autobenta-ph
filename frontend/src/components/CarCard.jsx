@@ -7,7 +7,9 @@ import {
   FUEL_LABELS,
   SELLER_TYPE_LABELS,
 } from '../utils/format';
+import { monthlyPayment } from '../utils/finance';
 import api from '../api/client';
+import DealBadge from './DealBadge';
 
 const carPlaceholder = (text) => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="280"><rect fill="#1e293b" width="400" height="280"/><text fill="#64748b" font-family="sans-serif" font-size="16" font-weight="500" text-anchor="middle" x="200" y="148">${text}</text></svg>`;
@@ -105,8 +107,13 @@ export default function CarCard({ listing, onFavoriteToggle }) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between mt-auto">
-          <span className="text-headline-sm font-bold text-primary">{formatPrice(listing.price)}</span>
+        {listing.dealRating && <DealBadge rating={listing.dealRating} className="self-start" />}
+
+        <div className="flex items-end justify-between mt-auto">
+          <div className="flex flex-col">
+            <span className="text-headline-sm font-bold text-primary">{formatPrice(listing.price)}</span>
+            <span className="text-label-sm text-on-surface-variant">≈ {formatPrice(monthlyPayment(listing.price))}/mo</span>
+          </div>
           <span className="flex items-center gap-1 text-label-sm text-on-surface-variant">
             <Icon name="location_on" className="text-[16px]" />
             <span className="truncate max-w-[90px]">{listing.city}</span>

@@ -12,6 +12,8 @@ const CATEGORIES = [
   { icon: 'fact_check', title: 'Ownership Transfer', desc: 'LTO requirements, fees, and checklist.', to: '/ownership-transfer' },
   { icon: 'payments', title: 'Financing & Taxes', desc: 'Loan calculator and pre-approval.', to: '/financing' },
   { icon: 'security', title: 'Account & Security', desc: 'Manage your profile and password.', to: '/account' },
+  { icon: 'gavel', title: 'Dispute Resolution', desc: 'Report a problem to trust & safety.', to: '/report-dispute' },
+  { icon: 'verified_user', title: 'Get Verified', desc: 'Earn a verified seller/dealer badge.', to: '/verification' },
 ];
 
 const FAQS = [
@@ -35,7 +37,7 @@ export default function HelpCenter() {
           <h1 className="font-display-lg text-display-lg text-primary mb-md">How can we help?</h1>
           <div className="relative">
             <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search articles, guides, or issues…"
+            <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search help articles" placeholder="Search articles, guides, or issues…"
               className="w-full py-4 pl-14 pr-6 bg-surface border border-border-subtle rounded-xl focus:ring-2 focus:ring-primary outline-none transition-shadow shadow-sm text-body-md text-on-surface placeholder-on-surface-variant/60" />
           </div>
         </div>

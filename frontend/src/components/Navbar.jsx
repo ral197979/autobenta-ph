@@ -4,9 +4,10 @@ import { useAuth } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 
 const NAV_LINKS = [
-  { to: '/', label: 'Home' },
-  { to: '/cars', label: 'Browse Cars' },
+  { to: '/new-cars', label: 'New Cars' },
+  { to: '/cars', label: 'Used Cars' },
   { to: '/inspection-services', label: 'Ryderr Certified' },
+  { to: '/news', label: 'News' },
   { to: '/sell', label: 'Sell My Car' },
 ];
 
@@ -58,7 +59,7 @@ export default function Navbar() {
             className={
               isActive(to)
                 ? 'text-primary dark:text-tertiary-fixed-dim font-bold text-label-md transition-all active:opacity-80 active:scale-95'
-                : 'text-on-surface-variant dark:text-on-secondary-fixed-variant hover:bg-surface-container-low transition-colors text-label-md px-2 py-1 rounded'
+                : 'text-on-surface-variant dark:text-secondary-fixed-dim hover:bg-surface-container-low transition-colors text-label-md px-2 py-1 rounded'
             }
           >
             {label}
@@ -111,9 +112,23 @@ export default function Navbar() {
                 <Link to="/offers" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
                   <Icon name="local_offer" className="text-base" /> Offers
                 </Link>
+                <Link to="/appointments" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                  <Icon name="event" className="text-base" /> Test Drives
+                </Link>
+                <Link to="/saved-searches" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                  <Icon name="bookmark" className="text-base" /> Saved Searches
+                </Link>
+                <Link to="/pipeline" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                  <Icon name="view_kanban" className="text-base" /> Deal Tracker
+                </Link>
                 <Link to="/account" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
                   <Icon name="settings" className="text-base" /> Account Settings
                 </Link>
+                {['seller', 'dealer'].includes(user.role) && (
+                  <Link to="/verification" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                    <Icon name="verified_user" className="text-base" /> Get Verified
+                  </Link>
+                )}
                 {user.role === 'dealer' && (
                   <Link to="/dealer" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
                     <Icon name="storefront" className="text-base" /> Dealer Panel
@@ -122,6 +137,21 @@ export default function Navbar() {
                 {user.role === 'admin' && (
                   <Link to="/admin" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
                     <Icon name="shield" className="text-base" /> Admin Panel
+                  </Link>
+                )}
+                {user.role === 'admin' && (
+                  <Link to="/admin/new-cars" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                    <Icon name="garage" className="text-base" /> New-Car Catalog
+                  </Link>
+                )}
+                {user.role === 'admin' && (
+                  <Link to="/admin/articles" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                    <Icon name="article" className="text-base" /> News &amp; Reviews
+                  </Link>
+                )}
+                {user.role === 'admin' && (
+                  <Link to="/admin/leads" onClick={() => setUserMenuOpen(false)} className="flex items-center gap-2 px-4 py-2 text-body-sm text-on-surface hover:bg-surface-container-low">
+                    <Icon name="contacts" className="text-base" /> Finance/Insurance Leads
                   </Link>
                 )}
                 <div className="my-1 border-t border-border-subtle" />

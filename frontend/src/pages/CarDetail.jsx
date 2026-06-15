@@ -4,10 +4,15 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../api/client';
 import { trackEvent } from '../utils/analytics';
 import { formatPrice, formatMileage, formatRelativeTime, FUEL_LABELS, TRANSMISSION_LABELS, CONDITION_LABELS, carPlaceholder } from '../utils/format';
+import { monthlyPayment } from '../utils/finance';
 import { useAuth } from '../context/AuthContext';
 import ReadinessScore from '../components/ReadinessScore';
+import CarCard from '../components/CarCard';
+import DealBadge from '../components/DealBadge';
+import TCOCalculator from '../components/TCOCalculator';
 import VehicleHistoryCard from '../components/VehicleHistoryCard';
 import MakeOfferModal from '../components/MakeOfferModal';
+import BookTestDriveModal from '../components/BookTestDriveModal';
 
 // Material Symbols icon helper (Stitch uses these throughout).
 function Icon({ name, className = '', filled = false }) {
@@ -34,6 +39,9 @@ export default function CarDetail() {
   const [inspectionRequested, setInspectionRequested] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
   const [offerSent, setOfferSent] = useState(false);
+  const [showBooking, setShowBooking] = useState(false);
+  const [bookingDone, setBookingDone] = useState(false);
+  const [tracked, setTracked] = useState(false);
 
   const { data: listing, isLoading } = useQuery({
     queryKey: ['listing', id],
@@ -43,6 +51,12 @@ export default function CarDetail() {
   const { data: aiAnalysis } = useQuery({
     queryKey: ['ai-analysis', id],
     queryFn: () => api.get(`/ai/listing/${id}/analysis`).then(r => r.data),
+    enabled: !!id,
+  });
+
+  const { data: similar } = useQuery({
+    queryKey: ['similar', id],
+    queryFn: () => api.get(`/listings/${id}/similar`).then(r => r.data),
     enabled: !!id,
   });
 
@@ -70,6 +84,16 @@ export default function CarDetail() {
       setInquirySent(true);
     } catch (e) {
       alert(e.response?.data?.error || 'Failed to send inquiry');
+    }
+  };
+
+  const trackCar = async () => {
+    if (!user) return navigate('/login');
+    try {
+      await api.post('/deal-tracker', { listingId: id });
+      setTracked(true);
+    } catch (e) {
+      alert(e.response?.data?.error || 'Failed to add to pipeline');
     }
   };
 
@@ -130,8 +154,7 @@ export default function CarDetail() {
 
   // Simple financing estimate — 30% down, 60 months, ~7.5% p.a.
   const down = Math.round(listing.price * 0.3);
-  const principal = listing.price - down;
-  const monthly = Math.round((principal * (1 + 0.075 * 5)) / 60);
+  const monthly = monthlyPayment(listing.price);
 
   return (
     <div className="bg-surface">
@@ -248,6 +271,9 @@ export default function CarDetail() {
             </div>
           </section>
 
+          {/* Total Cost of Ownership */}
+          <TCOCalculator listing={listing} />
+
           {/* Seller's Insight */}
           {(listing.description || true) && (
             <section className="space-y-xl">
@@ -327,16 +353,40 @@ export default function CarDetail() {
                   <span className="text-display-lg font-bold text-primary tracking-tight">{formatPrice(listing.price)}</span>
                   {listing.negotiable && <span className="text-label-sm text-on-surface-variant font-bold uppercase tracking-widest">Negotiable</span>}
                 </div>
+                {listing.dealRating && (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <DealBadge rating={listing.dealRating} />
+                    {listing.marketAvg && <span className="text-label-sm text-on-surface-variant">Market avg {formatPrice(listing.marketAvg)}</span>}
+                  </div>
+                )}
               </div>
 
-              <div className="space-y-md">
-                <button onClick={() => openInquiry('')} className="w-full bg-primary text-on-primary py-4 rounded-xl text-label-md font-bold hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/10">
-                  <Icon name="payments" className="text-[20px]" /> Inquire Now
-                </button>
-                <button onClick={() => (user ? setShowOffer(true) : navigate('/login'))} className="w-full bg-surface-container-high border border-border-subtle text-primary py-4 rounded-xl text-label-md font-bold hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
-                  <Icon name="gavel" className="text-[20px]" /> {offerSent ? 'Offer Sent ✓' : 'Make an Offer'}
-                </button>
-              </div>
+              {user?.id === listing.sellerId ? (
+                <Link to={`/listings/${id}/edit`} className="w-full bg-primary text-on-primary py-4 rounded-xl text-label-md font-bold hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/10">
+                  <Icon name="edit" className="text-[20px]" /> Edit Your Listing
+                </Link>
+              ) : (
+                <div className="space-y-md">
+                  <button onClick={() => openInquiry('')} className="w-full bg-primary text-on-primary py-4 rounded-xl text-label-md font-bold hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-xl shadow-primary/10">
+                    <Icon name="payments" className="text-[20px]" /> Inquire Now
+                  </button>
+                  <button onClick={() => (user ? setShowOffer(true) : navigate('/login'))} className="w-full bg-surface-container-high border border-border-subtle text-primary py-4 rounded-xl text-label-md font-bold hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
+                    <Icon name="gavel" className="text-[20px]" /> {offerSent ? 'Offer Sent ✓' : 'Make an Offer'}
+                  </button>
+                  <button onClick={() => (user ? setShowBooking(true) : navigate('/login'))} className="w-full bg-surface-container-high border border-border-subtle text-primary py-4 rounded-xl text-label-md font-bold hover:bg-surface-container-highest transition-all flex items-center justify-center gap-2">
+                    <Icon name="event" className="text-[20px]" /> {bookingDone ? 'Booking Requested ✓' : 'Book a Test Drive'}
+                  </button>
+                  {tracked ? (
+                    <Link to="/pipeline" className="w-full text-trust-emerald py-2 rounded-xl text-label-md font-bold flex items-center justify-center gap-2 hover:underline">
+                      <Icon name="check_circle" className="text-[20px]" filled /> Added — View Deal Tracker
+                    </Link>
+                  ) : (
+                    <button onClick={trackCar} className="w-full text-on-surface-variant py-2 rounded-xl text-label-md font-bold hover:text-primary transition-all flex items-center justify-center gap-2">
+                      <Icon name="view_kanban" className="text-[20px]" /> Track this car
+                    </button>
+                  )}
+                </div>
+              )}
 
               {/* Seller row */}
               {(listing.seller || listing.dealer) && (
@@ -416,15 +466,43 @@ export default function CarDetail() {
             <div className={`${CARD} p-4 text-center text-label-sm text-on-surface-variant`}>
               {listing.viewCount} views · {listing.inquiryCount} inquiries
             </div>
+
+            {user?.id !== listing.sellerId && (
+              <Link to={`/report-dispute?listingId=${id}`} className="flex items-center justify-center gap-1.5 text-label-sm text-on-surface-variant hover:text-error transition-colors">
+                <Icon name="flag" className="text-[16px]" /> Report this listing
+              </Link>
+            )}
           </div>
         </aside>
       </main>
+
+      {/* Similar cars */}
+      {similar?.length > 0 && (
+        <section className="max-w-[1280px] mx-auto px-gutter-mobile md:px-gutter-desktop pb-3xl">
+          <div className="flex items-center justify-between mb-xl">
+            <h2 className="text-headline-md font-bold text-primary">Similar cars</h2>
+            <Link to={`/cars?make=${encodeURIComponent(listing.make)}`} className="text-label-md font-bold text-primary hover:underline flex items-center gap-1">
+              View more <Icon name="arrow_forward" className="text-[18px]" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-xl">
+            {similar.map((s) => <CarCard key={s.id} listing={s} />)}
+          </div>
+        </section>
+      )}
 
       {showOffer && (
         <MakeOfferModal
           listing={listing}
           onClose={() => setShowOffer(false)}
           onSubmitted={() => { setShowOffer(false); setOfferSent(true); }}
+        />
+      )}
+      {showBooking && (
+        <BookTestDriveModal
+          listing={listing}
+          onClose={() => setShowBooking(false)}
+          onBooked={() => { setShowBooking(false); setBookingDone(true); }}
         />
       )}
     </div>

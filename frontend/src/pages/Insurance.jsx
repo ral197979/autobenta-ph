@@ -1,5 +1,55 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Car, CreditCard, FileText, ArrowRight, Phone, CheckCircle2, AlertCircle } from 'lucide-react';
+import api from '../api/client';
+
+const QUOTE_INPUT = 'w-full bg-surface-container border border-border-subtle rounded-xl px-md py-sm text-body-md text-on-surface focus:ring-2 focus:ring-primary outline-none placeholder-on-surface-variant/60';
+
+function InsuranceQuoteForm() {
+  const [f, setF] = useState({ name: '', email: '', phone: '', vehicleInfo: '', coverage: 'Comprehensive' });
+  const [status, setStatus] = useState('idle');
+  const set = (k, v) => setF((p) => ({ ...p, [k]: v }));
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!f.name || !f.email) return;
+    setStatus('loading');
+    try {
+      await api.post('/leads', { type: 'insurance', name: f.name, email: f.email, phone: f.phone, vehicleInfo: f.vehicleInfo, details: { coverage: f.coverage } });
+      setStatus('done');
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  if (status === 'done') return (
+    <section className="rounded-2xl border border-trust-emerald/30 bg-trust-emerald/10 p-8 text-center">
+      <CheckCircle2 className="h-10 w-10 text-trust-emerald mx-auto mb-2" />
+      <h3 className="font-bold text-on-surface mb-1">Quote request received</h3>
+      <p className="text-sm text-on-surface-variant">An insurance specialist will reach out with options within 1 business day.</p>
+    </section>
+  );
+
+  return (
+    <section className="rounded-2xl border border-border-subtle bg-surface-container-lowest p-8">
+      <h3 className="text-headline-sm font-headline-sm text-on-surface mb-1">Request an Insurance Quote</h3>
+      <p className="text-sm text-on-surface-variant mb-lg">Tell us about your vehicle and we'll match you with motor-insurance options from our partners.</p>
+      <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-md">
+        <input value={f.name} onChange={(e) => set('name', e.target.value)} required placeholder="Full name" className={QUOTE_INPUT} />
+        <input type="email" value={f.email} onChange={(e) => set('email', e.target.value)} required placeholder="Email" className={QUOTE_INPUT} />
+        <input value={f.phone} onChange={(e) => set('phone', e.target.value)} placeholder="Mobile number" className={QUOTE_INPUT} />
+        <select value={f.coverage} onChange={(e) => set('coverage', e.target.value)} className={QUOTE_INPUT}>
+          <option>Comprehensive</option><option>CTPL only</option><option>Financing / Mortgagee-noted</option>
+        </select>
+        <input value={f.vehicleInfo} onChange={(e) => set('vehicleInfo', e.target.value)} placeholder="Vehicle (e.g. 2021 Toyota Vios)" className={`${QUOTE_INPUT} md:col-span-2`} />
+        {status === 'error' && <p className="md:col-span-2 text-body-sm text-error">Something went wrong — please try again.</p>}
+        <button type="submit" disabled={status === 'loading'} className="md:col-span-2 bg-primary text-on-primary py-md rounded-xl font-label-md hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+          <ShieldCheck className="h-5 w-5" /> {status === 'loading' ? 'Sending…' : 'Request Quote'}
+        </button>
+      </form>
+    </section>
+  );
+}
 
 const INSURANCE_TYPES = [
   {
@@ -158,36 +208,8 @@ export default function Insurance() {
           </p>
         </section>
 
-        {/* Future integrations note */}
-        <section className="rounded-2xl border border-border-subtle bg-surface-container p-8">
-          <div className="flex items-start gap-4">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-              <CreditCard className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-bold text-on-surface mb-1">Insurance comparison coming soon</h3>
-              <p className="text-sm text-on-surface-variant max-w-lg">
-                We are building an integrated insurance marketplace where you can compare live quotes from multiple providers directly on the AutoBenta platform. Integration with leading insurers is underway.
-              </p>
-              <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                <Link
-                  to="/ownership-transfer"
-                  className="inline-flex items-center gap-2 rounded-lg border border-primary/30 bg-surface-container-lowest px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/5"
-                >
-                  <FileText className="h-4 w-4" />
-                  Transfer Guide
-                </Link>
-                <Link
-                  to="/cars"
-                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5"
-                >
-                  <Car className="h-4 w-4" />
-                  Browse Cars
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* Request a quote */}
+        <InsuranceQuoteForm />
       </div>
     </div>
   );

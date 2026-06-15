@@ -81,7 +81,7 @@ export default function Compare() {
           <p className="text-body-sm text-on-surface-variant mb-2">Add a car to compare ({ids.length}/{MAX_COMPARE})</p>
           <div className="relative">
             <Icon name="search" className="absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant" />
-            <input value={searchInput} onChange={e => setSearchInput(e.target.value)} placeholder="Search by make or model…"
+            <input value={searchInput} onChange={e => setSearchInput(e.target.value)} aria-label="Search cars to compare" placeholder="Search by make or model…"
               className="w-full bg-surface-container border border-border-subtle rounded-full pl-12 pr-md py-sm text-body-md text-on-surface focus:ring-2 focus:ring-primary outline-none placeholder-on-surface-variant/60" />
           </div>
           {searchResults?.listings?.length > 0 && searchInput.length > 2 && (
