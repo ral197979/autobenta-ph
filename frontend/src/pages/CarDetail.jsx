@@ -452,7 +452,7 @@ export default function CarDetail() {
 
             {/* Trust points */}
             <div className={`${CARD} p-lg space-y-md`}>
-              <TrustPoint icon="security" title="Secure Transaction" body="Funds held in Ryderr Escrow until vehicle delivery." />
+              <TrustPoint icon="security" title="Buy Safely" body="Inspect, verify the papers, then pay the seller directly — our safe-buying guide walks you through it." />
               <TrustPoint icon="verified_user" title="Authenticity Guaranteed" body="VIN-checked and paper-verified by our legal team." />
               <Link to={`/ownership-transfer?listingId=${id}`} className="flex items-start gap-md group">
                 <div className="p-2 bg-primary/10 rounded-lg"><Icon name="fact_check" className="text-primary" /></div>
