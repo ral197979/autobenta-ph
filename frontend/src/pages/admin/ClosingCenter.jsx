@@ -154,6 +154,7 @@ function AddToClosingModal({ onClose }) {
         </div>
         <input
           className="input w-full mb-3"
+          aria-label="Search prospects by name"
           placeholder="Search prospect name…"
           value={search}
           onChange={e => setSearch(e.target.value)}

@@ -1,10 +1,9 @@
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { optionalAuth } = require('../middleware/auth');
 const aiService = require('../services/ai');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 router.get('/listing/:listingId/analysis', optionalAuth, async (req, res, next) => {
   try {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { CheckCircle, Clock, CreditCard, Mail, Store, ClipboardList, Link2, Rocket } from 'lucide-react';
 import api from '../api/client';
@@ -103,7 +104,7 @@ export default function BookDemo() {
             )}
           </p>
           <p className="text-xs text-on-surface-variant">Questions? Email us at <a href="mailto:demos@autobentaph.com" className="text-primary hover:underline">demos@autobentaph.com</a></p>
-          <a href="/" className="inline-block mt-2 text-sm text-primary hover:underline">Back to AutoBentaPH</a>
+          <Link to="/" className="inline-block mt-2 text-sm text-primary hover:underline">Back to AutoBentaPH</Link>
         </div>
       </div>
     );
@@ -295,12 +296,12 @@ export default function BookDemo() {
             <div className="rounded-xl border border-amber-200 bg-amber-50 p-5">
               <p className="text-xs font-bold text-amber-700 uppercase tracking-wide mb-1">Founding Dealer Program</p>
               <p className="text-sm text-on-surface mb-3">Lock in lifetime pricing as one of our first 5 dealers. Limited slots available.</p>
-              <a
-                href="/for-dealers/founding"
+              <Link
+                to="/for-dealers/founding"
                 className="inline-flex items-center gap-1 text-sm font-semibold text-amber-700 hover:text-amber-800 underline"
               >
                 Learn more →
-              </a>
+              </Link>
             </div>
           </div>
         </div>

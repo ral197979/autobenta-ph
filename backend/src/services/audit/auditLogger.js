@@ -1,7 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../../lib/prisma");
 const { computeHash } = require('./tamperHash');
 
-const prisma = new PrismaClient();
 
 /**
  * Log an auditable action. Automatically chains to the previous log entry via SHA-256.

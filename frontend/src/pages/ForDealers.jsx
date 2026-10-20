@@ -10,7 +10,7 @@ const PILLARS = [
   {
     icon: ShieldCheck,
     title: 'Verified Listings',
-    desc: 'Every listing goes through our verification flow — photos, docs, and seller identity — so buyers trust your inventory.',
+    desc: 'Add photos, docs, and seller identity to earn a Verified badge that buyers trust.',
   },
   {
     icon: Layers,
@@ -31,7 +31,7 @@ const PILLARS = [
 
 const STATS = [
   { value: '90', label: 'Days Free Trial' },
-  { value: '3×', label: 'Faster Lead Response' },
+  { value: '8', label: 'Stage Lead Pipeline' },
   { value: '₱0', label: 'Setup Fee' },
 ];
 
@@ -65,7 +65,7 @@ const PLANS = [
       'API access',
       'Dedicated account manager',
       'Custom integrations',
-      'SLA guarantee',
+      'Priority support',
     ],
     highlight: false,
     cta: 'Contact Sales',
@@ -77,7 +77,7 @@ const FOUNDING_BENEFITS = [
   'Then ₱3,599/month forever — Founding Dealer rate, locked for life',
   'Founding Dealer badge on all listings',
   'Direct line to product team — influence the roadmap',
-  'Priority support with 4-hour response SLA',
+  'Priority support queue',
   'Only available to the first dealers on the platform',
 ];
 
@@ -352,7 +352,7 @@ export default function ForDealers() {
               {
                 icon: Clock,
                 title: 'Response time tracking',
-                desc: 'See average response times per salesperson. Buyers who get a reply in under 5 minutes convert 3× more.',
+                desc: 'See average response times per salesperson — faster replies help you win more deals.',
               },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="rounded-2xl border border-border-subtle bg-surface-container-lowest p-5 flex gap-4">
@@ -469,7 +469,7 @@ export default function ForDealers() {
                 </div>
                 <h2 className="text-2xl font-bold mb-3">Join 5 Founding Dealers</h2>
                 <p className="text-sm text-white/70 leading-relaxed">
-                  Lock in founding pricing, shape the roadmap, and be first to market with the Philippines' most advanced dealer platform.
+                  Lock in founding pricing, shape the roadmap, and be first to market with a modern dealer platform built for the Philippines.
                 </p>
               </div>
               <div>

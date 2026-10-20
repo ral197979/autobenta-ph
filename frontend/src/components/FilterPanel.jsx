@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, X, Navigation } from 'lucide-react';
+import { priceFromMonthly } from '../utils/finance';
+import { formatPrice } from '../utils/format';
 
 const MAKES = ['Toyota', 'Honda', 'Mitsubishi', 'Ford', 'Nissan', 'Suzuki', 'Hyundai', 'Isuzu', 'Mazda', 'Kia'];
 const FUEL_TYPES = [['gasoline', 'Gasoline'], ['diesel', 'Diesel'], ['hybrid', 'Hybrid'], ['electric', 'Electric'], ['lpg', 'LPG']];
@@ -60,6 +62,12 @@ export default function FilterPanel({ filters, onChange, onReset, geo }) {
         <div className="flex gap-2">
           <input type="number" placeholder="Min ₱" value={filters.priceMin || ''} onChange={(e) => set('priceMin', e.target.value)} className={inputCls} />
           <input type="number" placeholder="Max ₱" value={filters.priceMax || ''} onChange={(e) => set('priceMax', e.target.value)} className={inputCls} />
+        </div>
+        <div className="mt-2">
+          <input type="number" placeholder="Max monthly payment ₱" value={filters.monthlyMax || ''} onChange={(e) => set('monthlyMax', e.target.value)} className={inputCls} />
+          {filters.monthlyMax && (
+            <p className="text-label-sm text-on-surface-variant/70 mt-1">≈ up to {formatPrice(priceFromMonthly(filters.monthlyMax))} (30% down, 60 mos)</p>
+          )}
         </div>
       </Section>
 

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { SlidersHorizontal, X, ArrowUpDown } from 'lucide-react';
+import { SlidersHorizontal, X, ArrowUpDown, Bookmark } from 'lucide-react';
 import api from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import { trackEvent } from '../utils/analytics';
+import { priceFromMonthly } from '../utils/finance';
 import CarCard from '../components/CarCard';
 import FilterPanel from '../components/FilterPanel';
 import useGeolocation from '../hooks/useGeolocation';
@@ -19,10 +21,29 @@ const BASE_SORT_OPTIONS = [
 
 export default function Browse() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [showFilters, setShowFilters] = useState(false);
   const [sort, setSort] = useState('createdAt_desc');
   const [page, setPage] = useState(1);
+  const [savedMsg, setSavedMsg] = useState('');
   const geo = useGeolocation();
+
+  const saveSearch = async () => {
+    if (!user) return navigate('/login');
+    const suggested = [filters.make, filters.model, filters.search].filter(Boolean).join(' ') || 'All cars';
+    const name = window.prompt('Name this saved search:', suggested);
+    if (!name) return;
+    try {
+      const active = Object.fromEntries(Object.entries(filters).filter(([k, v]) => v && k !== 'radius'));
+      await api.post('/saved-searches', { name, filters: active, alertOn: true });
+      setSavedMsg('Saved! We’ll alert you on new matches.');
+      setTimeout(() => setSavedMsg(''), 3000);
+    } catch {
+      setSavedMsg('Could not save. Please try again.');
+      setTimeout(() => setSavedMsg(''), 3000);
+    }
+  };
 
   // Auto-activate geo if coming from a "near me" link
   useEffect(() => {
@@ -40,9 +61,14 @@ export default function Browse() {
     search: searchParams.get('search') || '',
     make: searchParams.get('make') || '',
     model: searchParams.get('model') || '',
-    yearMin: '', yearMax: '', priceMin: '', priceMax: '',
-    mileageMax: '', fuelType: '', transmission: '', location: '',
-    sellerType: '', condition: '', radius: '50',
+    bodyType: searchParams.get('bodyType') || '',
+    yearMin: '', yearMax: '',
+    priceMin: searchParams.get('priceMin') || '',
+    priceMax: searchParams.get('priceMax') || '',
+    mileageMax: '', fuelType: '', transmission: '',
+    location: searchParams.get('location') || '',
+    monthlyMax: '',
+    sellerType: searchParams.get('sellerType') || '', condition: '', radius: '50',
     verified: searchParams.get('verified') || '',
   });
 
@@ -75,7 +101,13 @@ export default function Browse() {
     const isNearby = sort === 'nearby_asc' && geo.active;
     const [sortBy, sortOrder] = isNearby ? ['createdAt', 'desc'] : sort.split('_');
     const params = new URLSearchParams({ page, sortBy, sortOrder });
-    Object.entries(filters).forEach(([k, v]) => { if (v && k !== 'radius') params.set(k, v); });
+    Object.entries(filters).forEach(([k, v]) => { if (v && k !== 'radius' && k !== 'monthlyMax') params.set(k, v); });
+    // A monthly-budget cap becomes a price ceiling, combined with any explicit Max ₱.
+    if (filters.monthlyMax) {
+      const ceil = priceFromMonthly(filters.monthlyMax);
+      const existing = filters.priceMax ? Number(filters.priceMax) : Infinity;
+      params.set('priceMax', String(Math.min(existing, ceil)));
+    }
     if (isNearby) {
       params.set('lat', geo.lat);
       params.set('lng', geo.lng);
@@ -91,7 +123,7 @@ export default function Browse() {
   });
 
   const resetFilters = () => {
-    setFilters({ search: '', make: '', model: '', yearMin: '', yearMax: '', priceMin: '', priceMax: '', mileageMax: '', fuelType: '', transmission: '', location: '', sellerType: '', condition: '', radius: '50', verified: '' });
+    setFilters({ search: '', make: '', model: '', bodyType: '', yearMin: '', yearMax: '', priceMin: '', priceMax: '', mileageMax: '', fuelType: '', transmission: '', location: '', monthlyMax: '', sellerType: '', condition: '', radius: '50', verified: '' });
     setSearchParams({});
   };
 
@@ -111,6 +143,12 @@ export default function Browse() {
         </div>
         <div className="flex items-center gap-md">
           <button
+            onClick={saveSearch}
+            className="flex items-center gap-2 rounded-xl border border-border-subtle text-on-surface px-md py-sm text-label-md hover:bg-surface-container transition-colors"
+          >
+            <Bookmark className="w-4 h-4" /> Save Search
+          </button>
+          <button
             onClick={() => setShowFilters(!showFilters)}
             className={`lg:hidden flex items-center gap-2 rounded-xl border px-md py-sm text-label-md transition-colors ${activeFilterCount > 0 ? 'border-primary text-primary' : 'border-border-subtle text-on-surface'}`}
           >
@@ -126,20 +164,41 @@ export default function Browse() {
         </div>
       </div>
 
+      {savedMsg && (
+        <div className="mb-lg rounded-xl bg-trust-emerald/10 border border-trust-emerald/30 px-4 py-2.5 text-body-sm text-trust-emerald flex items-center gap-2">
+          <Bookmark className="w-4 h-4" /> {savedMsg} <Link to="/saved-searches" className="ml-auto font-semibold hover:underline">View saved searches →</Link>
+        </div>
+      )}
+
       {/* Active filter chips */}
-      {filters.verified === 'true' && (
-        <div className="flex items-center gap-2 mb-4">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-label-sm text-primary">
-            Verified sellers only
-            <button
-              type="button"
-              onClick={() => setFilters(p => ({ ...p, verified: '' }))}
-              className="ml-0.5 hover:opacity-70 transition-opacity"
-              aria-label="Remove filter"
-            >
-              <X className="h-3 w-3" />
-            </button>
-          </span>
+      {(filters.verified === 'true' || filters.bodyType) && (
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          {filters.verified === 'true' && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-label-sm text-primary">
+              Verified sellers only
+              <button
+                type="button"
+                onClick={() => setFilters(p => ({ ...p, verified: '' }))}
+                className="ml-0.5 hover:opacity-70 transition-opacity"
+                aria-label="Remove filter"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          )}
+          {filters.bodyType && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-label-sm text-primary capitalize">
+              {filters.bodyType}
+              <button
+                type="button"
+                onClick={() => setFilters(p => ({ ...p, bodyType: '' }))}
+                className="ml-0.5 hover:opacity-70 transition-opacity"
+                aria-label="Remove filter"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </span>
+          )}
         </div>
       )}
 
@@ -148,6 +207,7 @@ export default function Browse() {
         <span className="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
         <input
           type="text"
+          aria-label="Search cars"
           placeholder="Search by brand, model, or body style…"
           value={filters.search}
           onChange={e => setFilters(p => ({ ...p, search: e.target.value }))}

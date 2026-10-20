@@ -1,10 +1,9 @@
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { authenticate, requireRole } = require('../middleware/auth');
 const { auditFromReq } = require('../services/audit/auditLogger');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // GET /api/admin/moderation — pending listings queue
 router.get('/', authenticate, requireRole('admin'), async (req, res, next) => {

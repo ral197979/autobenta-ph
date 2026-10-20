@@ -1,5 +1,7 @@
 // Subscription entitlement definitions and feature gate checker.
 
+const prisma = require("../../lib/prisma");
+
 const PLAN_FEATURES = {
   free: {
     maxListings: 5,
@@ -65,8 +67,6 @@ function canAddListing(plan, currentCount) {
 // Middleware factory: gate a route behind a plan feature
 function requireFeature(feature) {
   return async (req, res, next) => {
-    const { PrismaClient } = require('@prisma/client');
-    const prisma = new PrismaClient();
     try {
       const dealer = await prisma.dealer.findFirst({
         where: { userId: req.user.id },
@@ -86,8 +86,6 @@ function requireFeature(feature) {
       next();
     } catch (err) {
       next(err);
-    } finally {
-      await prisma.$disconnect();
     }
   };
 }

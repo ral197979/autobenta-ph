@@ -2,9 +2,8 @@ const { estimatePrice } = require('./priceEstimator');
 const { checkFraud } = require('./fraudRiskScorer');
 const { analyzeListingQuality } = require('./listingQualityAnalyzer');
 const { buyerAssistant } = require('./buyerAssistant');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../../lib/prisma");
 
-const prisma = new PrismaClient();
 
 async function analyzeListingWithAI(listingId) {
   const listing = await prisma.vehicleListing.findUnique({

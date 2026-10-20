@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { authenticate, requireRole } = require('../middleware/auth');
 
-const prisma = new PrismaClient();
 
 const TRIGGER_ACTIONS = {
   missed_invoice: 'Resolve overdue invoice immediately — call dealer today',

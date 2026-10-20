@@ -86,7 +86,7 @@ export default function Financing() {
     <div className="max-w-lg mx-auto px-4 py-16 text-center">
       <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
       <h1 className="text-2xl font-bold mb-2">Financing Request Submitted!</h1>
-      <p className="text-on-surface-variant mb-6">Our financing team will review your application and contact you within 24 hours.</p>
+      <p className="text-on-surface-variant mb-6">We'll review your application and get in touch with financing options.</p>
       <div className="flex gap-3 justify-center flex-wrap mb-6">
         <Link to="/dashboard" className="btn-primary">View My Requests</Link>
         <Link to="/cars" className="btn-secondary">Browse More Cars</Link>
@@ -225,7 +225,7 @@ export default function Financing() {
               <Calculator className="w-12 h-12 opacity-30" />
               <p>Fill in the form and click "Calculate" to see your estimated monthly payment.</p>
               <div className="grid grid-cols-2 gap-3 w-full mt-4 text-left text-xs text-on-surface-variant">
-                {[['✅', 'Low interest rates from 6.5% p.a.'], ['✅', 'Terms up to 72 months'], ['✅', 'Pre-qualification in 24 hrs'], ['✅', 'Partner banks across PH']].map(([icon, text]) => (
+                {[['✅', 'Competitive interest rates'], ['✅', 'Terms up to 72 months'], ['✅', 'Pre-qualification on request'], ['✅', 'Options for PH buyers']].map(([icon, text]) => (
                   <div key={text} className="flex items-start gap-1.5">{icon} {text}</div>
                 ))}
               </div>

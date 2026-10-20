@@ -1,10 +1,9 @@
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../../lib/prisma");
 const { detectDuplicatePhotos } = require('./duplicatePhotoDetector');
 const { detectSuspiciousPricing } = require('./suspiciousPricingDetector');
 const { analyzeVehicleFraudSignals } = require('./vehicleFraudAnalyzer');
 const { updateSellerRiskProfile } = require('./sellerRiskScorer');
 
-const prisma = new PrismaClient();
 
 const SEVERITY_SCORES = { low: 5, medium: 15, high: 30, critical: 50 };
 

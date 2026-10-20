@@ -1,7 +1,6 @@
 'use strict';
 const bcrypt = require('bcryptjs');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require("../lib/prisma");
 
 /**
  * Authenticates requests from third-party dealer apps using an API key.

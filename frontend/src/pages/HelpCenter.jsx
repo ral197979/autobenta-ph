@@ -12,11 +12,13 @@ const CATEGORIES = [
   { icon: 'fact_check', title: 'Ownership Transfer', desc: 'LTO requirements, fees, and checklist.', to: '/ownership-transfer' },
   { icon: 'payments', title: 'Financing & Taxes', desc: 'Loan calculator and pre-approval.', to: '/financing' },
   { icon: 'security', title: 'Account & Security', desc: 'Manage your profile and password.', to: '/account' },
+  { icon: 'gavel', title: 'Dispute Resolution', desc: 'Report a problem to trust & safety.', to: '/report-dispute' },
+  { icon: 'verified_user', title: 'Get Verified', desc: 'Earn a verified seller/dealer badge.', to: '/verification' },
 ];
 
 const FAQS = [
   { q: 'How does Ryderr verify sellers?', a: 'Sellers submit a government ID and selfie; dealers add business registration and a permit. Verified accounts earn a badge shown on every listing.' },
-  { q: 'What does "Ryderr Certified" mean?', a: 'The vehicle passed a 180-point pre-purchase inspection by our engineers. You can view the full report on the listing.' },
+  { q: 'What does "Ryderr Certified" mean?', a: 'The vehicle passed a 120-point pre-purchase inspection by our engineers. You can view the full report on the listing.' },
   { q: 'How do offers work?', a: 'Make an offer from any listing. The seller can accept, decline, or send a counter-offer, which you can then accept or withdraw — all tracked under Offers.' },
   { q: 'Is my payment held in escrow?', a: 'Escrow is coming soon via a licensed partner. For now, complete payment directly with the seller after inspection and use our transfer checklist.' },
   { q: 'How long does ownership transfer take?', a: 'A standard private transfer in the Philippines takes about 7–14 days. See the Ownership Transfer guide for the step-by-step timeline.' },
@@ -35,7 +37,7 @@ export default function HelpCenter() {
           <h1 className="font-display-lg text-display-lg text-primary mb-md">How can we help?</h1>
           <div className="relative">
             <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search articles, guides, or issues…"
+            <input value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search help articles" placeholder="Search articles, guides, or issues…"
               className="w-full py-4 pl-14 pr-6 bg-surface border border-border-subtle rounded-xl focus:ring-2 focus:ring-primary outline-none transition-shadow shadow-sm text-body-md text-on-surface placeholder-on-surface-variant/60" />
           </div>
         </div>

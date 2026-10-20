@@ -1,6 +1,5 @@
 'use strict';
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require("../lib/prisma");
 
 const TRIAL_DAYS = 90;
 const FOUNDING_DEALER_PRICE = 3599;

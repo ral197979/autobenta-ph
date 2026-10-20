@@ -1,6 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../../lib/prisma");
 
-const prisma = new PrismaClient();
 
 /**
  * Route a lead to the best dealer for a given listing.

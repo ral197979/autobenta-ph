@@ -24,6 +24,23 @@ import HelpCenter from './pages/HelpCenter';
 import SellerProfile from './pages/SellerProfile';
 import MessageThread from './pages/MessageThread';
 import PromoteListing from './pages/PromoteListing';
+import EditListing from './pages/EditListing';
+import ReportDispute from './pages/ReportDispute';
+import Verification from './pages/Verification';
+import VehicleDocumentVerification from './pages/VehicleDocumentVerification';
+import NewCars from './pages/NewCars';
+import NewCarDetail from './pages/NewCarDetail';
+import NewCarCompare from './pages/NewCarCompare';
+import AdminNewCars from './pages/admin/AdminNewCars';
+import DealerDirectory from './pages/DealerDirectory';
+import Appointments from './pages/Appointments';
+import TradeInValuation from './pages/TradeInValuation';
+import SavedSearches from './pages/SavedSearches';
+import DealTracker from './pages/DealTracker';
+import News from './pages/News';
+import ArticleDetail from './pages/ArticleDetail';
+import AdminArticles from './pages/admin/AdminArticles';
+import AdminLeads from './pages/admin/AdminLeads';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AIListingWizard from './pages/AIListingWizard';
@@ -73,8 +90,13 @@ function AppRoutes() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/new-cars" element={<NewCars />} />
+          <Route path="/new-cars/compare" element={<NewCarCompare />} />
+          <Route path="/new-cars/:id" element={<NewCarDetail />} />
           <Route path="/cars" element={<Browse />} />
           <Route path="/cars/:id" element={<CarDetail />} />
+          <Route path="/listings/:id/edit" element={<ProtectedRoute roles={['seller', 'dealer', 'admin']}><EditListing /></ProtectedRoute>} />
+          <Route path="/listings/:listingId/documents" element={<ProtectedRoute roles={['seller', 'dealer', 'admin']}><VehicleDocumentVerification /></ProtectedRoute>} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -86,10 +108,21 @@ function AppRoutes() {
           <Route path="/account" element={<ProtectedRoute><AccountSettings /></ProtectedRoute>} />
           <Route path="/notifications" element={<ProtectedRoute><NotificationsCenter /></ProtectedRoute>} />
           <Route path="/offers" element={<ProtectedRoute><ActiveOffers /></ProtectedRoute>} />
+          <Route path="/appointments" element={<ProtectedRoute><Appointments /></ProtectedRoute>} />
+          <Route path="/saved-searches" element={<ProtectedRoute><SavedSearches /></ProtectedRoute>} />
+          <Route path="/pipeline" element={<ProtectedRoute><DealTracker /></ProtectedRoute>} />
           <Route path="/help" element={<HelpCenter />} />
+          <Route path="/dealers" element={<DealerDirectory />} />
+          <Route path="/valuation" element={<TradeInValuation />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/news/:slug" element={<ArticleDetail />} />
+          <Route path="/admin/articles" element={<ProtectedRoute roles={['admin']}><AdminArticles /></ProtectedRoute>} />
+          <Route path="/admin/leads" element={<ProtectedRoute roles={['admin']}><AdminLeads /></ProtectedRoute>} />
           <Route path="/seller/:id" element={<SellerProfile />} />
           <Route path="/messages/:id" element={<ProtectedRoute><MessageThread /></ProtectedRoute>} />
           <Route path="/promote/:listingId" element={<ProtectedRoute roles={['dealer', 'admin']}><PromoteListing /></ProtectedRoute>} />
+          <Route path="/report-dispute" element={<ReportDispute />} />
+          <Route path="/verification" element={<ProtectedRoute><Verification /></ProtectedRoute>} />
           <Route path="/dealer-panel" element={<ProtectedRoute roles={['dealer', 'admin']}><DealerPanel /></ProtectedRoute>} />
           <Route path="/dealer/apply" element={<ProtectedRoute><DealerApply /></ProtectedRoute>} />
           <Route path="/dealer" element={<ProtectedRoute roles={['dealer', 'admin']}><DealerLayout /></ProtectedRoute>}>
@@ -107,6 +140,7 @@ function AppRoutes() {
           <Route path="/admin" element={<ProtectedRoute roles={['admin']}><AdminPanel /></ProtectedRoute>} />
           <Route path="/admin/dealers" element={<ProtectedRoute roles={['admin']}><DealerOperations /></ProtectedRoute>} />
           <Route path="/admin/revenue" element={<ProtectedRoute roles={['admin']}><RevenueInsights /></ProtectedRoute>} />
+          <Route path="/admin/new-cars" element={<ProtectedRoute roles={['admin']}><AdminNewCars /></ProtectedRoute>} />
           <Route path="/inspection-services" element={<InspectionServices />} />
           <Route path="/inspections" element={<ProtectedRoute><Inspections /></ProtectedRoute>} />
           <Route path="/inspections/:id" element={<ProtectedRoute><InspectionReport /></ProtectedRoute>} />

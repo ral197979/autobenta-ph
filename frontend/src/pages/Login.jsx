@@ -65,15 +65,15 @@ export default function Login() {
             {error && <div className="bg-error-container/40 border border-error/30 rounded-xl p-3 text-body-sm text-error">{error}</div>}
 
             <div>
-              <label className="block text-label-sm font-medium text-on-surface-variant mb-1">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className={inputCls} placeholder="your@email.com" />
+              <label htmlFor="login-email" className="block text-label-sm font-medium text-on-surface-variant mb-1">Email</label>
+              <input id="login-email" type="email" value={email} onChange={e => setEmail(e.target.value)} required className={inputCls} placeholder="your@email.com" />
             </div>
 
             <div>
-              <label className="block text-label-sm font-medium text-on-surface-variant mb-1">Password</label>
+              <label htmlFor="login-password" className="block text-label-sm font-medium text-on-surface-variant mb-1">Password</label>
               <div className="relative">
-                <input type={showPw ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} required className={`${inputCls} pr-10`} placeholder="••••••••" />
-                <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface">
+                <input id="login-password" type={showPw ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} required className={`${inputCls} pr-10`} placeholder="••••••••" />
+                <button type="button" onClick={() => setShowPw(!showPw)} aria-label={showPw ? 'Hide password' : 'Show password'} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface">
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>

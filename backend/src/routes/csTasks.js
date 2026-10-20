@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { authenticate, requireRole } = require('../middleware/auth');
 
-const prisma = new PrismaClient();
 
 const TASK_SCHEDULE = [
   { dayNumber: 1,  taskType: 'check_in',     title: 'Day 1 Welcome Check-in',        description: 'Call dealer to confirm login, answer first questions, confirm inventory import started' },

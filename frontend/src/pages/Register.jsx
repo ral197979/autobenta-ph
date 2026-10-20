@@ -66,33 +66,33 @@ export default function Register() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-label-sm font-medium text-on-surface-variant mb-1">Full Name</label>
-                <input type="text" value={form.name} onChange={e => set('name', e.target.value)} required className={inputCls} placeholder="Juan dela Cruz" />
+                <label htmlFor="reg-name" className="block text-label-sm font-medium text-on-surface-variant mb-1">Full Name</label>
+                <input id="reg-name" type="text" value={form.name} onChange={e => set('name', e.target.value)} required className={inputCls} placeholder="Juan dela Cruz" />
               </div>
               <div>
-                <label className="block text-label-sm font-medium text-on-surface-variant mb-1">Phone (optional)</label>
-                <input type="tel" value={form.phone} onChange={e => set('phone', e.target.value)} className={inputCls} placeholder="09XXXXXXXXX" />
+                <label htmlFor="reg-phone" className="block text-label-sm font-medium text-on-surface-variant mb-1">Phone (optional)</label>
+                <input id="reg-phone" type="tel" value={form.phone} onChange={e => set('phone', e.target.value)} className={inputCls} placeholder="09XXXXXXXXX" />
               </div>
             </div>
 
             <div>
-              <label className="block text-label-sm font-medium text-on-surface-variant mb-1">Email</label>
-              <input type="email" value={form.email} onChange={e => set('email', e.target.value)} required className={inputCls} placeholder="your@email.com" />
+              <label htmlFor="reg-email" className="block text-label-sm font-medium text-on-surface-variant mb-1">Email</label>
+              <input id="reg-email" type="email" value={form.email} onChange={e => set('email', e.target.value)} required className={inputCls} placeholder="your@email.com" />
             </div>
 
             <div>
-              <label className="block text-label-sm font-medium text-on-surface-variant mb-1">Password</label>
+              <label htmlFor="reg-password" className="block text-label-sm font-medium text-on-surface-variant mb-1">Password</label>
               <div className="relative">
-                <input type={showPw ? 'text' : 'password'} value={form.password} onChange={e => set('password', e.target.value)} required className={`${inputCls} pr-10`} placeholder="Min. 6 characters" />
-                <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface">
+                <input id="reg-password" type={showPw ? 'text' : 'password'} value={form.password} onChange={e => set('password', e.target.value)} required className={`${inputCls} pr-10`} placeholder="Min. 6 characters" />
+                <button type="button" onClick={() => setShowPw(!showPw)} aria-label={showPw ? 'Hide password' : 'Show password'} className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface">
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
             <div>
-              <label className="block text-label-sm font-medium text-on-surface-variant mb-1">Confirm Password</label>
-              <input type={showPw ? 'text' : 'password'} value={form.confirmPassword} onChange={e => set('confirmPassword', e.target.value)} required className={inputCls} placeholder="Repeat password" />
+              <label htmlFor="reg-confirm" className="block text-label-sm font-medium text-on-surface-variant mb-1">Confirm Password</label>
+              <input id="reg-confirm" type={showPw ? 'text' : 'password'} value={form.confirmPassword} onChange={e => set('confirmPassword', e.target.value)} required className={inputCls} placeholder="Repeat password" />
             </div>
 
             <button type="submit" disabled={loading} className="w-full bg-primary text-on-primary rounded-xl py-2.5 font-label-md hover:opacity-90 active:scale-[0.99] transition-all disabled:opacity-50">

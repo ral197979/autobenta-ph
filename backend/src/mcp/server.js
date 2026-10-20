@@ -20,9 +20,8 @@
 const { McpServer } = require('@modelcontextprotocol/sdk/server/mcp.js');
 const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio.js');
 const { z } = require('zod');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 
-const prisma = new PrismaClient();
 const server = new McpServer({
   name:    'ryderr-marketplace',
   version: '1.0.0',

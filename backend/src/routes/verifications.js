@@ -1,12 +1,11 @@
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require("../lib/prisma");
 const { authenticate, requireRole } = require('../middleware/auth');
 const uploadDocument = require('../middleware/uploadDocument');
 const { auditLog } = require('../services/audit/auditLogger');
 const { computeReadinessScore } = require('../services/verification/readinessEngine');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // ─── Seller: Submit a verification request ────────────────────────────────────
 

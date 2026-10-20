@@ -1,5 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require("../../lib/prisma");
 
 /**
  * Calculate or update the SellerRiskProfile for a user based on their listing history.

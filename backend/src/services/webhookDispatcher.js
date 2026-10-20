@@ -1,7 +1,6 @@
 'use strict';
 const crypto = require('crypto');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require("../lib/prisma");
 
 /**
  * Fires an event to all registered webhooks for a dealer that subscribe to it.

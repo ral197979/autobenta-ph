@@ -1,6 +1,5 @@
 'use strict';
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require("../../lib/prisma");
 
 /**
  * Save a V8Atlas API token for a dealer.
