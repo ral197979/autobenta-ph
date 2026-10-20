@@ -62,7 +62,7 @@ const DEALERS = [
 ];
 
 const TRUST = [
-  { icon: 'verified_user', title: '100% Inspected', body: 'Every listing undergoes a rigorous 180-point inspection before it appears on Ryderr.' },
+  { icon: 'verified_user', title: 'Inspection On Request', body: 'Book a 180-point Ryderr Certified inspection on any listing before you commit.' },
   { icon: 'lock', title: 'Safe Buying Guidance', body: 'Inspection checks, verified sellers, and a step-by-step LTO transfer checklist guide every deal.' },
   { icon: 'support_agent', title: '24/7 Expert Help', body: 'Our specialists guide you through every step of the buying or selling process.' },
 ];
