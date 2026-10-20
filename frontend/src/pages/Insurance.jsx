@@ -26,7 +26,7 @@ function InsuranceQuoteForm() {
     <section className="rounded-2xl border border-trust-emerald/30 bg-trust-emerald/10 p-8 text-center">
       <CheckCircle2 className="h-10 w-10 text-trust-emerald mx-auto mb-2" />
       <h3 className="font-bold text-on-surface mb-1">Quote request received</h3>
-      <p className="text-sm text-on-surface-variant">An insurance specialist will reach out with options within 1 business day.</p>
+      <p className="text-sm text-on-surface-variant">We'll record your request and reach out with insurance options.</p>
     </section>
   );
 

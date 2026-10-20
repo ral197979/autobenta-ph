@@ -16,7 +16,7 @@ router.post('/', optionalAuth, [
     const { type, name, email, phone, listingId, vehicleInfo, amount, details } = req.body;
     const lead = await prisma.partnerLead.create({
       data: {
-        type: type === 'insurance' ? 'insurance' : 'financing',
+        type: ['insurance', 'dealer'].includes(type) ? type : 'financing',
         userId: req.user?.id || null,
         name, email, phone: phone || null,
         listingId: listingId || null,

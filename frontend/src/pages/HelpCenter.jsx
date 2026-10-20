@@ -18,7 +18,7 @@ const CATEGORIES = [
 
 const FAQS = [
   { q: 'How does Ryderr verify sellers?', a: 'Sellers submit a government ID and selfie; dealers add business registration and a permit. Verified accounts earn a badge shown on every listing.' },
-  { q: 'What does "Ryderr Certified" mean?', a: 'The vehicle passed a 180-point pre-purchase inspection by our engineers. You can view the full report on the listing.' },
+  { q: 'What does "Ryderr Certified" mean?', a: 'The vehicle passed a 120-point pre-purchase inspection by our engineers. You can view the full report on the listing.' },
   { q: 'How do offers work?', a: 'Make an offer from any listing. The seller can accept, decline, or send a counter-offer, which you can then accept or withdraw — all tracked under Offers.' },
   { q: 'Is my payment held in escrow?', a: 'Escrow is coming soon via a licensed partner. For now, complete payment directly with the seller after inspection and use our transfer checklist.' },
   { q: 'How long does ownership transfer take?', a: 'A standard private transfer in the Philippines takes about 7–14 days. See the Ownership Transfer guide for the step-by-step timeline.' },

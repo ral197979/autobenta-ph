@@ -54,17 +54,10 @@ function BrandLogo({ brand }) {
   );
 }
 
-const DEALERS = [
-  { name: 'Elite Motors', tag: 'Premium Partner' },
-  { name: 'Autohaus PH', tag: 'Verified Dealer' },
-  { name: 'Summit Auto', tag: 'Verified Dealer' },
-  { name: 'Auto Gallery', tag: 'Verified Dealer' },
-];
-
 const TRUST = [
-  { icon: 'verified_user', title: 'Inspection On Request', body: 'Book a 180-point Ryderr Certified inspection on any listing before you commit.' },
+  { icon: 'verified_user', title: 'Inspection On Request', body: 'Book a 120-point Ryderr Certified inspection on any listing before you commit.' },
   { icon: 'lock', title: 'Safe Buying Guidance', body: 'Inspection checks, verified sellers, and a step-by-step LTO transfer checklist guide every deal.' },
-  { icon: 'support_agent', title: '24/7 Expert Help', body: 'Our specialists guide you through every step of the buying or selling process.' },
+  { icon: 'support_agent', title: 'Expert Help', body: 'Our team guides you through buying and selling, Mon–Sat, 9am–6pm.' },
 ];
 
 const BUDGET_OPTIONS = [
@@ -128,7 +121,7 @@ function HeroSearch() {
           Precision Engineering. Seamless Ownership.
         </h1>
         <p className="text-white/90 font-body-lg text-body-lg mb-xl max-w-2xl mx-auto">
-          Discover the Philippines' most trusted marketplace for verified, high-performance vehicles.
+          Discover a trusted Philippine marketplace for quality used cars — inspected on request, with verified sellers.
         </p>
         {/* New / Used toggle */}
         <div className="inline-flex p-1 mb-md rounded-full bg-white/10 backdrop-blur-sm">
@@ -283,7 +276,7 @@ function Newsletter() {
       <div className="max-w-container-max mx-auto bg-primary-container rounded-2xl p-xl md:p-3xl relative overflow-hidden text-center">
         <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-tertiary-container/30 blur-3xl" />
         <div className="relative z-10 max-w-xl mx-auto">
-          <h2 className="text-headline-lg font-headline-lg text-on-primary mb-sm">Join thousands of car buyers</h2>
+          <h2 className="text-headline-lg font-headline-lg text-on-primary mb-sm">Join our community of car buyers</h2>
           <p className="text-on-primary-container font-body-md mb-lg">Get new listings, price drops, and buying tips in your inbox. No spam.</p>
           {status === 'done' ? (
             <p className="text-on-primary font-label-md flex items-center justify-center gap-2"><span className="material-symbols-outlined">check_circle</span> You're subscribed — welcome aboard!</p>
@@ -311,7 +304,7 @@ function SellCTA() {
         <div className="relative z-10 flex-1 text-center md:text-left">
           <h2 className="text-on-primary font-headline-lg text-headline-lg mb-md">Sell Your Car for the Best Price.</h2>
           <p className="text-on-primary-container font-body-lg text-body-lg mb-2xl max-w-lg">
-            Our experts handle the inspection and paperwork. Get paid in as fast as 24 hours.
+            List in minutes, get a free price estimate, and connect with buyers directly — we guide you through the LTO transfer.
           </p>
           <div className="flex flex-col sm:flex-row gap-md justify-center md:justify-start">
             <Link to="/valuation" className="bg-surface-container-lowest text-primary px-3xl py-md rounded-xl font-label-md text-label-md hover:bg-surface-container-low transition-all shadow-lg active:scale-95">
@@ -331,25 +324,31 @@ function SellCTA() {
 }
 
 function VerifiedDealers() {
+  const { data } = useQuery({
+    queryKey: ['home-verified-dealers'],
+    queryFn: () => api.get('/dealers?verified=true').then((r) => r.data),
+  });
+  const dealers = (data || []).slice(0, 4);
+  if (!dealers.length) return null;
   return (
     <section className="py-3xl bg-surface-container-lowest">
       <div className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop">
         <div className="text-center mb-3xl">
           <h2 className="text-headline-lg font-headline-lg text-primary mb-sm">Verified Dealers</h2>
           <p className="text-on-surface-variant font-body-md text-body-md max-w-xl mx-auto">
-            Shop with confidence from our network of pre-vetted dealerships.
+            Dealerships that have completed verification — see their ratings and inventory.
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-lg">
-          {DEALERS.map((d) => (
-            <Link key={d.name} to="/dealers" className="bg-surface-container-lowest p-lg rounded-xl border border-border-subtle flex flex-col items-center text-center group cursor-pointer hover:border-primary transition-all">
-              <div className="w-20 h-20 bg-surface rounded-full flex items-center justify-center mb-md border border-border-subtle">
-                <span className="material-symbols-outlined text-3xl text-primary">storefront</span>
+          {dealers.map((d) => (
+            <Link key={d.id} to="/dealers" className="bg-surface-container-lowest p-lg rounded-xl border border-border-subtle flex flex-col items-center text-center group cursor-pointer hover:border-primary transition-all">
+              <div className="w-20 h-20 bg-surface rounded-full flex items-center justify-center mb-md border border-border-subtle overflow-hidden">
+                {d.logoUrl ? <img src={d.logoUrl} alt="" className="w-full h-full object-cover" /> : <span className="material-symbols-outlined text-3xl text-primary">storefront</span>}
               </div>
-              <h4 className="font-headline-sm text-headline-sm text-primary mb-xs">{d.name}</h4>
+              <h4 className="font-headline-sm text-headline-sm text-primary mb-xs truncate max-w-full">{d.businessName}</h4>
               <span className="text-label-sm font-label-sm text-trust-emerald flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
-                {d.tag}
+                {d._count?.listings ?? 0} listings
               </span>
             </Link>
           ))}

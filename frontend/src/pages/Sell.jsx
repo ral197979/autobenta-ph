@@ -15,7 +15,7 @@ const BTN_SECONDARY = 'rounded-xl border border-border-subtle text-on-surface px
 
 const TRUST = [
   { icon: 'groups', color: 'text-on-tertiary-container', title: 'Reach thousands', body: 'Your listing is shown to our database of active, qualified buyers across the Philippines.' },
-  { icon: 'verified_user', color: 'text-trust-emerald', title: 'Verified status', body: "Build instant trust with the 'Ryderr Verified' badge — proven to increase sale speed." },
+  { icon: 'verified_user', color: 'text-trust-emerald', title: 'Verified status', body: "Build buyer trust with the 'Ryderr Verified' badge." },
   { icon: 'speed', color: 'text-alert-orange', title: 'Sell faster', body: 'Transparent pricing and inspection-ready listings close in a fraction of the usual time.' },
 ];
 

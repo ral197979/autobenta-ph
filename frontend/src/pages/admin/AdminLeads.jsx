@@ -27,12 +27,12 @@ export default function AdminLeads() {
     <div className="bg-background min-h-screen">
       <main className="max-w-container-max mx-auto px-gutter-mobile md:px-gutter-desktop py-2xl">
         <div className="mb-lg">
-          <h1 className="text-headline-lg font-headline-lg text-on-surface">Finance &amp; Insurance Leads</h1>
-          <p className="text-body-sm text-on-surface-variant mt-1">Pre-approval and insurance-quote requests to forward to partners.</p>
+          <h1 className="text-headline-lg font-headline-lg text-on-surface">Leads</h1>
+          <p className="text-body-sm text-on-surface-variant mt-1">Finance, insurance, and founding-dealer requests to follow up on.</p>
         </div>
 
         <div className="flex gap-2 mb-lg">
-          {['all', 'financing', 'insurance'].map((t) => (
+          {['all', 'financing', 'insurance', 'dealer'].map((t) => (
             <button key={t} onClick={() => setType(t)} className={`px-md py-sm rounded-full text-label-md capitalize transition-colors ${type === t ? 'bg-primary text-on-primary' : 'border border-border-subtle text-on-surface hover:bg-surface-container'}`}>{t}</button>
           ))}
         </div>
@@ -47,13 +47,14 @@ export default function AdminLeads() {
               <div key={l.id} className="flex flex-col md:flex-row md:items-center gap-md p-md">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`px-2 py-0.5 rounded-full text-label-sm uppercase tracking-wide font-bold ${l.type === 'financing' ? 'bg-secondary-container text-on-secondary-container' : 'bg-primary/10 text-primary'}`}>{l.type}</span>
+                    <span className={`px-2 py-0.5 rounded-full text-label-sm uppercase tracking-wide font-bold ${l.type === 'financing' ? 'bg-secondary-container text-on-secondary-container' : l.type === 'dealer' ? 'bg-trust-emerald/15 text-trust-emerald' : 'bg-primary/10 text-primary'}`}>{l.type}</span>
                     <span className="font-semibold text-on-surface">{l.name}</span>
                     <span className="text-label-sm text-on-surface-variant">{fmtDate(l.createdAt)}</span>
                   </div>
                   <p className="text-body-sm text-on-surface-variant mt-0.5">
                     {l.email}{l.phone ? ` · ${l.phone}` : ''}{l.vehicleInfo ? ` · ${l.vehicleInfo}` : ''}{l.amount ? ` · ${formatPrice(l.amount)}` : ''}
                     {l.details?.coverage ? ` · ${l.details.coverage}` : ''}{l.details?.term ? ` · ${l.details.term}mo` : ''}
+                    {l.details?.businessName ? ` · ${l.details.businessName}` : ''}{l.details?.city ? ` · ${l.details.city}` : ''}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

@@ -244,7 +244,7 @@ export default function CarDetail() {
                 </div>
                 <div>
                   <h3 className="text-headline-sm font-bold text-on-surface">Not yet inspected</h3>
-                  <p className="text-on-surface-variant text-body-sm">Request a Ryderr 180-point pre-purchase inspection.</p>
+                  <p className="text-on-surface-variant text-body-sm">Request a Ryderr 120-point pre-purchase inspection.</p>
                 </div>
               </div>
               {inspectionRequested ? (

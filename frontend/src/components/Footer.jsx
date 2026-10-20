@@ -44,7 +44,7 @@ export default function Footer() {
         <div className="col-span-2 space-y-md">
           <span className="text-headline-md font-bold text-primary-container dark:text-primary-fixed-dim block">Ryderr</span>
           <p className="text-body-sm text-on-surface-variant leading-relaxed max-w-xs">
-            The Philippines' premier automotive marketplace for verified, inspection-ready vehicle transactions.
+            A Philippine automotive marketplace with optional seller verification and inspections.
           </p>
           <div className="flex gap-md">
             <a href="#" aria-label="Website" className="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all text-on-surface-variant">

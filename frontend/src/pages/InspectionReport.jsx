@@ -92,7 +92,7 @@ export default function InspectionReport() {
           <div>
             <p className="text-on-primary-container font-label-md uppercase tracking-widest mb-1">Certification Score</p>
             <p className="text-on-primary text-headline-md font-bold capitalize">{overall.label}</p>
-            <p className="text-on-primary-container text-body-sm mt-1">180-point Ryderr inspection</p>
+            <p className="text-on-primary-container text-body-sm mt-1">120-point Ryderr inspection</p>
           </div>
         </div>
 
@@ -144,7 +144,7 @@ export default function InspectionReport() {
           <div className="w-12 h-12 rounded-full bg-trust-emerald/10 flex items-center justify-center shrink-0"><Icon name="verified" className="text-trust-emerald" filled /></div>
           <div>
             <h3 className="font-headline-sm text-headline-sm text-on-surface">Certified Verification</h3>
-            <p className="text-on-surface-variant text-body-sm mt-1">This vehicle underwent a rigorous 180-point inspection under Ryderr's Quality Assurance protocols. All findings are documented as of the inspection date.</p>
+            <p className="text-on-surface-variant text-body-sm mt-1">This vehicle underwent a rigorous 120-point inspection under Ryderr's Quality Assurance protocols. All findings are documented as of the inspection date.</p>
           </div>
         </div>
       </main>

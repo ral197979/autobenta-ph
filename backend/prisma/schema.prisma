@@ -634,6 +634,7 @@ model PartnerLead {
 enum LeadType {
   financing
   insurance
+  dealer
 }
 
 enum LeadStatus {

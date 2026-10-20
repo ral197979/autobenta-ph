@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   Tag, Users, Star, Headphones, CheckCircle, ChevronDown, ArrowRight, Zap, ShieldCheck,
 } from 'lucide-react';
+import api from '../api/client';
 
 const BENEFITS = [
   {
@@ -22,8 +23,8 @@ const BENEFITS = [
   },
   {
     icon: Headphones,
-    title: 'Priority support SLA',
-    desc: '4-hour guaranteed response time, 7 days a week. Your issues jump the queue automatically.',
+    title: 'Priority support',
+    desc: 'Your support requests jump the queue and get priority handling during business hours (Mon–Sat).',
   },
 ];
 
@@ -35,7 +36,7 @@ const FEATURES = [
   'CSV bulk import + field mapping',
   'AI-powered listing wizard',
   'Response time tracking',
-  'Priority support (4-hr SLA)',
+  'Priority support queue',
   'Founding Dealer badge on all listings',
   'Monthly product roadmap call',
   '3 months free, then ₱3,599/mo forever',
@@ -60,7 +61,6 @@ const FAQS = [
   },
 ];
 
-const SPOTS_REMAINING = 3;
 const SPOTS_TOTAL = 5;
 
 function FaqItem({ q, a }) {
@@ -93,6 +93,8 @@ export default function FoundingDealer() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const validate = () => {
     const e = {};
@@ -106,15 +108,35 @@ export default function FoundingDealer() {
     return e;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const e2 = validate();
     if (Object.keys(e2).length > 0) {
       setErrors(e2);
       return;
     }
-    console.log('Founding Dealer application:', form);
-    setSubmitted(true);
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      await api.post('/leads', {
+        type: 'dealer',
+        name: form.contactName,
+        email: form.email,
+        phone: form.phone,
+        details: {
+          program: 'founding-dealer',
+          businessName: form.businessName,
+          city: form.city,
+          monthlyInventory: form.monthlyInventory,
+          currentDms: form.currentDms,
+        },
+      });
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(err.response?.data?.error || 'Could not submit your application. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleChange = (field) => (e) => {
@@ -132,13 +154,13 @@ export default function FoundingDealer() {
         <div className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-surface-container-lowest/10 px-3 py-1 text-xs font-semibold text-white/80 mb-6">
             <Zap className="h-3.5 w-3.5 text-accent" />
-            5 spots only — {SPOTS_REMAINING} remaining
+            Limited to {SPOTS_TOTAL} founding dealers
           </div>
           <h1 className="text-3xl font-bold sm:text-4xl lg:text-5xl leading-tight mb-4">
             Become a Founding Dealer
           </h1>
           <p className="text-base text-white/70 max-w-2xl mx-auto mb-8 leading-relaxed">
-            3 months free, no credit card required. Then ₱3,599/month — locked for life. Shape the product roadmap and be first to market with the Philippines' most advanced dealer platform.
+            3 months free, no credit card required. Then ₱3,599/month — locked for life. Shape the product roadmap and be first to market with a modern dealer platform built for the Philippines.
           </p>
           <a
             href="#apply"
@@ -207,16 +229,8 @@ export default function FoundingDealer() {
       {/* Spots counter */}
       <section className="py-10 border-y border-border-subtle">
         <div className="mx-auto max-w-lg px-4 text-center">
-          <div className="flex justify-center gap-2 mb-4">
-            {Array.from({ length: SPOTS_TOTAL }).map((_, i) => (
-              <div
-                key={i}
-                className={`h-4 w-10 rounded-full ${i < SPOTS_TOTAL - SPOTS_REMAINING ? 'bg-primary' : 'bg-cardborder'}`}
-              />
-            ))}
-          </div>
           <p className="text-lg font-bold text-on-surface">
-            {SPOTS_REMAINING} of {SPOTS_TOTAL} spots remaining
+            Limited to {SPOTS_TOTAL} founding dealers
           </p>
           <p className="text-sm text-on-surface-variant mt-1">
             Once filled, founding pricing closes permanently. No waitlist.
@@ -230,14 +244,14 @@ export default function FoundingDealer() {
           <div className="text-center mb-10">
             <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Apply</p>
             <h2 className="text-2xl font-bold text-on-surface sm:text-3xl">Founding Dealer Application</h2>
-            <p className="text-sm text-on-surface-variant mt-2">Takes about 2 minutes. We'll get back to you within 24 hours.</p>
+            <p className="text-sm text-on-surface-variant mt-2">Takes about 2 minutes. We'll review your application and get in touch.</p>
           </div>
 
           {submitted ? (
             <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center">
               <CheckCircle className="h-12 w-12 text-emerald-500 mx-auto mb-4" />
               <h3 className="text-lg font-bold text-on-surface mb-2">Application received!</h3>
-              <p className="text-sm text-on-surface-variant">We'll contact you within 24 hours to confirm your spot and get you onboarded.</p>
+              <p className="text-sm text-on-surface-variant">We've received your application and will be in touch to confirm your spot and get you onboarded.</p>
               <Link
                 to="/for-dealers"
                 className="inline-flex items-center gap-2 mt-6 text-sm font-semibold text-primary hover:underline"
@@ -343,14 +357,16 @@ export default function FoundingDealer() {
                 </div>
               </div>
 
+              {submitError && <p className="text-center text-sm text-red-500">{submitError}</p>}
               <button
                 type="submit"
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:bg-primary/90 transition-colors"
+                disabled={submitting}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white hover:bg-primary/90 transition-colors disabled:opacity-60"
               >
-                Submit Application <ArrowRight className="h-4 w-4" />
+                {submitting ? 'Submitting…' : <>Submit Application <ArrowRight className="h-4 w-4" /></>}
               </button>
               <p className="text-center text-xs text-on-surface-variant">
-                We review every application within 24 hours. Only {SPOTS_REMAINING} spots remain.
+                We review every application and follow up by email. Founding spots are limited to {SPOTS_TOTAL}.
               </p>
             </form>
           )}

@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api/client';
 import ListingCard from './ListingCard';
-import { MOCK_LISTINGS } from '../../data/mockListings';
 import useGeolocation from '../../hooks/useGeolocation';
 
 export default function FeaturedListings() {
@@ -25,7 +24,7 @@ export default function FeaturedListings() {
     seen.add(key);
     return true;
   });
-  const listings = deduped.length >= 4 ? deduped.slice(0, 6) : MOCK_LISTINGS.slice(0, 6);
+  const listings = deduped.slice(0, 6);
   const nearby = geo.active;
 
   return (
@@ -38,8 +37,8 @@ export default function FeaturedListings() {
             </h2>
             <p className="text-on-surface-variant font-body-md text-body-md">
               {nearby
-                ? `${deduped.length} verified vehicle${deduped.length !== 1 ? 's' : ''} within 150 km`
-                : 'Hand-picked premium vehicles with full history reports.'}
+                ? `${deduped.length} vehicle${deduped.length !== 1 ? 's' : ''} within 150 km`
+                : 'Popular listings on Ryderr right now.'}
             </p>
             {!nearby && !geo.error && (
               <button
@@ -78,6 +77,8 @@ export default function FeaturedListings() {
               </div>
             ))}
           </div>
+        ) : listings.length === 0 ? (
+          <p className="text-center text-on-surface-variant py-10">No listings yet — check back soon.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
             {listings.map((l) => (

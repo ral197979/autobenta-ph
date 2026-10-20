@@ -150,13 +150,13 @@ export default function SafeBuying() {
               <ShieldCheck className="h-10 w-10 text-accent mb-4" />
               <h2 className="text-2xl font-bold mb-3">How AutoBenta verifies sellers</h2>
               <p className="text-white/70 text-sm leading-relaxed mb-4">
-                Every dealer listing on AutoBenta is reviewed by our team. Verified dealers have submitted business registration documents, LTO accreditation, and passed our listing quality audit.
+                Dealers can submit business documents and seller identity for verification. Verified dealers display a badge, and our team moderates listing quality and screens for fraud signals.
               </p>
               <ul className="space-y-2">
                 {[
-                  'Business registration verified (DTI/SEC)',
-                  'LTO dealer accreditation on file',
-                  'No outstanding fraud reports',
+                  'Business documents submitted for verification',
+                  'Seller identity checked',
+                  'Listings screened for fraud signals',
                   'Active moderation of listing quality',
                 ].map((item) => (
                   <li key={item} className="flex items-center gap-2 text-sm text-white/80">
